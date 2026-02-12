@@ -4,18 +4,17 @@
 \alias{bwsp_model}
 \title{Fit Bayesian model to time-to-event data}
 \usage{
-bwsp_model(
-  datstan,
-  tte.dist = c("w", "dw", "pgw"),
-  prior.dist = c("fg", "fl", "gg", "ll"),
-  chains = 4,
-  iter = 11000,
-  warmup = 1000
-)
+bwsp_model(datstan, chains = 4, iter = 11000, warmup = 1000)
 }
 \arguments{
 \item{datstan}{named list of data for the stanmodel; tte data can be
 formated with \code{\link{tte2priordat}}}
+
+\item{chains}{number of Markov chains to run}
+
+\item{iter}{total number of iterations per chain (including warmup)}
+
+\item{warmup}{number of warmup iterations per chain}
 
 \item{tte.dist}{character indicating the modelling approach; options are
 \code{"w", "dw", "pgw"} (see details)}
@@ -23,12 +22,6 @@ formated with \code{\link{tte2priordat}}}
 \item{prior.dist}{character indicating the prior distribution for the
 parameters of the tte distribution; options are
 \code{"fg", "fl", "gg", "ll"} (see details)}
-
-\item{chains}{number of Markov chains to run}
-
-\item{iter}{total number of iterations per chain (including warmup)}
-
-\item{warmup}{number of warmup iterations per chain}
 }
 \value{
 A stanfit object or, in case of \code{tte.dist = "dw"}, a list of two stanfit objects
@@ -45,10 +38,6 @@ with \code{\link{bwsp_test}}.
 The function applies the \code{\link[rstan]{sampling}} command with the No U-Turn sampler
 to fit a Bayesian model to
 time-to-event data.
-The model can be a Weibull \code{("w")},
-a double Weibull \code{("dw"}, estimating two Weibull models - one to the data as is and
-one to the data censored at mid of observation period),
-or a power generalized Weibull \code{("pgw")} model.
 
 The posterior is proportional to the likelihood times the prior. The likelihood is
 \deqn{\mathcal{L}(t| \Theta) = \prod_{i=1}^N S(t_i)^{1-d_i}\cdot f(t_i)^{d_i}}
@@ -56,38 +45,31 @@ with \eqn{S(t)} the survival function of the chosen distribution and \eqn{f(t)} 
 density function \insertCite{nikulin2016}{WSPsignal}. The pair \eqn{(t_i, d_i)}
 are the tte observations.
 
-Implemented prior distributions for the scale and shape parameters are products
-of the following univariate distributional choices:
-\tabular{lll}{
-for scale parameter \tab for shape parameter(s) \tab  abbreviation \cr
-fixed to prior mean \tab gamma  \tab fg \cr
-gamma \tab gamma \tab gg \cr
-fixed to prior mean \tab lognormal \tab fl \cr
-lognormal \tab lognormal \tab ll \cr
-}
+Prior and tte distribution are specified in data preparation with function
+\code{\link{tte2priordat}}.
 }
 \examples{
-# prep the data
-head(tte)
-standat = tte2priordat(dat = tte,
-                     tte.dist = "pgw",
-                     scale.mean = 1, 
-                     scale.sd = 10,
-                     shape.mean = 1, 
-                     shape.sd = 10,
-                     powershape.mean = 1, 
-                     powershape.sd = 10)
-# fit a pgw model
-fit = bwsp_model(datstan = standat,  
-                  tte.dist = "pgw",         
-                  prior.dist = "ll",  
-                  chains = 4,
-                  iter = 110,          # (posterior sample
-                  warmup = 10)         # is small for demo purpose)
-                  
-# print the summary
-fit
 
+head(tte)
+
+# prep the data
+# we formalize a prior belief (here "no association
+# between drug and event", therefore prior mean = 1 for shape parameter)
+# and reformat our tte data to fit the model in the following
+dat_list = tte2priordat(dat = tte,   # reformat the data
+                      tte.dist = "w",
+                      prior.dist = "ll", 
+                      scale.mean = 1, 
+                      scale.sd = 10,
+                      shape.mean = 1, 
+                      shape.sd = 10)
+
+# model fitting
+fit = bwsp_model(datstan = dat_list,      # fit the model       
+                 chains = 4,              
+                 iter = 110,             # (posterior sample is
+                 warmup = 10)            # small for demo purpose)
+fit
 
 
 }

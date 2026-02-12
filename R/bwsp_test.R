@@ -5,21 +5,14 @@
 #' Weibull family.
 #' 
 #'
-#' @param credregion vector of length 2 or 4 with the lower and upper boundaries of the 
-#' credibility interval (CI) reflecting the posterior distribution of the shape
-#' parameter(s); required order: 1. lower CI boundary of first shape parameter, 
-#' 2. upper CI boundary of first shape parameter; and if existent: 3. lower CI 
-#' boundary of second shape parameter, 4. upper CI boundary of second shape parameter
-#' @param nullregion vector of length 2 or 4 with the lower and upper boundaries of the 
-#' region of practical equivalence (ROPE) reflecting the null hypothesis region of the shape
-#' parameter(s); required order: 1. lower ROPE boundary of first shape parameter, 
-#' 2. upper ROPE boundary of first shape parameter; and if existent: 3. lower ROPE 
-#' boundary of second shape parameter, 4. upper ROPE boundary of second shape parameter
-#' @param tte.dist character specifying the modelling 
-#' approach used to obtain the posterior samples; options are \code{"w", "dw", "pgw"};
-#' @param option numeric value out of \code{1,2,3}; rule to be used to deduct a 
-#' binary outcome (signal/no signal) from the HDI+ROPE test results of each shape 
-#' parameter (see details)
+#' @param mod.output model output resulting from \code{\link{bwsp_model}}
+#' @param cred.level numeric or vector of credibility levels; default is 0.8
+#' @param ci.type  character indicating whether to extract equal tailed
+#' intervals (\code{"ETI"}) or highest posterior density intervals (\code{"HDI"}) as
+#' credibility interval (CI) for BWSP testing; default is \code{"HDI"}
+#' @param sensitivity.option numeric value out of \code{1,2,3}; rule to be used to deduct a 
+#' binary outcome (signal/no signal) from one or two shape parameter tests; 
+#' default is \code{sensitivity.option = 2} (see details)
 #' 
 #' 
 #' @return binary, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected; see details for definition
@@ -78,12 +71,12 @@
 #' The HDI+ROPE test checks the 
 #' relationship between ROPE and credibility region(s) leading to either acceptance,
 #' rejection or no decision regarding the null hypothesis for a single shape parameter.
-#' Options to generate a binary outcome, i.e. a signal or not, from HDI+ROPE test results 
+#' Sensitivity options to generate a binary outcome, i.e. a signal or not, from HDI+ROPE test results 
 #' based on one (in case of \code{"w"}) or two (in case of \code{"dw", "pgw"}) shape parameters are:
 #' \tabular{ccccc}{
 #' HDI+ROPE \tab HDI+ROPE \tab combination \tab combination \tab combination \cr
 #' outcome \tab outcome \tab rule \tab rule \tab rule \cr
-#' for shape_1\tab for shape_2 \tab (\code{option = 1}) \tab (\code{option = 2}) \tab (\code{option = 3}) \cr
+#' for shape_1\tab for shape_2 \tab (\code{sensitivity.option = 1}) \tab (\code{sensitivity.option = 2}) \tab (\code{sensitivity.option = 3}) \cr
 #' rejection \tab (none) \tab signal \tab signal \tab signal \cr
 #' acceptance \tab (none) \tab - \tab - \tab - \cr
 #' no decision \tab (none) \tab signal \tab - \tab - \cr
@@ -98,8 +91,8 @@
 #' no decision \tab no decision \tab signal \tab - \tab - \cr
 #' }
 #' 
-#' The hypotheses as stated above (see test concept) are implemented in \code{option = 1} whereas
-#' \code{option = 2} and \code{option = 3} lead to a signal in fewer cases.
+#' The hypotheses as stated above (see test concept) are implemented in \code{sensitivity.option = 1} whereas
+#' \code{sensitivity.option = 2} and \code{sensitivity.option = 3} lead to a signal in fewer cases.
 #' 
 #' More details on the HDI+ROPE test, recommendations for interval specifications
 #' and the combination rules
@@ -115,63 +108,40 @@
 #' 
 #' # under weibull model:
 #' 
-#' # 1. specify ROPE reflecting the null hypothesis:
-#' # we choose an 80% confidence interval around the 
-#' # null value (1 for both shape parameters)
-#' logpars = logprior_repar(1, 10) # get parameters of a 
-#'                                 # lognormal distribution with 
-#'                                 # mean 1 and sd 10
-#' 
-#' rope = qlnorm(p = c(0.1,0.9), meanlog = logpars[1], sdlog = logpars[2])
-#' 
-#' # 2. Prior specification and model fitting:
+#' # 1. prior specification
 #' # we formalize a prior belief (here "no association
 #' # between drug and event", therefore prior mean = 1 for shape parameter)
 #' # and reformat our tte data to fit the model in the following
-#' standat = tte2priordat(dat = tte,   # reformat the data
+#' dat_list = tte2priordat(dat = tte,   # reformat the data
 #'                       tte.dist = "w",
+#'                       prior.dist = "ll", 
 #'                       scale.mean = 1, 
 #'                       scale.sd = 10,
 #'                       shape.mean = 1, 
 #'                       shape.sd = 10)
 #' 
-#' fit = bwsp_model(datstan = standat,      # fit the model
-#'                   tte.dist = "w", 
-#'                   prior.dist = "ll",       
-#'                   chains = 4,              
-#'                   iter = 110,             # (posterior sample
-#'                   warmup = 10)            # is small for demo purpose)
+#' # 2. model fitting
+#' fit = bwsp_model(datstan = dat_list,      # fit the model       
+#'                  chains = 4,              
+#'                  iter = 110,             # (posterior sample is
+#'                  warmup = 10)            # small for demo purpose)
+#' fit$fit
 #' 
-#' # 3. HDI specification and extraction:
-#' # extract 80% HDIs representing posterior samples of the shape parameters
-#' post.sample = rstan::extract(fit, pars = c("nu"))
-#' nu.hdi = HDInterval::hdi(object = post.sample$nu, credMass = 0.8)
-#' 
-#' # 4. conduct the BWSPtest
-#' bwsp_test(credregion = nu.hdi, 
-#'           nullregion = rope, 
-#'           tte.dist = "w", 
-#'           option = 1)
-#' # returns a signal
+#' # 3. BWSP test
+#' bwsp_test(mod.output = fit,
+#'           cred.level = 0.8,
+#'           ci.type = "HDI",
+#'           sensitivity.option = 2)
 #' 
 #' # under pgw model:
 #' 
-#' # 1. specify ROPE reflecting the null hypothesis:
-#' # we choose an 80% confidence interval around the 
-#' # null value (1 for both shape parameters)
-#' 
-#' logpars = logprior_repar(1, 10) # get parameters of a 
-#'                                 # lognormal distribution with 
-#'                                 # mean 1 and sd 10
-#' 
-#' rope = qlnorm(p = c(0.1,0.9), meanlog = logpars[1], sdlog = logpars[2])
-#' 
-#' # 2. Prior specification and model fitting:
+#' # 1. prior specification
 #' # we formalize a prior belief (here "no association
 #' # between drug and event", therefore prior mean = 1 for both shape parameters)
 #' # and reformat our tte data to fit the model in the following
-#' standat = tte2priordat(dat = tte,          # reformat the data
+#' dat_list = tte2priordat(dat = tte,          # reformat the data
 #'                       tte.dist = "pgw",
+#'                       prior.dist = "ll",
 #'                       scale.mean = 1, 
 #'                       scale.sd = 10,
 #'                       shape.mean = 1, 
@@ -179,147 +149,169 @@
 #'                       powershape.mean = 1, 
 #'                       powershape.sd = 10)
 #' 
-#' fit = bwsp_model(datstan = standat,     # fit the model
-#'                   tte.dist = "pgw",
-#'                   prior.dist = "ll",       
+#' # 2. model fitting
+#' fit = bwsp_model(datstan = dat_list,     # fit the model      
 #'                   chains = 4,              
 #'                   iter = 110,            # (posterior sample
 #'                   warmup = 10)           # is small for demo purpose)
 #' 
-#' # 3. HDI specification and extraction:
-#' # extract 80% HDIs representing posterior samples of the shape parameters
-#' post.samples = rstan::extract(fit, pars = c("nu", "gamma")) 
-#' nu.hdi = HDInterval::hdi(object = post.samples$nu, credMass = 0.8)
-#' ga.hdi = HDInterval::hdi(object = post.samples$gamma, credMass = 0.8)
+#' # 3. BWSP test
+#' bwsp_test(mod.output = fit,
+#'           cred.level = 0.8,
+#'           ci.type = "HDI", 
+#'           sensitivity.option = 2)
 #' 
-#' # 4. conduct the BWSP test
-#' bwsp_test(credregion = c(nu.hdi, ga.hdi), 
-#'           nullregion = rope, 
-#'           tte.dist = "pgw", 
-#'           option = 1)
-#' 
-#' # returns a signal
 #' 
 #' 
 #' @export
 #'
 
 
-bwsp_test = function(credregion, 
-                     nullregion, 
-                     tte.dist = c("w", "dw", "pgw"), 
-                     option = c(1,2,3)){
+bwsp_test = function(mod.output, 
+                     cred.level = 0.8,
+                     ci.type = "HDI",
+                     sensitivity.option = 2){
   
-  # argument check for mod
-  if(tte.dist != "w" & tte.dist != "dw" & tte.dist != "pgw"){
-    stop("tte.dist must be one of 'w', 'dw' or 'pgw'")
-  }
-  # argument check for option 
-  if(option != 1 & option != 2 & option != 3){
-    stop("option must be one of 1, 2 or 3")
+  # argument check mod.output
+  valid_mod.output <-
+    is.list(mod.output) &&
+    all(c("fit", "args_list") %in% names(mod.output)) &&
+    is.list(mod.output$args_list) &&
+    all(c("tte.dist", "prior.dist") %in% names(mod.output$args_list))
+  
+  if (!valid_mod.output) {
+    stop("Argument 'mod.output' must be a list generated by bwsp_model().")
+  } 
+  
+  # argument check cred.level
+  if (!is.numeric(cred.level)) stop("Argument cred.level must be numeric.\n")
+  if (any(cred.level < 0 | cred.level > 1)) stop("Argument cred.level must be between 0 and 1.\n")
+  if (any(duplicated(cred.level))) {
+    warning("Duplicate entries removed from cred.level.\n")
+    cred.level <- unique(cred.level)
   }
   
-  # test under Weibull model
-  if(tte.dist == "w"){
-    # argument check for nullregion
-    if(length(nullregion) != 2){
-      stop("Argument nullregion must be a vector of length 2.")
-    }
-    # argument check for credregion
-    if(length(credregion) != 2){
-      stop("Argument credregion must be a vector of length 2.")
-    }
-    shape1credregion = credregion
-    shape1ropehdi_res = hdi_plus_rope(nullregion = nullregion, credregion = shape1credregion)
-    res = shape1ropehdi_res
-    # options for "w" model
-    if(option == 1){ # HDI+ROPE test rejects H0 or undecided -> signal
-      out = ifelse(is.na(res), 1, res)
-      return(out)
-    }
-    if(option == 2 | option == 3){ # HDI+ROPE test rejects H0 -> signal
-      out = ifelse(is.na(res), 0, res)
-      return(out)
-    }
-    else{
-      stop("option must be 1, 2 or 3")
-      }
+  # argument check ci.type
+  if (any(duplicated(ci.type))) {
+    warning("Duplicate entries removed from ci.type.\n")
+    ci.type <- unique(ci.type)
   }
-  # test under double or pgw model
-  if(tte.dist == "dw" | tte.dist == "pgw"){
+  allowed_ci <- c("ETI","HDI")
+  if (any(is.na(match(ci.type, allowed_ci))))
+    stop(paste0("Argument ci.type must be out of: ",paste(allowed_ci, collapse = ", "),".\n"))
+  
+  # argument check sensitivity.option 
+  #if(sensitivity.option != 1 & sensitivity.option != 2 & sensitivity.option != 3){
+  #  stop("sensitivity.option must be one of 1, 2 or 3")
+  #}
+  # ----------------------------------------------------------------------------
+# inner fct for one combination of cred.level, ci.type and sensitivity.option
+  test_one = function(cred.level_ci.type_sensitivity.option_vect){
+    cred.level = as.numeric(cred.level_ci.type_sensitivity.option_vect[1])
+    ci.type = cred.level_ci.type_sensitivity.option_vect[2]
+    sensitivity.option = cred.level_ci.type_sensitivity.option_vect[3]
     
-    # argument check for nullregion
-    if(length(nullregion) != 2 && length(nullregion) != 4){
-      stop("Argument nullregion must be a vector of length 2 or 4.")
-    }
-    if(length(nullregion) == 2){
-      warning("Argument nullregion is a vector of length 2. 
-              Assuming that the same null region applies to both shape parameters.")
-      nullregion = c(nullregion, nullregion)
-    }
-    # argument check for credregion
-    if(length(credregion) != 4){
-      stop("Argument credregion must be a vector of length 4.")
-    }
-    shape1nullregion = nullregion[1:2]
-    shape2nullregion = nullregion[3:4]
+    tte.dist = mod.output$args_list$tte.dist
+    prior.dist = mod.output$args_list$prior.dist
+    shape.sd = mod.output$args_list$shape.sd
+    shape_c.sd = mod.output$args_list$shape_c.sd
+    powershape.sd = mod.output$args_list$powershape.sd
     
-    shape1credregion = credregion[1:2]
-    shape2credregion = credregion[3:4]
+    rope_vect = setup_rope(tte.dist = tte.dist, prior.dist = prior.dist, 
+                           cred.level = cred.level, shape.sd = shape.sd, 
+                           shape_c.sd = shape_c.sd, powershape.sd = powershape.sd)
     
-    shape1ropehdi_res = hdi_plus_rope(nullregion = shape1nullregion, credregion = shape1credregion)
-    shape2ropehdi_res = hdi_plus_rope(nullregion = shape2nullregion, credregion = shape2credregion)
-    res = c(shape1ropehdi_res, shape2ropehdi_res)
+    ci_vect = extract_post_ci(mod.output = mod.output, ci.type = ci.type, cred.level = cred.level)
     
-    if(option == 1){
-      if(sum(is.na(res)) == 2){ # both undecided
-        return(1)
-      }
+    # test under Weibull model
+    if(tte.dist == "w"){
+      # cat("shape ROPE:", rope_vect, "\n")
+      # cat("shape posterior CI:", ci_vect, "\n\n")
       
-      if(sum(is.na(res)) == 1){ # one undecided, other leads the combined result
-        out = res[!is.na(res)]
+      res = hdi_plus_rope(nullregion = rope_vect, credregion = ci_vect)
+      
+      # sensitivity.options for "w" model
+      if(sensitivity.option == 1){ # CI+ROPE test rejects H0 or undecided -> signal
+        out = ifelse(is.na(res), 1, res)
         return(out)
       }
-      
-      if(sum(is.na(res)) == 0){ # both decided
-        out = ifelse(sum(res) == 0, 0, 1)
+      if(sensitivity.option == 2 | sensitivity.option == 3){ # CI+ROPE test rejects H0 -> signal
+        out = ifelse(is.na(res), 0, res)
         return(out)
+      }
+      else{
+        stop("sensitivity.option must be 1, 2 or 3")
       }
     }
-    if(option == 2){
-      if(sum(is.na(res)) == 2){ # both undecided
-        return(0)
-      }
+    # test under double or pgw model
+    if(tte.dist == "dw" | tte.dist == "pgw"){
+      # cat("shape 1 ROPE:", rope_vect[1:2], "\nshape 2 ROPE:", rope_vect[3:4], "\n")
+      # cat("shape posterior CI:", ci_vect[1:2], "\nshape 2 posterior CI:", ci_vect[3:4], "\n\n")
       
-      if(sum(is.na(res)) == 1){ # one undecided, other leads the combined result
-        out = res[!is.na(res)]
-        return(out)
-      }
+      res.shape = hdi_plus_rope(nullregion = rope_vect[1:2], credregion = ci_vect[1:2]) # single shape parameter CI+ROPE test
+      res.shape2 = hdi_plus_rope(nullregion = rope_vect[3:4], credregion = ci_vect[3:4]) # single shape_c parameter CI+ROPE test
+      res = c(res.shape, res.shape2)
       
-      if(sum(is.na(res)) == 0){ # both decided
-        out = ifelse(sum(res) == 2, 1, 0)
-        return(out)
+      # sensitivity.options for "dw" or "pgw" model
+      if(sensitivity.option == 1){
+        if(sum(is.na(res)) == 2){ # both undecided
+          out = 1
+        }
+        
+        if(sum(is.na(res)) == 1){ # one undecided, other leads the combined result
+          out = res[!is.na(res)]
+        }
+        
+        if(sum(is.na(res)) == 0){ # both decided
+          out = ifelse(sum(res) == 0, 0, 1)
+        }
+      }
+      if(sensitivity.option == 2){
+        if(sum(is.na(res)) == 2){ # both undecided
+          out = 0
+        }
+        
+        if(sum(is.na(res)) == 1){ # one undecided, other leads the combined result
+          out = res[!is.na(res)]
+        }
+        
+        if(sum(is.na(res)) == 0){ # both decided, 2 rejections
+          out = ifelse(sum(res) == 2, 1, 0)
+        }
+      }
+      if(sensitivity.option == 3){
+        if(sum(is.na(res)) == 2){ # both undecided
+          out = 0
+        }
+        
+        if(sum(is.na(res)) == 1){ # one undecided
+          out = 0
+        }
+        
+        if(sum(is.na(res)) == 0){ # both decided
+          out = ifelse(sum(res) == 2, 1, 0)
+        }
       }
     }
-    if(option == 3){
-      if(sum(is.na(res)) == 2){ # both undecided
-        return(0)
-      }
-      
-      if(sum(is.na(res)) == 1){ # one undecided
-        return(0)
-      }
-      
-      if(sum(is.na(res)) == 0){ # both decided
-        out = ifelse(sum(res) == 2, 1, 0)
-        return(out)
-      }
-    }
+    
+    # name each vector entry according to the credibility level
+    names(out) = paste0("bwsp_", tte.dist, "_", prior.dist, "_", cred.level, "_", ci.type, "_", sensitivity.option)
+    return(out)
+    
   }
-
+  
+  # apply for multiple cred.levels
+  test_specifications = expand.grid(cred.level, ci.type, sensitivity.option,
+                                    KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
+  test.res.list <- lapply(
+    seq_len(nrow(test_specifications)),
+    function(i) test_one(unlist(test_specifications[i, ]))
+  )
+  
+  test.res <- do.call(c, test.res.list)
+  return(test.res)
+  
+  
 }
-
-
-
 
 ## END OF DOC

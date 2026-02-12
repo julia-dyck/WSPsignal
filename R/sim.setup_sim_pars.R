@@ -21,7 +21,7 @@
 #' the prior specifications for model fitting; setup with \code{\link{sim.priors_template}}
 #' @param post.ci.type character indicating whether to extract equal tailed
 #' intervals (\code{"ETI"}) or highest posterior density intervals (\code{"HDI"}) as
-#' credibilty interval (CI) for BWSP testing (see \code{\link{bwsp_test}} details)
+#' credibility interval (CI) for BWSP testing (see \code{\link{bwsp_test}} details)
 #' @param cred.level vector of credibility levels used for construction
 #' of region of practical equivalence (ROPE) and posterior CI
 #' @param sensitivity.option vector of sensitivity options for the BWSP test 

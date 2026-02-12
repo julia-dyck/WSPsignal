@@ -5,31 +5,24 @@
 \title{Bayesian Weibull Shape Parameter Test}
 \usage{
 bwsp_test(
-  credregion,
-  nullregion,
-  tte.dist = c("w", "dw", "pgw"),
-  option = c(1, 2, 3)
+  mod.output,
+  cred.level = 0.8,
+  ci.type = "HDI",
+  sensitivity.option = 2
 )
 }
 \arguments{
-\item{credregion}{vector of length 2 or 4 with the lower and upper boundaries of the
-credibility interval (CI) reflecting the posterior distribution of the shape
-parameter(s); required order: 1. lower CI boundary of first shape parameter,
-2. upper CI boundary of first shape parameter; and if existent: 3. lower CI
-boundary of second shape parameter, 4. upper CI boundary of second shape parameter}
+\item{mod.output}{model output resulting from \code{\link{bwsp_model}}}
 
-\item{nullregion}{vector of length 2 or 4 with the lower and upper boundaries of the
-region of practical equivalence (ROPE) reflecting the null hypothesis region of the shape
-parameter(s); required order: 1. lower ROPE boundary of first shape parameter,
-2. upper ROPE boundary of first shape parameter; and if existent: 3. lower ROPE
-boundary of second shape parameter, 4. upper ROPE boundary of second shape parameter}
+\item{cred.level}{numeric or vector of credibility levels; default is 0.8}
 
-\item{tte.dist}{character specifying the modelling
-approach used to obtain the posterior samples; options are \code{"w", "dw", "pgw"};}
+\item{ci.type}{character indicating whether to extract equal tailed
+intervals (\code{"ETI"}) or highest posterior density intervals (\code{"HDI"}) as
+credibility interval (CI) for BWSP testing; default is \code{"HDI"}}
 
-\item{option}{numeric value out of \code{1,2,3}; rule to be used to deduct a
-binary outcome (signal/no signal) from the HDI+ROPE test results of each shape
-parameter (see details)}
+\item{sensitivity.option}{numeric value out of \code{1,2,3}; rule to be used to deduct a
+binary outcome (signal/no signal) from one or two shape parameter tests;
+default is \code{sensitivity.option = 2} (see details)}
 }
 \value{
 binary, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected; see details for definition
@@ -91,12 +84,12 @@ BWSP test specifications.
 The HDI+ROPE test checks the
 relationship between ROPE and credibility region(s) leading to either acceptance,
 rejection or no decision regarding the null hypothesis for a single shape parameter.
-Options to generate a binary outcome, i.e. a signal or not, from HDI+ROPE test results
+Sensitivity options to generate a binary outcome, i.e. a signal or not, from HDI+ROPE test results
 based on one (in case of \code{"w"}) or two (in case of \code{"dw", "pgw"}) shape parameters are:
 \tabular{ccccc}{
 HDI+ROPE \tab HDI+ROPE \tab combination \tab combination \tab combination \cr
 outcome \tab outcome \tab rule \tab rule \tab rule \cr
-for shape_1\tab for shape_2 \tab (\code{option = 1}) \tab (\code{option = 2}) \tab (\code{option = 3}) \cr
+for shape_1\tab for shape_2 \tab (\code{sensitivity.option = 1}) \tab (\code{sensitivity.option = 2}) \tab (\code{sensitivity.option = 3}) \cr
 rejection \tab (none) \tab signal \tab signal \tab signal \cr
 acceptance \tab (none) \tab - \tab - \tab - \cr
 no decision \tab (none) \tab signal \tab - \tab - \cr
@@ -111,8 +104,8 @@ acceptance \tab no decision \tab - \tab - \tab - \cr
 no decision \tab no decision \tab signal \tab - \tab - \cr
 }
 
-The hypotheses as stated above (see test concept) are implemented in \code{option = 1} whereas
-\code{option = 2} and \code{option = 3} lead to a signal in fewer cases.
+The hypotheses as stated above (see test concept) are implemented in \code{sensitivity.option = 1} whereas
+\code{sensitivity.option = 2} and \code{sensitivity.option = 3} lead to a signal in fewer cases.
 
 More details on the HDI+ROPE test, recommendations for interval specifications
 and the combination rules
@@ -125,63 +118,40 @@ can be found in \insertCite{kruschke2018}{WSPsignal} and
 
 # under weibull model:
 
-# 1. specify ROPE reflecting the null hypothesis:
-# we choose an 80\% confidence interval around the 
-# null value (1 for both shape parameters)
-logpars = logprior_repar(1, 10) # get parameters of a 
-                                # lognormal distribution with 
-                                # mean 1 and sd 10
-
-rope = qlnorm(p = c(0.1,0.9), meanlog = logpars[1], sdlog = logpars[2])
-
-# 2. Prior specification and model fitting:
+# 1. prior specification
 # we formalize a prior belief (here "no association
 # between drug and event", therefore prior mean = 1 for shape parameter)
 # and reformat our tte data to fit the model in the following
-standat = tte2priordat(dat = tte,   # reformat the data
+dat_list = tte2priordat(dat = tte,   # reformat the data
                       tte.dist = "w",
+                      prior.dist = "ll", 
                       scale.mean = 1, 
                       scale.sd = 10,
                       shape.mean = 1, 
                       shape.sd = 10)
 
-fit = bwsp_model(datstan = standat,      # fit the model
-                  tte.dist = "w", 
-                  prior.dist = "ll",       
-                  chains = 4,              
-                  iter = 110,             # (posterior sample
-                  warmup = 10)            # is small for demo purpose)
+# 2. model fitting
+fit = bwsp_model(datstan = dat_list,      # fit the model       
+                 chains = 4,              
+                 iter = 110,             # (posterior sample is
+                 warmup = 10)            # small for demo purpose)
+fit$fit
 
-# 3. HDI specification and extraction:
-# extract 80\% HDIs representing posterior samples of the shape parameters
-post.sample = rstan::extract(fit, pars = c("nu"))
-nu.hdi = HDInterval::hdi(object = post.sample$nu, credMass = 0.8)
-
-# 4. conduct the BWSPtest
-bwsp_test(credregion = nu.hdi, 
-          nullregion = rope, 
-          tte.dist = "w", 
-          option = 1)
-# returns a signal
+# 3. BWSP test
+bwsp_test(mod.output = fit,
+          cred.level = 0.8,
+          ci.type = "HDI",
+          sensitivity.option = 2)
 
 # under pgw model:
 
-# 1. specify ROPE reflecting the null hypothesis:
-# we choose an 80\% confidence interval around the 
-# null value (1 for both shape parameters)
-
-logpars = logprior_repar(1, 10) # get parameters of a 
-                                # lognormal distribution with 
-                                # mean 1 and sd 10
-
-rope = qlnorm(p = c(0.1,0.9), meanlog = logpars[1], sdlog = logpars[2])
-
-# 2. Prior specification and model fitting:
+# 1. prior specification
 # we formalize a prior belief (here "no association
 # between drug and event", therefore prior mean = 1 for both shape parameters)
 # and reformat our tte data to fit the model in the following
-standat = tte2priordat(dat = tte,          # reformat the data
+dat_list = tte2priordat(dat = tte,          # reformat the data
                       tte.dist = "pgw",
+                      prior.dist = "ll",
                       scale.mean = 1, 
                       scale.sd = 10,
                       shape.mean = 1, 
@@ -189,26 +159,18 @@ standat = tte2priordat(dat = tte,          # reformat the data
                       powershape.mean = 1, 
                       powershape.sd = 10)
 
-fit = bwsp_model(datstan = standat,     # fit the model
-                  tte.dist = "pgw",
-                  prior.dist = "ll",       
+# 2. model fitting
+fit = bwsp_model(datstan = dat_list,     # fit the model      
                   chains = 4,              
                   iter = 110,            # (posterior sample
                   warmup = 10)           # is small for demo purpose)
 
-# 3. HDI specification and extraction:
-# extract 80\% HDIs representing posterior samples of the shape parameters
-post.samples = rstan::extract(fit, pars = c("nu", "gamma")) 
-nu.hdi = HDInterval::hdi(object = post.samples$nu, credMass = 0.8)
-ga.hdi = HDInterval::hdi(object = post.samples$gamma, credMass = 0.8)
+# 3. BWSP test
+bwsp_test(mod.output = fit,
+          cred.level = 0.8,
+          ci.type = "HDI", 
+          sensitivity.option = 2)
 
-# 4. conduct the BWSP test
-bwsp_test(credregion = c(nu.hdi, ga.hdi), 
-          nullregion = rope, 
-          tte.dist = "pgw", 
-          option = 1)
-
-# returns a signal
 
 
 }

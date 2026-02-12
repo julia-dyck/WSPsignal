@@ -6,17 +6,18 @@
 \usage{
 tte2priordat(
   dat,
-  tte.dist = c("w", "dw", "pgw"),
-  scale.mean,
-  scale.sd,
-  shape.mean,
-  shape.sd,
-  scale_c.mean = NULL,
-  scale_c.sd = NULL,
-  shape_c.mean = NULL,
-  shape_c.sd = NULL,
-  powershape.mean = NULL,
-  powershape.sd = NULL
+  tte.dist = "dw",
+  prior.dist = "ll",
+  scale.mean = 1,
+  scale.sd = 10,
+  shape.mean = 1,
+  shape.sd = 10,
+  scale_c.mean = 1,
+  scale_c.sd = 10,
+  shape_c.mean = 1,
+  shape_c.sd = 10,
+  powershape.mean = 1,
+  powershape.sd = 10
 )
 }
 \arguments{
@@ -24,27 +25,31 @@ tte2priordat(
 in the second column}
 
 \item{tte.dist}{character indicating the modelling approach; options are \code{"w"},
-\code{"dw"}, \code{"pgw"}}
+\code{"dw"}, \code{"pgw"}; default is \code{"dw"}}
 
-\item{scale.mean}{prior mean of the scale parameter}
+\item{prior.dist}{character indicating the prior distribution for the
+parameters of the tte distribution; options are
+\code{"fg", "fl", "gg", "ll"}; default is \code{"ll"}}
 
-\item{scale.sd}{prior standard deviation (sd) of the scale parameter}
+\item{scale.mean}{prior mean of the scale parameter; default is 1}
 
-\item{shape.mean}{prior mean of the shape parameter}
+\item{scale.sd}{prior standard deviation (sd) of the scale parameter; default is 10}
 
-\item{shape.sd}{prior sd of the shape parameter}
+\item{shape.mean}{prior mean of the shape parameter; default is 1}
+
+\item{shape.sd}{prior sd of the shape parameter; default is 10}
 
 \item{scale_c.mean}{prior mean of the scale parameter for censored-at-half data
-(only for \code{tte.dist="dw"})}
+(only for \code{tte.dist="dw"}); default is 1}
 
 \item{scale_c.sd}{prior sd of the scale parameter for censored-at-half data
-(only for \code{tte.dist="dw"})}
+(only for \code{tte.dist="dw"}); default is 10}
 
 \item{shape_c.mean}{prior mean of the shape parameter for censored-at-half data
-(only for \code{tte.dist="dw"})}
+(only for \code{tte.dist="dw"}); default is 1}
 
 \item{shape_c.sd}{prior sd of the shape parameter for censored-at-half data
-(only for \code{tte.dist="dw"})}
+(only for \code{tte.dist="dw"}); default is 10}
 
 \item{powershape.mean}{prior mean of the power shape parameter (only for
 \code{tte.dist="pgw"})}
@@ -60,13 +65,29 @@ Prepare time-to-event data and prior specifications for model fitting
 with \code{\link{bwsp_model}}.
 }
 \details{
-Only the parameters relevant to the chosen \code{tte.dist} must be provided, that is:
+The function prepares data to fit a Bayesian model to time-to-event data.
+The distribution can be assumed a Weibull \code{("w")},
+a double Weibull \code{("dw"}, estimating two Weibull models - one to the data as is and
+one to the data censored at mid of observation period),
+or a power generalized Weibull \code{("pgw")} model.
+
+Only the parameters relevant to the chosen \code{tte.dist} need to be provided, that is:
 \itemize{
 \item for \code{"w"}: \code{scale.mean}, \code{scale.sd}, \code{shape.mean}, \code{shape.sd}
 \item for \code{"dw"}: \code{scale.mean}, \code{scale.sd}, \code{shape.mean}, \code{shape.sd},
 \code{scale_c.mean}, \code{scale_c.sd}, \code{shape_c.mean}, \code{shape_c.sd}
 \item for \code{"pgw"}: \code{scale.mean}, \code{scale.sd}, \code{shape.mean}, \code{shape.sd},
 \code{powershape.mean}, \code{powershape.sd}
+}
+
+Implemented prior distributions for the scale and shape parameters are products
+of the following univariate distributional choices:
+\tabular{lll}{
+for scale parameter \tab for shape parameter(s) \tab  abbreviation \cr
+fixed to prior mean \tab gamma  \tab fg \cr
+gamma \tab gamma \tab gg \cr
+fixed to prior mean \tab lognormal \tab fl \cr
+lognormal \tab lognormal \tab ll \cr
 }
 
 Prior means suitable to reflect the prior belief can be worked out by plotting the
@@ -80,17 +101,17 @@ standard deviation in case of low certainty).
 }
 \examples{
 
-tte2priordat(dat = tte, tte.dist = "w", 
+tte2priordat(dat = tte, tte.dist = "w", prior.dist = "ll", 
              scale.mean = 10, scale.sd = 2, 
              shape.mean = 1.5, shape.sd = 15)
              
-tte2priordat(dat = tte, tte.dist = "dw", 
+tte2priordat(dat = tte, tte.dist = "dw", prior.dist = "ll",
              scale.mean = 10, scale.sd = 2, 
              shape.mean = 1.5, shape.sd = 15,
              scale_c.mean = 5, scale_c.sd = 1, 
              shape_c.mean = 1, shape_c.sd = 10)
              
-tte2priordat(dat = tte, tte.dist = "pgw", 
+tte2priordat(dat = tte, tte.dist = "pgw", prior.dist = "ll",
              scale.mean = 10, scale.sd = 2, 
              shape.mean = 1.5, shape.sd = 15,
              powershape.mean = 3, powershape.sd = 20)
