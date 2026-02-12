@@ -46,7 +46,7 @@
 
 
 fwsp_model = function(dat, 
-                      tte.dist = c("w", "dw", "pgw")
+                      tte.dist = c("dw")
                       ) {
   tte.dist <- match.arg(tte.dist)
   
@@ -61,7 +61,7 @@ fwsp_model = function(dat,
                           row.names = NULL)
     message("Weibull parameter estimates in rweibull parametrization:")
     print(outprint)
-    return(res.w)
+    return(list(fit = res.w, estimates = outprint, tte.dist = tte.dist))
   }
   
   if(tte.dist == "dw"){
@@ -79,7 +79,7 @@ fwsp_model = function(dat,
                           row.names = NULL)
     message("Double Weibull parameter estimates in rweibull parametrization:")
     print(outprint)
-    return(list(uncens = res.w, cens = res.c.w))
+    return(list(fit = list(uncens = res.w, cens = res.c.w), estimates = outprint, tte.dist = tte.dist))
   }
   
   if(tte.dist == "pgw"){
@@ -90,7 +90,7 @@ fwsp_model = function(dat,
                           row.names = NULL)
     message("Power generalized Weibull parameter estimates in rpgw parametrization:")
     print(outprint)
-    return(res.pgw)
+    return(list(fit = res.pgw, estimates = outprint, tte.dist = tte.dist))
   }
   
   return(mod)

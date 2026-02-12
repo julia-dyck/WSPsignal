@@ -5,10 +5,8 @@
 #' 
 #
 #' 
-#' @param mod.output estimation output resulting from \code{\link{fwsp_model}}
-#' @param tte.dist character indicating the modelling approach; options are
-#' \code{"w", "dw", "pgw"}
-#' @param credlevel numeric or vector of credibility levels (i.e. 1 - significance level) 
+#' @param mod.output model output resulting from \code{\link{fwsp_model}}
+#' @param cred.level numeric or vector of credibility levels (i.e. 1 - significance level) 
 #' for the test(s) to be performed 
 #' 
 #' @return binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected; 
@@ -41,33 +39,45 @@
 #' 
 #' @examples 
 #' # fit a model
-#' mod = fwsp_model(dat = tte, tte.dist = "pgw")
+#' mod = fwsp_model(dat = tte)
 #' mod
 #' # perform the shape parameter test at credibility level 0.95 
 #' # or significance level 0.05
-#' fwsp_test(mod.output = mod, tte.dist = "pgw", credlevel = 0.95)
+#' fwsp_test(mod.output = mod, cred.level = 0.95)
 #' 
 #' @export
 #' 
 
 
-fwsp_test = function(mod.output, tte.dist = c("w", "dw", "pgw"), credlevel = 1 - c(1:10/1000, 2:10/100)){
+fwsp_test = function(mod.output, cred.level = 0.996){
   
-  tte.dist = match.arg(tte.dist, c("w", "dw", "pgw"))
+  # argument check mod.output
+  
+  # argument check cred.level
+  if (!is.numeric(cred.level)) stop("Argument cred.level must be numeric.\n")
+  if (any(cred.level < 0 | cred.level > 1)) stop("Argument cred.level must be between 0 and 1.\n")
+  if (any(duplicated(cred.level))) {
+    warning("Duplicate entries removed from cred.level.\n")
+    cred.level <- unique(cred.level)
+  }
+  
+  tte.dist = mod.output$tte.dist
+  
+  fit = mod.output$fit
   
   if(tte.dist == "w"){
-    testres = fwsp_test_w(mod.output, credlevel)
+    testres = fwsp_test_w(fit, cred.level)
   }
   
   if(tte.dist == "dw"){
-    testres = fwsp_test_dw(mod.output, credlevel)
+    testres = fwsp_test_dw(fit, cred.level)
   }
   
   if(tte.dist == "pgw"){
-    testres = fwsp_test_pgw(mod.output, credlevel)
+    testres = fwsp_test_pgw(fit, cred.level)
   }
   
   # name each vector entry according to the credibility level
-  names(testres) = paste0("fwsp_", tte.dist, "_", credlevel)
+  names(testres) = paste0("fwsp_", tte.dist, "_", cred.level)
   return(testres)
 }

@@ -6,7 +6,7 @@
 #
 #' 
 #' @param mod.output estimation output resulting from `fit_mod_tte_freq(..., tte.dist = "pgw")`
-#' @param credlevel vector of credibility levels for the tests to be performed 
+#' @param cred.level vector of credibility levels for the tests to be performed 
 #' 
 #' @return A vector containing the test results for each credibility level.
 #' 
@@ -19,13 +19,13 @@
 #' @noRd
 
 
-fwsp_test_pgw = function(mod.output, credlevel = 1 - c(1:10/1000, 2:10/100)){ 
+fwsp_test_pgw = function(mod.output, cred.level = 1 - c(1:10/1000, 2:10/100)){ 
   
   # check whether mod.output is a list
   if(!inherits(mod.output, "list")){
     stop("Argument mod.output must be a list returned by fwsp_model(..., tte.dist = 'pgw').")
   }
-  alphas = 1 - credlevel
+  alphas = 1 - cred.level
   
   if(is.vector(mod.output) == F){
     rej.H0 = rep(NA, length(alphas))

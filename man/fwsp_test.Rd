@@ -4,19 +4,12 @@
 \alias{fwsp_test}
 \title{Frequentist Shape Parameter Test}
 \usage{
-fwsp_test(
-  mod.output,
-  tte.dist = c("w", "dw", "pgw"),
-  credlevel = 1 - c(1:10/1000, 2:10/100)
-)
+fwsp_test(mod.output, cred.level = 0.996)
 }
 \arguments{
-\item{mod.output}{estimation output resulting from \code{\link{fwsp_model}}}
+\item{mod.output}{model output resulting from \code{\link{fwsp_model}}}
 
-\item{tte.dist}{character indicating the modelling approach; options are
-\code{"w", "dw", "pgw"}}
-
-\item{credlevel}{numeric or vector of credibility levels (i.e. 1 - significance level)
+\item{cred.level}{numeric or vector of credibility levels (i.e. 1 - significance level)
 for the test(s) to be performed}
 }
 \value{
@@ -52,11 +45,11 @@ following \insertCite{sauzet2022;textual}{WSPsignal}.
 }
 \examples{
 # fit a model
-mod = fwsp_model(dat = tte, tte.dist = "pgw")
+mod = fwsp_model(dat = tte)
 mod
 # perform the shape parameter test at credibility level 0.95 
 # or significance level 0.05
-fwsp_test(mod.output = mod, tte.dist = "pgw", credlevel = 0.95)
+fwsp_test(mod.output = mod, cred.level = 0.95)
 
 }
 \references{

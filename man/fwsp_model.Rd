@@ -4,7 +4,7 @@
 \alias{fwsp_model}
 \title{Fit frequentist model to time-to-event data}
 \usage{
-fwsp_model(dat, tte.dist = c("w", "dw", "pgw"))
+fwsp_model(dat, tte.dist = c("dw"))
 }
 \arguments{
 \item{dat}{data frame or matrix with time information in first column and
