@@ -233,11 +233,9 @@ bwsp_test = function(mod.output,
       # sensitivity.options for "w" model
       if(sensitivity.option == 1){ # CI+ROPE test rejects H0 or undecided -> signal
         out = ifelse(is.na(res), 1, res)
-        return(out)
       }
       if(sensitivity.option == 2 | sensitivity.option == 3){ # CI+ROPE test rejects H0 -> signal
         out = ifelse(is.na(res), 0, res)
-        return(out)
       }
       else{
         stop("sensitivity.option must be 1, 2 or 3")
