@@ -20,10 +20,20 @@ sim.monitor.progress = function(pc_list){
   for(i in 1:nrow(pc_list$pc_table)){
     merged.res.one.pc = data.frame()
     for(ind.batch in 1:pc_list$add$batch.nr){
-      merged.res.one.pc = dplyr::bind_rows(merged.res.one.pc,
-                                           sim.load.scenario(pc = pc_list$pc_table[i,], 
-                                                             wd= pc_list$add$resultpath, 
-                                                             batchnr = ind.batch))
+      
+      tryCatch({
+        # try merge as new row to existing part
+        merged.res.one.pc = dplyr::bind_rows(merged.res.one.pc,
+                                          sim.load.scenario(pc = pc_list$pc_table[i,], 
+                                                            wd= pc_list$add$resultpath, 
+                                                            batchnr = ind.batch,
+                                                            bayes = T))
+      },
+      error=function(cond) {
+        # if not, return a warning 
+        warning(paste0(paste(c(pc_list$pc_table[i,], "bADR_sim", ind.batch, ".RData") ,collapse="_"), " not found."))
+      }
+      )
     }
     
     progress = c(progress, nrow(merged.res.one.pc))
