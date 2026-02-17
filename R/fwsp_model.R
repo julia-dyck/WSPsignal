@@ -48,8 +48,19 @@
 fwsp_model = function(dat, 
                       tte.dist = c("dw")
                       ) {
-  tte.dist <- match.arg(tte.dist)
   
+  ### checks for tte.dist
+  if (any(duplicated(tte.dist))) {
+    warning("Duplicate entries removed from tte.dist.\n")
+    tte.dist <- unique(tte.dist)
+  }
+  allowed_dists <- c("w","dw","pgw")
+  if (any(is.na(match(tte.dist, allowed_dists))))
+    stop(paste0("Argument tte.dist must be out of: ",
+                paste(allowed_dists, collapse = ", "),
+                ".\n"))
+  
+  # model fitting dep. on tte.dist
   if(tte.dist == "w"){
     # fit model
     res.w = summary(survival::survreg(survival::Surv(time = dat[,1], event = dat[,2])~1, dist = "weibull"))
