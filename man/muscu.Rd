@@ -20,7 +20,7 @@ following bisphosphonate intake.
 }
 \details{
 The data was generated using
-\code{\link{sim.datagen_tte(genpar = c(19777, 0.009, (0.017 - 0.009)/0.009, 160/365, 99/365, 365))}}
+\code{\link{sim.datagen_tte(genpar = c(19777, 0.01, 0.89, 160/365, 0.1, 365))}}
 with parameters derived from the case study presented in
 \insertCite{dyck2024bpgwsppreprint;textual}{WSPsignal}.
 }
