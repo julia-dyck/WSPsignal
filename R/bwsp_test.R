@@ -200,10 +200,15 @@ bwsp_test = function(mod.output,
   if (any(is.na(match(ci.type, allowed_ci))))
     stop(paste0("Argument ci.type must be out of: ",paste(allowed_ci, collapse = ", "),".\n"))
   
-  # argument check sensitivity.option 
-  #if(sensitivity.option != 1 & sensitivity.option != 2 & sensitivity.option != 3){
-  #  stop("sensitivity.option must be one of 1, 2 or 3")
-  #}
+  # argument check sensitivity.option
+  if (any(duplicated(sensitivity.option))) {
+    warning("Duplicate entries removed from sensitivity.option.\n")
+    sensitivity.option <- unique(sensitivity.option)
+  }
+  allowed_so <- 1:3
+  if (any(is.na(match(sensitivity.option, allowed_so))))
+    stop(paste0("Argument sensitivity.option must be out of: ",paste(allowed_so, collapse = ", "),".\n"))
+  
   # ----------------------------------------------------------------------------
 # inner fct for one combination of cred.level, ci.type and sensitivity.option
   test_one = function(cred.level_ci.type_sensitivity.option_vect){
