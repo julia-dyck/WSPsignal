@@ -40,25 +40,6 @@
 #' Lognormal \tab Lognormal \tab Lognormal \tab ll \cr
 #' }
 #' 
-#' @examples
-#' # prep the data
-#' head(tte)
-#' standat = tte2priordat_pgw(dat = tte,
-#'                            scale.mean = 1, 
-#'                            scale.sd = 10,
-#'                            shape.mean = 1, 
-#'                            shape.sd = 10,
-#'                            powershape.mean = 1, 
-#'                            powershape.sd = 10)
-#' # fit the model
-#' fit = bwsp_model_pgw(datstan = standat,  # (be aware that posterior sample
-#'                  prior.dist = "ll",   # is small for demo purpose)
-#'                  chains = 4,
-#'                  iter = 110,
-#'                  warmup = 10)
-#' # print the summary
-#' fit
-#' 
 #' @noRd
 
 

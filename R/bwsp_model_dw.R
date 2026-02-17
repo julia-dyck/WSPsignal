@@ -45,29 +45,6 @@
 #' Lognormal \tab Lognormal \tab ll \cr
 #' }
 #' 
-#' @examples
-#' # prep the data
-#' head(tte)
-#' standat = tte2priordat_dw(dat = tte,
-#'                           scale.mean = 1,
-#'                           scale.sd = 10,
-#'                           shape.mean = 1,
-#'                           shape.sd = 10,
-#'                           scale_c.mean = 1,
-#'                           scale_c.sd = 10,
-#'                           shape_c.mean = 1,
-#'                           shape_c.sd = 10)
-#' standat
-#' 
-#' # fit the model
-#' fit = fit_tte_dw(standat,
-#'                  priordist = "ll",
-#'                  chains = 1,
-#'                  iter = 1100,
-#'                  warmup = 100)
-#'                  
-#' # print the summary
-#' fit
 #' 
 #' @noRd
 
