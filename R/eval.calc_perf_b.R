@@ -134,14 +134,14 @@ eval.calc_perf_b = function(pc_list){
             tte.dist = x[9]
             
             if(tte.dist == "dw" || tte.dist == "pgw"){
-              bwsp_test(
+              sim.bwsp_test(
                 credregion = credregion,
                 nullregion = nullregion,
                 option = opt,
                 tte.dist =  tte.dist
               )
             } else if(tte.dist == "w"){
-              bwsp_test(
+              sim.bwsp_test(
                 credregion = credregion[1:2],
                 nullregion = nullregion[1:2],
                 option = opt,

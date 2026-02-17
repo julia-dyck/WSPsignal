@@ -32,15 +32,14 @@ sim.fit.to.1.sample = function(pc, pc_list){
 
   ### tte and prior data preparation
   datstan = sim.fit.prep(ttedat = ttedat, pc = pc, pc_list = pc_list)
-
+  
   ### Model fitting
   mod = bwsp_model(datstan = datstan,
-                    tte.dist = pc$tte.dist,
-                    prior.dist = pc$prior.dist,
                     chains = pc_list$add$stanmod.chains,
                     iter = pc_list$add$stanmod.iter,
                     warmup = pc_list$add$stanmod.warmup)
-
+  mod = mod$fit
+  
   ### extracting Bayesian posterior statistics
   bstats = tryCatch(
     sim.stanfit.to.poststats(pc, 
