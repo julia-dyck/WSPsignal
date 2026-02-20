@@ -53,9 +53,9 @@ sim.fit.to.1.sample = function(pc, pc_list){
   
   ### Frequentist model fitting (MLE)
   mod.w = fwsp_model(dat = ttedat, tte.dist = "w")
-  test.w = fwsp_test(mod.w, credlevel = pc_list$input$cred.level)
+  test.w = fwsp_test(mod.w, cred.level = pc_list$input$cred.level)
   mod.dw = fwsp_model(dat = ttedat, tte.dist = "dw")
-  test.dw = fwsp_test(mod.dw, credlevel = pc_list$input$cred.level)
+  test.dw = fwsp_test(mod.dw, cred.level = pc_list$input$cred.level)
   
   mod.pgw = tryCatch(
     fwsp_model(dat = ttedat, tte.dist = "pgw"),
@@ -64,7 +64,7 @@ sim.fit.to.1.sample = function(pc, pc_list){
     }
   )
   test.pgw = tryCatch(
-    fwsp_test(mod.pgw, credlevel = pc_list$input$cred.level),
+    fwsp_test(mod.pgw, cred.level = pc_list$input$cred.level),
     error = function(e) {
       return(rep(NA, length(pc_list$input$cred.level)))
     }
