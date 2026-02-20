@@ -34,11 +34,19 @@ sim.fit.prep = function(ttedat, pc, pc_list){
                          c("scale.mean_w", "scale.sd_w", "shape.mean_w", "shape.sd_w")]
     
     # format data and prior pars accordingly
-    datstan = tte2priordat_w(dat = ttedat, 
-                             scale.mean = pars$scale.mean_w, 
-                             scale.sd = pars$scale.sd_w,
-                             shape.mean = pars$shape.mean_w, 
-                             shape.sd = pars$shape.sd_w)
+    datstan = tte2priordat(dat = ttedat, 
+                           tte.dist = "w",
+                           scale.mean = pars$scale.mean_w, 
+                           scale.sd = pars$scale.sd_w,
+                           shape.mean = pars$shape.mean_w, 
+                           shape.sd = pars$shape.sd_w,
+                           scale_c.mean = NULL,
+                           scale_c.sd = NULL,
+                           shape_c.mean = NULL,
+                           shape_c.sd = NULL,
+                           powershape.mean = NULL,
+                           powershape.sd = NULL
+    )
   }
   
   if(pc$tte.dist == "dw"){
@@ -48,16 +56,19 @@ sim.fit.prep = function(ttedat, pc, pc_list){
                           c("scale.mean_dw", "scale.sd_dw", "shape.mean_dw", "shape.sd_dw",
                             "scale_c.mean_dw", "scale_c.sd_dw", "shape_c.mean_dw", "shape_c.sd_dw")]
     # format data and prior pars accordingly
-    datstan = tte2priordat_dw(dat = ttedat, 
-                              scale.mean = pars$scale.mean_dw, 
-                              scale.sd = pars$scale.sd_dw,
-                              shape.mean = pars$shape.mean_dw, 
-                              shape.sd = pars$shape.sd_dw,
-                              scale_c.mean = pars$scale_c.mean_dw,
-                              scale_c.sd = pars$scale_c.sd_dw,
-                              shape_c.mean = pars$shape_c.mean_dw,
-                              shape_c.sd = pars$shape_c.sd_dw
-                              )
+    datstan = tte2priordat(dat = ttedat, 
+                           tte.dist = "dw",
+                           scale.mean = pars$scale.mean_dw, 
+                           scale.sd = pars$scale.sd_dw,
+                           shape.mean = pars$shape.mean_dw, 
+                           shape.sd = pars$shape.sd_dw,
+                           scale_c.mean = pars$scale_c.mean_dw,
+                           scale_c.sd = pars$scale_c.sd_dw,
+                           shape_c.mean = pars$shape_c.mean_dw,
+                           shape_c.sd = pars$shape_c.sd_dw,
+                           powershape.mean = NULL,
+                           powershape.sd = NULL
+    )
   }
   
   if(pc$tte.dist == "pgw"){
@@ -67,14 +78,19 @@ sim.fit.prep = function(ttedat, pc, pc_list){
                            c("scale.mean_pgw", "scale.sd_pgw", "shape.mean_pgw", "shape.sd_pgw",
                              "powershape.mean_pgw", "powershape.sd_pgw")]
     # format data and prior pars accordingly
-    datstan = tte2priordat_pgw(dat = ttedat, 
-                               scale.mean = pars$scale.mean_pgw, 
-                               scale.sd = pars$scale.sd_pgw,
-                               shape.mean = pars$shape.mean_pgw, 
-                               shape.sd = pars$shape.sd_pgw,
-                               powershape.mean = pars$powershape.mean_pgw,
-                               powershape.sd = pars$powershape.sd_pgw
-                               )
+    datstan = tte2priordat(dat = ttedat,
+                           tte.dist = "pgw",
+                           scale.mean = pars$scale.mean_pgw, 
+                           scale.sd = pars$scale.sd_pgw,
+                           shape.mean = pars$shape.mean_pgw, 
+                           shape.sd = pars$shape.sd_pgw,
+                           scale_c.mean = NULL,
+                           scale_c.sd = NULL,
+                           shape_c.mean = NULL,
+                           shape_c.sd = NULL,
+                           powershape.mean = pars$powershape.mean_pgw,
+                           powershape.sd = pars$powershape.sd_pgw
+    )
   }
   
   return(datstan)
