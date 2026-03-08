@@ -133,28 +133,28 @@ tte2priordat = function(dat,
     }
   }
   
-  # Warn about irrelevant arguments
-  warn_irrelevant <- function(args_list, forbidden_args) {
-    provided <- forbidden_args[sapply(forbidden_args, function(x) !is.null(args_list[[x]]))]
-    if (length(provided)) {
-      warning(sprintf(
-        "For tte.dist='%s' the following arguments are ignored: %s",
-        tte.dist,
-        paste(provided, collapse = ", ")
-      ))
-    }
-  }
+  # # Warn about irrelevant arguments
+  # warn_irrelevant <- function(args_list, forbidden_args) {
+  #   provided <- forbidden_args[sapply(forbidden_args, function(x) !is.null(args_list[[x]]))]
+  #   if (length(provided)) {
+  #     warning(sprintf(
+  #       "For tte.dist='%s' the following arguments are ignored: %s",
+  #       tte.dist,
+  #       paste(provided, collapse = ", ")
+  #     ))
+  #   }
+  # }
   # reformat information into standat format
   if (tte.dist == "w") {
-    warn_irrelevant(args_list, c("scale_c.mean","scale_c.sd","shape_c.mean","shape_c.sd",
-                                 "powershape.mean","powershape.sd"))
+    # warn_irrelevant(args_list, c("scale_c.mean","scale_c.sd","shape_c.mean","shape_c.sd",
+    #                              "powershape.mean","powershape.sd"))
     req(c("scale.mean","scale.sd","shape.mean","shape.sd"), args_list, tte.dist)
     
     standat = tte2priordat_w(dat, scale.mean, scale.sd, shape.mean, shape.sd)
   }
   
   if (tte.dist == "dw") {
-    warn_irrelevant(args_list, c("powershape.mean","powershape.sd"))
+    # warn_irrelevant(args_list, c("powershape.mean","powershape.sd"))
     req(c("scale.mean","scale.sd","shape.mean","shape.sd",
           "scale_c.mean","scale_c.sd","shape_c.mean","shape_c.sd"),
         args_list, tte.dist)
@@ -164,7 +164,7 @@ tte2priordat = function(dat,
   }
   
   if (tte.dist == "pgw") {
-    warn_irrelevant(args_list, c("scale_c.mean","scale_c.sd","shape_c.mean","shape_c.sd"))
+    # warn_irrelevant(args_list, c("scale_c.mean","scale_c.sd","shape_c.mean","shape_c.sd"))
     req(c("scale.mean","scale.sd","shape.mean","shape.sd",
           "powershape.mean","powershape.sd"),
         args_list, tte.dist)
