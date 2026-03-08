@@ -120,6 +120,9 @@ bwsp_model_dw = function(datstan,
       iter = iter         # total number of iterations per chain (including warmup)
     )
   }
+  
+  print(output_uncens, probs = NULL)
+  print(output_cens, probs = NULL)
   output = list(uncens = output_uncens, cens = output_cens)
   return(output)
 }

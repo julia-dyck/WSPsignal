@@ -125,7 +125,7 @@ bwsp_model = function(datstan,
   }
   
   out = list(fit = fit, args_list = datstan$args_list) # args_list for info on tte.dist, prior.dist, prior shape sds
-  
+  # printing in tte.dist specific inner fct
   return(out)
 }
 
