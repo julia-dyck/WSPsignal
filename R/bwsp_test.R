@@ -214,7 +214,7 @@ bwsp_test = function(mod.output,
   test_one = function(cred.level_ci.type_sensitivity.option_vect){
     cred.level = as.numeric(cred.level_ci.type_sensitivity.option_vect[1])
     ci.type = cred.level_ci.type_sensitivity.option_vect[2]
-    sensitivity.option = cred.level_ci.type_sensitivity.option_vect[3]
+    sensitivity.option = as.numeric(cred.level_ci.type_sensitivity.option_vect[3])
     
     tte.dist = mod.output$args_list$tte.dist
     prior.dist = mod.output$args_list$prior.dist
@@ -241,9 +241,6 @@ bwsp_test = function(mod.output,
       }
       if(sensitivity.option == 2 | sensitivity.option == 3){ # CI+ROPE test rejects H0 -> signal
         out = ifelse(is.na(res), 0, res)
-      }
-      else{
-        stop("sensitivity.option must be 1, 2 or 3")
       }
     }
     # test under double or pgw model
