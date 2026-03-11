@@ -38,18 +38,22 @@ sim.fit.to.1.sample = function(pc, pc_list){
                     chains = pc_list$add$stanmod.chains,
                     iter = pc_list$add$stanmod.iter,
                     warmup = pc_list$add$stanmod.warmup)
-  mod = mod$fit
+  
+  btestres = bwsp_test(mod, 
+                    cred.level = pc_list$input$cred.level, 
+                    ci.type = pc_list$input$post.ci.type, 
+                    sensitivity.option = pc_list$input$sensitivity.option)
   
   ### extracting Bayesian posterior statistics
   bstats = tryCatch(
     sim.stanfit.to.poststats(pc, 
-                             stanfit.object = mod,
-                             cred.niveaus = pc_list$input$cred.level
-    ),
+                             stanfit.object = mod$fit
+                             ),
     error = function(e) {
       return(NULL)
     }
   )
+  btests = c(bstats, btestres)
   
   ### Frequentist model fitting (MLE)
   mod.w = fwsp_model(dat = ttedat, tte.dist = "w")
@@ -73,7 +77,7 @@ sim.fit.to.1.sample = function(pc, pc_list){
   ### formatting frequentist results
   ftests = c(pc, test.w, test.dw, test.pgw)
   
-  return(list(bstats = bstats, ftests = ftests)) # return both Bayesian posterior stats and frequentist test results
+  return(list(btests = btests, ftests = ftests)) # return both Bayesian and frequentist test results
 
 }
 
