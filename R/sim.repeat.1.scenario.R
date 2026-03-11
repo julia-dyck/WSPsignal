@@ -35,12 +35,14 @@ sim.repeat.1.scenario = function(pc, pc_list, batch.ind) {
                              sim.fit.to.1.sample(pc = pc, pc_list = pc_list),
                              simplify = FALSE)
   
-  ## bstats
-  res.batch = do.call(rbind, lapply(res.batch.list, function(x) x$bstats))
+  ## btests
+  res.batch = do.call(rbind, lapply(res.batch.list, function(x) x$btests))
   # Convert list-columns to atomic vectors (flatten the structure)
-  res.batch = as.data.frame(lapply(res.batch, unlist), stringsAsFactors = FALSE)
+  res.batch = data.frame(res.batch)
+  res.batch = lapply(res.batch, unlist)
+  res.batch = data.frame(res.batch)
   
-  # Save bstats batch
+  # Save btests batch
   path = pc_list$add$resultpath
   filename = paste(c(pc, "bADR_sim", batch.ind, ".RData"), collapse = "_")
   save(res.batch, file = file.path(path, filename))
