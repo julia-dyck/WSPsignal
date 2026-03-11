@@ -36,16 +36,11 @@ sim.fit.prep = function(ttedat, pc, pc_list){
     # format data and prior pars accordingly
     datstan = tte2priordat(dat = ttedat, 
                            tte.dist = "w",
+                           prior.dist = pc$prior.dist,
                            scale.mean = pars$scale.mean_w, 
                            scale.sd = pars$scale.sd_w,
                            shape.mean = pars$shape.mean_w, 
-                           shape.sd = pars$shape.sd_w,
-                           scale_c.mean = NULL,
-                           scale_c.sd = NULL,
-                           shape_c.mean = NULL,
-                           shape_c.sd = NULL,
-                           powershape.mean = NULL,
-                           powershape.sd = NULL
+                           shape.sd = pars$shape.sd_w
     )
   }
   
@@ -58,6 +53,7 @@ sim.fit.prep = function(ttedat, pc, pc_list){
     # format data and prior pars accordingly
     datstan = tte2priordat(dat = ttedat, 
                            tte.dist = "dw",
+                           prior.dist = pc$prior.dist,
                            scale.mean = pars$scale.mean_dw, 
                            scale.sd = pars$scale.sd_dw,
                            shape.mean = pars$shape.mean_dw, 
@@ -65,9 +61,7 @@ sim.fit.prep = function(ttedat, pc, pc_list){
                            scale_c.mean = pars$scale_c.mean_dw,
                            scale_c.sd = pars$scale_c.sd_dw,
                            shape_c.mean = pars$shape_c.mean_dw,
-                           shape_c.sd = pars$shape_c.sd_dw,
-                           powershape.mean = NULL,
-                           powershape.sd = NULL
+                           shape_c.sd = pars$shape_c.sd_dw
     )
   }
   
@@ -80,14 +74,11 @@ sim.fit.prep = function(ttedat, pc, pc_list){
     # format data and prior pars accordingly
     datstan = tte2priordat(dat = ttedat,
                            tte.dist = "pgw",
+                           prior.dist = pc$prior.dist,
                            scale.mean = pars$scale.mean_pgw, 
                            scale.sd = pars$scale.sd_pgw,
                            shape.mean = pars$shape.mean_pgw, 
                            shape.sd = pars$shape.sd_pgw,
-                           scale_c.mean = NULL,
-                           scale_c.sd = NULL,
-                           shape_c.mean = NULL,
-                           shape_c.sd = NULL,
                            powershape.mean = pars$powershape.mean_pgw,
                            powershape.sd = pars$powershape.sd_pgw
     )
