@@ -22,27 +22,10 @@
 #' @noRd
 
 sim.merge_results_b = function(pc_list, save = T){
-  # prepare ncols of merged df per tte.dist
-  ncols_parvect = 10
-  ncols_post.summary = 5 # per shape parameter
-  ncols_eti = 2*length(pc_list$input$cred.level) # per shape parameter
-  ncols_hdi = 2*length(pc_list$input$cred.level) # per shape parameter
-  ncols_per = 101 # per shape parameter
-  ncols_per.shape = ncols_post.summary + ncols_eti + ncols_hdi +  ncols_per
   
-  # for w
-  ncols = ncols_parvect + 1*ncols_per.shape
-  # setup empty df
+  # setup empty dfs
   merged.res.w =  data.frame()
-  
-  # adjust ncols of df (no. shapes depends on tte.dist)
-  ncols = ncols_parvect + 2*ncols_per.shape # 2 = length(nu1, nu2)
-  # setup empty df
   merged.res.dw =  data.frame()
-  
-  # for pgw
-  ncols = ncols_parvect + 2*ncols_per.shape # 2 = length(nu, ga)
-  # setup empty df
   merged.res.pgw = data.frame()
   
   # go through all pc combinations in pc_list:

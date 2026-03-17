@@ -58,130 +58,77 @@ eval.calc_perf_b = function(pc_list){
     message("Object `res_b` currently loaded in environment is used to calculate performance measures.")
   }
   
+  # 0. -------------------------------------------------------------------------
+  #### get rid of NAs in table, transform to long format
+  
+  pc_cols = names(res_b)[1:9]
+  
+  bwsp_w_ll_cols = grep("^bwsp_w_ll", names(res_b), value = TRUE)
+  bwsp_dw_ll_cols = grep("^bwsp_dw_ll", names(res_b), value = TRUE)
+  bwsp_pgw_ll_cols = grep("^bwsp_pgw_ll", names(res_b), value = TRUE)
+  
+  bwsp_w_gg_cols = grep("^bwsp_w_gg", names(res_b), value = TRUE)
+  bwsp_dw_gg_cols = grep("^bwsp_dw_gg", names(res_b), value = TRUE)
+  bwsp_pgw_gg_cols = grep("^bwsp_pgw_gg", names(res_b), value = TRUE)
+  
+  # filter for subtables that contain test results
+  
+  # for prior.dist == "ll"
+  res_b_w_ll = res_b %>% filter(tte.dist == "w", prior.dist == "ll") %>%
+    select(all_of(c(pc_cols, bwsp_w_ll_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_w_ll_", "bwsp_", .x), starts_with("bwsp_w_ll"))
+  
+  res_b_dw_ll = res_b %>% filter(tte.dist == "dw", prior.dist == "ll") %>%
+    select(all_of(c(pc_cols, bwsp_dw_ll_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_dw_ll_", "bwsp_", .x), starts_with("bwsp_dw_ll"))
+  
+  res_b_pgw_ll = res_b %>% filter(tte.dist == "pgw", prior.dist == "ll") %>%
+    select(all_of(c(pc_cols, bwsp_pgw_ll_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_pgw_ll_", "bwsp_", .x), starts_with("bwsp_pgw_ll"))
+  
+  # for prior.dist == "gg"
+  res_b_w_gg = res_b %>% filter(tte.dist == "w", prior.dist == "gg") %>%
+    select(all_of(c(pc_cols, bwsp_w_gg_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_w_gg_", "bwsp_", .x), starts_with("bwsp_w_gg"))
+  
+  res_b_dw_gg = res_b %>% filter(tte.dist == "dw", prior.dist == "gg") %>%
+    select(all_of(c(pc_cols, bwsp_dw_gg_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_dw_gg_", "bwsp_", .x), starts_with("bwsp_dw_gg"))
+  
+  res_b_pgw_gg = res_b %>% filter(tte.dist == "pgw", prior.dist == "gg") %>%
+    select(all_of(c(pc_cols, bwsp_pgw_gg_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_pgw_gg_", "bwsp_", .x), starts_with("bwsp_pgw_gg"))
+  
+  # bind rows to one long table
+  res_b_long = dplyr::bind_rows(
+    res_b_w_ll, res_b_dw_ll, res_b_pgw_ll,
+    res_b_w_gg, res_b_dw_gg, res_b_pgw_gg
+  )
+  
+  
   # 1. -------------------------------------------------------------------------
   #### add label for true adr status
-  res_b$lab = ifelse(res_b$adr.rate > 0, 1, 0) # 1 = ADR, 0 = no ADR)
-  
+  res_b_long$lab = ifelse(res_b_long$adr.rate > 0, 1, 0) # 1 = ADR, 0 = no ADR)
+  res.ext = res_b_long
+
   # 2. -------------------------------------------------------------------------
-  #### add ropes for all bwsp tests to be performed
-  
-  rope.infos = dplyr::filter(do.call(dplyr::bind_rows, pc_list$fit), prior.belief == "none")
-  
-  # calculate ropes for each tte.dist & prior.dist combi
-  ropes = do.call(rbind, lapply(1:nrow(rope.infos), function(i) {
-    # extract row
-    rope.infos.row = rope.infos[i, ]
-    # apply eval.calc_rope
-    ropes = eval.calc_rope(cred.levels = pc_list$input$cred.level, rope.infos.row = rope.infos.row)
-    return(ropes)
-  }))
-  
-  rope.infos$prior.belief <- NULL # to not mess up the merge
-  # remove cols unnecessary? (at the same time, they do not hurt)
-  rope.infos = cbind(rope.infos, ropes)
-  
-  res.ext = merge(res_b, rope.infos, by = c("tte.dist", "prior.dist"), all.x = TRUE) #merge
-  
-  # 3. -------------------------------------------------------------------------
-  #### perform all bwsp tests and save binary test result per row and per test specification as new res cols
-  
-  # names of the lower and upper interval bounds you need
-  cred.levels = pc_list$input$cred.level
-  
-  # posterior CI types
-  types = tolower(pc_list$input$post.ci.type)
-  
-  # define the different sensitivity options
-  options = pc_list$input$sensitivity.option
-  
-  
-  # loop over sensitivity options
-  for (opt in options) {
-    
-    # loop over types (hdi, eti)
-    for (type in types) {
-      
-      # loop over credibility levels
-      for (lev in cred.levels) {
-        
-        # create the column names dynamically for credregion
-        cred_cols = c(
-          paste0("nu.", type, lev, "l"),
-          paste0("nu.", type, lev, "u"),
-          paste0("ga.", type, lev, "l"),
-          paste0("ga.", type, lev, "u")
-        )
-        
-        # create the column names dynamically for nullregion
-        null_cols = c(
-          paste0("nu.", "rope", lev, "l"),
-          paste0("nu.", "rope", lev, "u"),
-          paste0("ga.", "rope", lev, "l"),
-          paste0("ga.", "rope", lev, "u")
-        )
-        
-        # define a new column name for the result
-        bwsp_col = paste0("bwsp_", type, "_", lev, "_opt", opt)
-        
-        # apply the test rowwise
-        res.ext[[bwsp_col]] = apply(
-          res.ext[, c(cred_cols, null_cols, "tte.dist")], 
-          MARGIN = 1,
-          FUN = function(x) {
-            # first 4 entries = credregion, next 4 entries = nullregion
-            credregion = as.numeric(unlist(x[1:4]))
-            nullregion = as.numeric(unlist(x[5:8]))
-            tte.dist = x[9]
-            
-            if(tte.dist == "dw" || tte.dist == "pgw"){
-              sim.bwsp_test(
-                credregion = credregion,
-                nullregion = nullregion,
-                option = opt,
-                tte.dist =  tte.dist
-              )
-            } else if(tte.dist == "w"){
-              sim.bwsp_test(
-                credregion = credregion[1:2],
-                nullregion = nullregion[1:2],
-                option = opt,
-                tte.dist =  tte.dist
-              )
-            }
-          }
-        ) # end of apply
-      } # end of loop over cred.levels
-    } # end of loop over cred.levels
-  } # end of loop over options
-  
-  
-  # 4. -------------------------------------------------------------------------
   #### calculate AUC for each simulation scenario (= one row of pc_list$pc_table)
   
   ## control cases are matched to each ADR-positive scenario for AUC calc
   pc.pos = filter(pc_list$pc_table, adr.rate > 0) # only ADR-positive scenarios
   
-  # number of tests
-  nr.combined.tests = length(grep("^bwsp_", names(res.ext))) 
-  
   # Identify all bwsp_test result columns
   bwsp_cols = grep("^bwsp_", names(res.ext), value = TRUE)
+  nr.combined.tests = length(bwsp_cols)
   
   # prep empty matrix for performance measure results
   # false positive rate
-  fprs = matrix(rep(NA, nr.combined.tests*nrow(pc.pos)), ncol = nr.combined.tests)
+  aucs = fprs = tprs = fnrs = tnrs = 
+    matrix(NA, nrow = nrow(pc.pos), ncol = nr.combined.tests)
   colnames(fprs) = sub("^bwsp", "fpr", bwsp_cols)
-  # true positive rate
-  tprs = matrix(rep(NA, nr.combined.tests*nrow(pc.pos)), ncol = nr.combined.tests)
   colnames(tprs) = sub("^bwsp", "tpr", bwsp_cols)
-  # false negative rate
-  fnrs = matrix(rep(NA, nr.combined.tests*nrow(pc.pos)), ncol = nr.combined.tests)
   colnames(fnrs) = sub("^bwsp", "fnr", bwsp_cols)
-  # true negative rate
-  tnrs = matrix(rep(NA, nr.combined.tests*nrow(pc.pos)), ncol = nr.combined.tests)
   colnames(tnrs) = sub("^bwsp", "tnr", bwsp_cols)
-  # area under the receiver operating characteristic (ROC) curve
-  aucs = matrix(rep(NA, nr.combined.tests*nrow(pc.pos)), ncol = nr.combined.tests)
   colnames(aucs) = sub("^bwsp", "auc", bwsp_cols)
   
   run.reps = c()
@@ -197,6 +144,26 @@ eval.calc_perf_b = function(pc_list){
     prior.dist_i = pc.pos$prior.dist[i]
     prior.belief_i = pc.pos$prior.belief[i]
     
+    res.test0 = res.ext %>%
+      dplyr::filter(adr.rate == 0,
+                    (is.na(adr.when) | adr.when == adr.when_i),
+                    N == N_i,
+                    br == br_i,
+                    (is.na(adr.relsd) | adr.relsd == adr.relsd_i),
+                    tte.dist == tte.dist_i,
+                    prior.dist == prior.dist_i,
+                    prior.belief == prior.belief_i)
+    
+    res.test1 = res.ext %>%
+      dplyr::filter(adr.rate == adr.rate_i,
+                    (is.na(adr.when) | adr.when == adr.when_i),
+                    N == N_i,
+                    br == br_i,
+                    (is.na(adr.relsd) | adr.relsd == adr.relsd_i),
+                    tte.dist == tte.dist_i,
+                    prior.dist == prior.dist_i,
+                    prior.belief == prior.belief_i)
+    
     res.test = res.ext %>%
       dplyr::filter((adr.rate == 0 | adr.rate == adr.rate_i),
                     (is.na(adr.when) | adr.when == adr.when_i),
@@ -208,13 +175,16 @@ eval.calc_perf_b = function(pc_list){
                     prior.belief == prior.belief_i)
     
     run.reps[i] = nrow(res.test) # number of repetitions obtained for this scenario
-    if(run.reps[i] == 2*pc_list$add$reps){
+    
+    ## calc performance measures if at least one repetition in control and adr group
+    # if(nrow(res.test0) > 0 & nrow(res.test1) > 0){ 
+     if(run.reps[i] == 2*pc_list$add$reps){ # calc perf measures if all repetitions did run successfully
       
       # set up labels and predictions in a matrix
       labels = matrix(res.test$lab, nrow = run.reps[i], ncol = nr.combined.tests, byrow = F)
       predictions = data.frame(res.test)[,bwsp_cols] %>%
         as.matrix()
-      
+
       # calculate tpr, fpr, tnr, fnr manually   
       
       # true positives
@@ -231,7 +201,7 @@ eval.calc_perf_b = function(pc_list){
       fnrs[i,] = fn / (tp + fn) # false negative rate
       tnrs[i,] = tn / (fp + tn) # true negative rate
       
-      
+      # return(list(predictions = predictions, labels = labels))
       # calculate AUCs
       pred.obj <- ROCR::prediction(predictions, labels) # creating prediction object
       
@@ -248,10 +218,9 @@ eval.calc_perf_b = function(pc_list){
     }
   }
   
-  # 5. -------------------------------------------------------------------------
-  #### add info and reshape table format
   
-  # add scenario information to performance measure matrices
+  # 3. -------------------------------------------------------------------------
+  #### add scenario information to performance measure matrices
   
   ## inner fct
   # add description of deviance between prior belief and simulated truth
@@ -284,7 +253,9 @@ eval.calc_perf_b = function(pc_list){
   tnrs = cbind(pc.pos, tnrs)
   aucs = cbind(pc.pos, aucs)
   
-  # reshape performance measure matrices to long format
+  
+  # 4. -------------------------------------------------------------------------
+  #### reshape performance measure matrices to long format
   
   fpr_cols <- grep("^fpr_", names(fprs), value = TRUE)
   # Reshape
@@ -298,9 +269,10 @@ eval.calc_perf_b = function(pc_list){
   )
   rownames(fprs_long) <- NULL
   # Extract post.ci.type, cred.level, and sensitivity.option from test_spec
-  fprs_long$post.ci.type = sub("^fpr_([^_]+)_.*", "\\1", fprs_long$test_spec)
-  fprs_long$cred.level <- as.numeric(sub("^fpr_[^_]+_([0-9\\.]+)_.*", "\\1", fprs_long$test_spec))
-  fprs_long$sensitivity.option <- as.integer(sub(".*opt([0-9]+)$", "\\1", fprs_long$test_spec))
+  # Extract from "fpr_0.8_ETI_1"
+  fprs_long$cred.level <- as.numeric(sub("^fpr_([0-9.]+)_.*", "\\1", fprs_long$test_spec))
+  fprs_long$post.ci.type <- sub("^fpr_[0-9.]+_([A-Z]+)_.*", "\\1", fprs_long$test_spec)
+  fprs_long$sensitivity.option <- as.integer(sub("^fpr_[0-9.]+_[A-Z]+_([0-9]+)$", "\\1", fprs_long$test_spec))
   
   tpr_cols <- grep("^tpr_", names(tprs), value = TRUE)
   # Reshape
@@ -314,9 +286,9 @@ eval.calc_perf_b = function(pc_list){
   )
   rownames(tprs_long) <- NULL
   # Extract post.ci.type, cred.level, and sensitivity.option from test_spec
-  tprs_long$post.ci.type = sub("^tpr_([^_]+)_.*", "\\1", tprs_long$test_spec)
-  tprs_long$cred.level <- as.numeric(sub("^tpr_[^_]+_([0-9\\.]+)_.*", "\\1", tprs_long$test_spec))
-  tprs_long$sensitivity.option <- as.integer(sub(".*opt([0-9]+)$", "\\1", tprs_long$test_spec))
+  tprs_long$cred.level <- as.numeric(sub("^tpr_([0-9.]+)_.*", "\\1", tprs_long$test_spec))
+  tprs_long$post.ci.type <- sub("^tpr_[0-9.]+_([A-Z]+)_.*", "\\1", tprs_long$test_spec)
+  tprs_long$sensitivity.option <- as.integer(sub("^tpr_[0-9.]+_[A-Z]+_([0-9]+)$", "\\1", tprs_long$test_spec))
   
   fnr_cols <- grep("^fnr_", names(fnrs), value = TRUE)
   # Reshape
@@ -330,9 +302,9 @@ eval.calc_perf_b = function(pc_list){
   )
   rownames(fnrs_long) <- NULL
   # Extract post.ci.type, cred.level, and sensitivity.option from test_spec
-  fnrs_long$post.ci.type = sub("^fnr_([^_]+)_.*", "\\1", fnrs_long$test_spec)
-  fnrs_long$cred.level <- as.numeric(sub("^fnr_[^_]+_([0-9\\.]+)_.*", "\\1", fnrs_long$test_spec))
-  fnrs_long$sensitivity.option <- as.integer(sub(".*opt([0-9]+)$", "\\1", fnrs_long$test_spec))
+  fnrs_long$cred.level <- as.numeric(sub("^fnr_([0-9.]+)_.*", "\\1", fnrs_long$test_spec))
+  fnrs_long$post.ci.type <- sub("^fnr_[0-9.]+_([A-Z]+)_.*", "\\1", fnrs_long$test_spec)
+  fnrs_long$sensitivity.option <- as.integer(sub("^fnr_[0-9.]+_[A-Z]+_([0-9]+)$", "\\1", fnrs_long$test_spec))
   
   tnr_cols <- grep("^tnr_", names(tnrs), value = TRUE)
   # Reshape
@@ -346,9 +318,9 @@ eval.calc_perf_b = function(pc_list){
   )
   rownames(tnrs_long) <- NULL
   # Extract post.ci.type, cred.level, and sensitivity.option from test_spec
-  tnrs_long$post.ci.type = sub("^tnr_([^_]+)_.*", "\\1", tnrs_long$test_spec)
-  tnrs_long$cred.level <- as.numeric(sub("^tnr_[^_]+_([0-9\\.]+)_.*", "\\1", tnrs_long$test_spec))
-  tnrs_long$sensitivity.option <- as.integer(sub(".*opt([0-9]+)$", "\\1", tnrs_long$test_spec))
+  tnrs_long$cred.level <- as.numeric(sub("^tnr_([0-9.]+)_.*", "\\1", tnrs_long$test_spec))
+  tnrs_long$post.ci.type <- sub("^tnr_[0-9.]+_([A-Z]+)_.*", "\\1", tnrs_long$test_spec)
+  tnrs_long$sensitivity.option <- as.integer(sub("^tnr_[0-9.]+_[A-Z]+_([0-9]+)$", "\\1", tnrs_long$test_spec))
   
   # reshape aucs to long format
   auc_cols <- grep("^auc_", names(aucs), value = TRUE)
@@ -363,9 +335,9 @@ eval.calc_perf_b = function(pc_list){
   )
   rownames(aucs_long) <- NULL
   # Extract post.ci.type, cred.level, and sensitivity.option from test_spec
-  aucs_long$post.ci.type = sub("^auc_([^_]+)_.*", "\\1", aucs_long$test_spec)
-  aucs_long$cred.level <- as.numeric(sub("^auc_[^_]+_([0-9\\.]+)_.*", "\\1", aucs_long$test_spec))
-  aucs_long$sensitivity.option <- as.integer(sub(".*opt([0-9]+)$", "\\1", aucs_long$test_spec))
+  aucs_long$cred.level <- as.numeric(sub("^auc_([0-9.]+)_.*", "\\1", aucs_long$test_spec))
+  aucs_long$post.ci.type <- sub("^auc_[0-9.]+_([A-Z]+)_.*", "\\1", aucs_long$test_spec)
+  aucs_long$sensitivity.option <- as.integer(sub("^auc_[0-9.]+_[A-Z]+_([0-9]+)$", "\\1", aucs_long$test_spec))
   
   
   # merge performance measure matrices fprs, tprs, auc to one
