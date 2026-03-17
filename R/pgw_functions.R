@@ -59,7 +59,7 @@ spgw =  function(x, scale = 1, shape = 1, powershape = 1, log = FALSE) {
   
   log1pxtn <- log1p((x/theta)^nu)
   log_inner <- log1pxtn / gamma     # stabilised exponent
-  Slog <- 1 - exp(log_inner)        # log survival
+  Slog <- -expm1(log_inner)        # log survival
   
   if(log) return(Slog)
   return(exp(Slog))
@@ -108,9 +108,9 @@ ppgw = function(x, scale = 1, shape = 1, powershape = 1){
   
   log1pxtn <- log1p((x/theta)^nu)
   log_inner <- log1pxtn / gamma     # hopefully stabilised exponent
-  Slog <- 1 - exp(log_inner)        # log survival
+  Slog <- -expm1(log_inner)        # log survival
 
-  cdf_values = 1 - exp(Slog)
+  cdf_values = -expm1(Slog)
 
   return(cdf_values)
 
@@ -133,7 +133,7 @@ dpgw = function(x, scale = 1, shape = 1, powershape = 1, log = FALSE) {
   
   log1pxtn <- log1p((x/theta)^nu)
   log_inner <- log1pxtn / gamma # hopefully stabilises double power
-  log_S <- 1 - exp(log_inner)
+  log_S <- -expm1(log_inner)
   log_h <- log(nu) - log(gamma) - nu * log(theta) +
     (nu-1) * log(x) + (1/gamma - 1) * log1pxtn
   
