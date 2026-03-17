@@ -17,6 +17,7 @@ A list with summary statistics (\verb{$summary}), a ggplot2 object (\verb{$plot}
 and the data (\verb{$df}) on which summary and plot are based.
 }
 \description{
+Only for Bayesian estimation approach.
 Summarizes and visualizes effective sample sizes of the stan models fitted during
 the simulation study, grouped by time-to-event (tte) and prior distribution types.
 This helps assess which of the tte and prior distribution choices is suitable

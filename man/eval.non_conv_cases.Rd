@@ -20,6 +20,7 @@ A data frame with the following columns:
 }
 }
 \description{
+Only for Bayesian estimation approach.
 Summarizes the number of planned vs. not successfully run simulations grouped by \code{tte.dist}
 and \code{prior.dist}. The purpose of the table is to guide the
 time-to-event (tte) and prior distributional choices (along with other diagnostics

@@ -1,5 +1,6 @@
 #' Evaluate effective sample sizes by tte and prior distribution
 #'
+#' Only for Bayesian estimation approach.
 #' Summarizes and visualizes effective sample sizes of the stan models fitted during 
 #' the simulation study, grouped by time-to-event (tte) and prior distribution types. 
 #' This helps assess which of the tte and prior distribution choices is suitable 
@@ -55,6 +56,10 @@ eval.eff_sample_sizes = function(pc_list, threshold = 10000){
   
   if (!pc_list_is_valid) {
     stop("Argument pc_list has wrong format. It must be a list produced by sim.setup_sim_pars().\n")
+  }
+  
+  if(!("b" %in% pc_list$input$est.approach)){
+    stop("Functions eval.non_conv_cases(), eval.execution_times() and eval.eff_sample_sizes() only applicable if Bayesian estimation is included in simulation study.\n")
   }
   
   # argument check for threshold

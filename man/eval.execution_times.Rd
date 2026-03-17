@@ -14,6 +14,7 @@ A list with summary statistics (\verb{$summary}), a ggplot2 object (\verb{$plot}
 and the data (\verb{$df}) on which summary and plot are based.
 }
 \description{
+Only for Bayesian estimation approach.
 Summarizes and visualizes execution times of the models fitted during the simulation study grouped
 by time-to-event (tte) and prior distribution types to guide the
 tte and prior distributional choices (along with other diagnostics such as

@@ -1,5 +1,6 @@
 #' Evaluate execution times by tte and prior distribution
 #'
+#' Only for Bayesian estimation approach.
 #' Summarizes and visualizes execution times of the models fitted during the simulation study grouped
 #' by time-to-event (tte) and prior distribution types to guide the
 #' tte and prior distributional choices (along with other diagnostics such as
@@ -47,6 +48,10 @@ eval.execution_times = function(pc_list){
   
   if (!pc_list_is_valid) {
     stop("Argument pc_list has wrong format. It must be a list produced by sim.setup_sim_pars().\n")
+  }
+  
+  if(!("b" %in% pc_list$input$est.approach)){
+    stop("Functions eval.non_conv_cases(), eval.execution_times() and eval.eff_sample_sizes() only applicable if Bayesian estimation is included in simulation study.\n")
   }
   
   ## fct body ------------------------------------------------------------------
