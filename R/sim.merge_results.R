@@ -7,10 +7,8 @@
 #' @param save if \code{TRUE} (default), merged table is saved as res_b.RData or res_f.RData
 #' in same path where batches are stored; 
 #' else, it is returned to global environment
-#' @param bayes \code{TRUE} (default), results of Bayesian simulations are merged, 
-#' else, results of frequentist simulations are merged
 #' 
-#' @return Dataframe containing all simulation results (one repetition of one 
+#' @return Dataframe or list of two dataframes containing all simulation results (one repetition of one 
 #' simulation scenario per row). The 
 #' simulation parameters are stored in the first 9 columns. The remaining columns 
 #' contain 
@@ -24,7 +22,7 @@
 #'       
 #' @export
 
-sim.merge_results = function(pc_list, save = T, bayes = T){
+sim.merge_results = function(pc_list, save = T){
   
   ## argument checks -----------------------------------------------------------
   # argument check for pc_list
@@ -64,18 +62,39 @@ sim.merge_results = function(pc_list, save = T, bayes = T){
     stop("Argument 'save' must be a single logical value (TRUE or FALSE).\n")
   }
   
-  # argument check for bayes
-  if (!is.logical(bayes) || length(bayes) != 1 || is.na(bayes)) {
-    stop("Argument 'bayes' must be a single logical value (TRUE or FALSE).\n")
-  }
-  
   ## fct body ------------------------------------------------------------------
-  if(bayes == T){
-    sim.merge_results_b(pc_list = pc_list, save = save)
-    
+  est.approach = pc_list$input$est.approach
+  
+  if("b" %in% est.approach){
+    res_b = sim.merge_results_b(pc_list = pc_list)
+    if(save == T){
+      # save result
+      path = pc_list$add$resultpath
+      filename = "res_b.RData"
+      save(res_b, file=paste0(path, "/", filename))
+      message(sprintf("res_b saved to: %s", file.path(path, filename)))
+    }
   }
-  else if(bayes == F){
-    sim.merge_results_f(pc_list = pc_list, save = save)
+  if("f" %in% est.approach){
+    res_f = sim.merge_results_f(pc_list = pc_list)
+    if(save == T){
+      # save result
+      path = pc_list$add$resultpath
+      filename = "res_f.RData"
+      save(res_f, file=paste0(path, "/", filename))
+      message(sprintf("res_f saved to: %s", file.path(path, filename)))
+    }
+  }
+  if(save == F){
+    if("b" %in% est.approach && "f" %in% est.approach){
+      return(list(res_b = res_b, res_f = res_f))
+    } else if("b" %in% est.approach){
+      return(res_b)
+    } else if("f" %in% est.approach){
+      return(res_f)
+    } else {
+      return(NULL)
+    }
   }
 }
 

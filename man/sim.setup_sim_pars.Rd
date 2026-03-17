@@ -10,6 +10,7 @@ sim.setup_sim_pars(
   adr.rate,
   adr.relsd,
   study.period,
+  est.approach,
   tte.dist,
   prior.dist,
   fitpars.list,
@@ -34,6 +35,9 @@ sim.setup_sim_pars(
 \item{adr.relsd}{vector of relative standard deviations from the adverse drug reaction times}
 
 \item{study.period}{scalar specifying the length of the study period}
+
+\item{est.approach}{character vector specifying one or two estimation approaches; options are
+\code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})}
 
 \item{tte.dist}{character vector specifying one or multiple modelling approaches; options are
 \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})}

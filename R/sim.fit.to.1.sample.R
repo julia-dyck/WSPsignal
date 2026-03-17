@@ -26,56 +26,64 @@
 
 
 sim.fit.to.1.sample = function(pc, pc_list){
-
+  est.approach = pc_list$input$est.approach
+  
   ### Data simulation
   ttedat = sim.datagen_tte(genpar = c(pc$N, pc$br, pc$adr.rate, pc$adr.when, pc$adr.relsd, pc$study.period))
 
-  ### tte and prior data preparation
-  datstan = sim.fit.prep(ttedat = ttedat, pc = pc, pc_list = pc_list)
   
-  ### Model fitting
-  mod = bwsp_model(datstan = datstan,
-                    chains = pc_list$add$stanmod.chains,
-                    iter = pc_list$add$stanmod.iter,
-                    warmup = pc_list$add$stanmod.warmup)
-  
-  btestres = bwsp_test(mod, 
-                    cred.level = pc_list$input$cred.level, 
-                    ci.type = pc_list$input$post.ci.type, 
-                    sensitivity.option = pc_list$input$sensitivity.option)
-  
-  ### extracting Bayesian posterior statistics
-  bstats = tryCatch(
-    sim.stanfit.to.poststats(pc, 
-                             stanfit.object = mod$fit
-                             ),
-    error = function(e) {
-      return(NULL)
-    }
-  )
-  btests = c(bstats, btestres)
+  ### Bayesian model fitting
+  if("b" %in% est.approach){
+    # tte and prior data preparation
+    datstan = sim.fit.prep(ttedat = ttedat, pc = pc, pc_list = pc_list)
+    mod = bwsp_model(datstan = datstan,
+                     chains = pc_list$add$stanmod.chains,
+                     iter = pc_list$add$stanmod.iter,
+                     warmup = pc_list$add$stanmod.warmup)
+    
+    btestres = bwsp_test(mod, 
+                         cred.level = pc_list$input$cred.level, 
+                         ci.type = pc_list$input$post.ci.type, 
+                         sensitivity.option = pc_list$input$sensitivity.option)
+    
+    ### extracting Bayesian posterior statistics
+    bstats = tryCatch(
+      sim.stanfit.to.poststats(pc, 
+                               stanfit.object = mod$fit
+      ),
+      error = function(e) {
+        return(NULL)
+      }
+    )
+    btests = c(bstats, btestres)
+  }
+  else{btests = NULL}
   
   ### Frequentist model fitting (MLE)
-  mod.w = fwsp_model(dat = ttedat, tte.dist = "w")
-  test.w = fwsp_test(mod.w, cred.level = pc_list$input$cred.level)
-  mod.dw = fwsp_model(dat = ttedat, tte.dist = "dw")
-  test.dw = fwsp_test(mod.dw, cred.level = pc_list$input$cred.level)
+  if("f" %in% est.approach){
+    mod.w = fwsp_model(dat = ttedat, tte.dist = "w")
+    test.w = fwsp_test(mod.w, cred.level = pc_list$input$cred.level)
+    mod.dw = fwsp_model(dat = ttedat, tte.dist = "dw")
+    test.dw = fwsp_test(mod.dw, cred.level = pc_list$input$cred.level)
+    
+    mod.pgw = tryCatch(
+      fwsp_model(dat = ttedat, tte.dist = "pgw"),
+      error = function(e) {
+        return(NULL)
+      }
+    )
+    test.pgw = tryCatch(
+      fwsp_test(mod.pgw, cred.level = pc_list$input$cred.level),
+      error = function(e) {
+        return(rep(NA, length(pc_list$input$cred.level)))
+      }
+    )
+    
+    ### formatting frequentist results
+    ftests = c(pc, test.w, test.dw, test.pgw)
+  }
+  else{ftests = NULL}
   
-  mod.pgw = tryCatch(
-    fwsp_model(dat = ttedat, tte.dist = "pgw"),
-    error = function(e) {
-      return(NULL)
-    }
-  )
-  test.pgw = tryCatch(
-    fwsp_test(mod.pgw, cred.level = pc_list$input$cred.level),
-    error = function(e) {
-      return(rep(NA, length(pc_list$input$cred.level)))
-    }
-  )
-  
-  ### formatting frequentist results
-  ftests = c(pc, test.w, test.dw, test.pgw)
   
   return(list(btests = btests, ftests = ftests)) # return both Bayesian and frequentist test results
 

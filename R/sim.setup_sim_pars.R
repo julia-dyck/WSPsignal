@@ -13,6 +13,8 @@
 #' @param adr.rate vector of adverse drug reaction rates as proportions of the background rates
 #' @param adr.relsd vector of relative standard deviations from the adverse drug reaction times
 #' @param study.period scalar specifying the length of the study period
+#' @param est.approach character vector specifying one or two estimation approaches; options are
+#' \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})
 #' @param tte.dist character vector specifying one or multiple modelling approaches; options are
 #' \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})
 #' @param prior.dist character indicating the prior distribution for the parameters 
@@ -126,7 +128,8 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                               adr.rate,          # |
                               adr.relsd,         # v
                               study.period,      # -
-                              tte.dist,          # tuning parameters
+                              est.approach,          # tuning parameters
+                              tte.dist,          # |
                               prior.dist,        # |
                               fitpars.list,      # |
                               post.ci.type,      # |
@@ -183,6 +186,17 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
     stop("Argument study.period must be a single numeric value.\n")
   
   ## for fit parameters ---
+  
+  ### checks for est.approach
+  if (any(duplicated(est.approach))) {
+    warning("Duplicate entries removed from est.approach.\n")
+    est.approach <- unique(est.approach)
+  }
+  allowed_apprs <- c("b", "f")
+  if (any(is.na(match(est.approach, allowed_apprs))))
+    stop(paste0("Argument est.approach must be out of: ",
+                paste(allowed_apprs, collapse = ", "),
+                ".\n"))
   
   ### checks for tte.dist
   if (any(duplicated(tte.dist))) {
@@ -329,6 +343,7 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                     adr.when = c(0, 0.25, 0.5, 0.75), # fixed (reduce complexity)
                     adr.relsd = adr.relsd, 
                     study.period = study.period,
+                    est.approach = est.approach,
                     tte.dist = tte.dist, 
                     prior.belief = c("none", "beginning", "middle", "end"), # fixed (matching adr.when)
                     prior.dist = prior.dist, 

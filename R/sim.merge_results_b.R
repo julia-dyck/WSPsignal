@@ -4,9 +4,6 @@
 #' \code{\link{sim.run}}.
 #'
 #' @param pc_list list of parameter combinations obtained from \link{sim.setup_simpars}
-#' @param save if \code{TRUE} (default), merged table is saved
-#' as res_b.RData in same path where batches are stored; 
-#' else, it is returned to global environment
 #' 
 #' @return Dataframe containing all simulation results (one repetition of one 
 #' simulation scenario per row). The 
@@ -21,7 +18,7 @@
 #'
 #' @noRd
 
-sim.merge_results_b = function(pc_list, save = T){
+sim.merge_results_b = function(pc_list){
   
   # setup empty dfs
   merged.res.w =  data.frame()
@@ -95,15 +92,7 @@ sim.merge_results_b = function(pc_list, save = T){
   
   # merge output for all tte.dists
   res_b = dplyr::bind_rows(merged.res.w, merged.res.dw, merged.res.pgw)
-  if(save == T){
-    # save result
-    path = pc_list$add$resultpath
-    filename = "res_b.RData"
-    save(res_b, file=paste0(path, "/", filename))
-  }
-  else{
-    return(res_b)
-  }
+  return(res_b)
 }
 
 ## END OF DOC

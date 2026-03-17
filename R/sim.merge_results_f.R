@@ -4,8 +4,6 @@
 #' \code{\link{sim.run}}.
 #'
 #' @param pc_list list of parameter combinations obtained from \link{sim.setup_simpars}
-#' @param save if \code{TRUE} (default), merged table is saved as res_f.RData in same path where batches are stored; 
-#' else, it is returned to global environment
 #' 
 #' @return Dataframe containing all simulation results (one repetition of one 
 #' simulation scenario per row). The 
@@ -20,7 +18,7 @@
 #'       
 #' @noRd
 
-sim.merge_results_f = function(pc_list, save = T){
+sim.merge_results_f = function(pc_list){
   
   pc_table = pc_list$pc_table
   pc_table_ext = dplyr::cross_join(pc_table, data.frame(batch_nr = 1:pc_list$add$batch.nr))
@@ -37,22 +35,14 @@ sim.merge_results_f = function(pc_list, save = T){
     tryCatch({
       batch = sim.load.scenario(pc = pc_vect, wd = pc_list$add$resultpath, batchnr = ind.batch, bayes = F)
       res_f = rbind(res_f, batch)
-      message("File exists.")
     },
     error = function(cond) {
-      message("File does not exist.")
+      # if not, return a warning 
+      warning(paste0(paste(c(pc_vect, "fADR_sim", ind.batch, ".RData") ,collapse="_"), " not found."))
     })
   }
   
-  if(save == T){
-    # save result
-    path = pc_list$add$resultpath
-    filename = "res_f.RData"
-    save(res_f, file=paste0(path, "/", filename))
-  }
-  if(save == F){
-    return(res_f)
-  }
+  return(res_f)
 }
 
 ## END OF DOC
