@@ -209,33 +209,43 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                 paste(allowed_dists, collapse = ", "),
                 ".\n"))
   
-  ### checks for prior.dist
-  if (any(duplicated(prior.dist))) {
-    warning("Duplicate entries removed from prior.dist.\n")
-    prior.dist <- unique(prior.dist)
+  # special case: only frequentist -> overwrite prior info input args 
+  if (identical(est.approach, "f")) {
+    prior.dist <- NA_character_
+    fitpars.list <- list(w = data.frame(), dw = data.frame(), pgw = data.frame())
+    warning("Arguments prior.dist and fitpars.list are ignored. Reason: only frequentist estimation approach considered in simulation study. \n")
   }
-  allowed_priors <- c("fg","fl","gg","ll")
-  if (any(is.na(match(prior.dist, allowed_priors))))
-    stop(paste0("Argument prior.dist must be out of: ", paste(allowed_priors, collapse = ", "),".\n"))
   
-  ### checks regarding fitpars.list
-  if(!setequal(names(fitpars.list), c("w", "dw", "pgw")))
-    stop("Argument fitpars.list must be a list with elements $w, $dw and $pgw.\nSetup a fitpars.list template with sim.priors_template.\n")
-  # check whether tte.dist matches tte.dist defined fitpars.list
-  tte.dist.in.fitpars.list <- names(Filter(function(x) is.data.frame(x) && nrow(x) > 0, fitpars.list))
-  # Check matching distributions
-  if (!setequal(tte.dist, tte.dist.in.fitpars.list))
-    stop("Argument tte.dist must match non-empty fitpars.list data.frames.\nSetup a fitpars.list template with sim.priors_template.\n")
-  # Validate each dataframe
-  for (dist in tte.dist) {
-    df <- fitpars.list[[dist]]
-    # numeric check except first col
-    if (!all(sapply(df[-1], is.numeric))) 
-      stop(paste0("All parameter columns in fitpars.list$", dist," must be numeric (no characters or factors).\nSetup a fitpars.list template with sim.priors_template.\n"))
-    # no remaining NA
-    if (any(is.na(df[-1]))) 
-      stop(paste0("All priors in fitpars.list$", dist, " must be filled - no NA allowed.\nSetup a fitpars.list template with sim.priors_template.\n"))
+  if (!identical(est.approach, "f")) { #iif "b" considered, check for prior.dist and fitpars.list input
+    ### checks for prior.dist
+    if (any(duplicated(prior.dist))) {
+      warning("Duplicate entries removed from prior.dist.\n")
+      prior.dist <- unique(prior.dist)
+    }
+    allowed_priors <- c("fg","fl","gg","ll")
+    if (any(is.na(match(prior.dist, allowed_priors))))
+      stop(paste0("Argument prior.dist must be out of: ", paste(allowed_priors, collapse = ", "),".\n"))
+    
+    ### checks regarding fitpars.list
+    if(!setequal(names(fitpars.list), c("w", "dw", "pgw")))
+      stop("Argument fitpars.list must be a list with elements $w, $dw and $pgw.\nSetup a fitpars.list template with sim.priors_template.\n")
+    # check whether tte.dist matches tte.dist defined fitpars.list
+    tte.dist.in.fitpars.list <- names(Filter(function(x) is.data.frame(x) && nrow(x) > 0, fitpars.list))
+    # Check matching distributions
+    if (!setequal(tte.dist, tte.dist.in.fitpars.list))
+      stop("Argument tte.dist must match non-empty fitpars.list data.frames.\nSetup a fitpars.list template with sim.priors_template.\n")
+    # Validate each dataframe
+    for (dist in tte.dist) {
+      df <- fitpars.list[[dist]]
+      # numeric check except first col
+      if (!all(sapply(df[-1], is.numeric))) 
+        stop(paste0("All parameter columns in fitpars.list$", dist," must be numeric (no characters or factors).\nSetup a fitpars.list template with sim.priors_template.\n"))
+      # no remaining NA
+      if (any(is.na(df[-1]))) 
+        stop(paste0("All priors in fitpars.list$", dist, " must be filled - no NA allowed.\nSetup a fitpars.list template with sim.priors_template.\n"))
+    }
   }
+  
   
   ## for test parameters ---
   
@@ -319,11 +329,6 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                                 adr.relsd = adr.relsd,
                                 study.period = study.period)
   
-  fit_pars = sim.setup_fit_pars(tte.dist = tte.dist,
-                                prior.belief = c("none", "beginning", "middle", "end"), # fixed (to reduce complexity; matching adr.when)
-                                prior.dist = prior.dist,
-                                fit_pars_list = fitpars.list)
-  
   test_pars = sim.setup_test_pars(post.ci.type = post.ci.type,
                                   cred.level = cred.level,
                                   sensitivity.option = sensitivity.option)
@@ -358,30 +363,54 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                     stanmod.warmup = stanmod.warmup
   )
   
-  cat(paste0("Each combination of sample scenario and prior specification leads to a total of ",
-             nrow(dgp_pars) * sum(nrow(fit_pars$w), nrow(fit_pars$dw), nrow(fit_pars$pgw)),
-             " different simulation settings. ",
-             "Each simulation scenario's data generation and posterior estimation will be repeated ", 
-             reps,
-             " times. "))
+  if (!identical(est.approach, "f")) {
+    fit_pars = sim.setup_fit_pars(
+      tte.dist = tte.dist,
+      prior.belief = c("none", "beginning", "middle", "end"),
+      prior.dist = prior.dist,
+      fit_pars_list = fitpars.list
+    )
+    
+    pc_table = list()
+    if(nrow(fit_pars$w) > 0){
+      pc_table$w = dplyr::cross_join(dgp_pars, fit_pars$w[c("tte.dist","prior.dist","prior.belief")])
+    } else pc_table$w = NULL
+    
+    if(nrow(fit_pars$dw) > 0){
+      pc_table$dw = dplyr::cross_join(dgp_pars, fit_pars$dw[c("tte.dist","prior.dist","prior.belief")])
+    } else pc_table$dw = NULL
+    
+    if(nrow(fit_pars$pgw) > 0){
+      pc_table$pgw = dplyr::cross_join(dgp_pars, fit_pars$pgw[c("tte.dist","prior.dist","prior.belief")])
+    } else pc_table$pgw = NULL
+    
+  } else {
+    fit_pars = list(w = data.frame(), dw = data.frame(), pgw = data.frame())
+    
+    pc_table = dplyr::cross_join(
+      dgp_pars,
+      data.frame(
+        tte.dist = tte.dist,
+        prior.dist = NA_character_,
+        prior.belief = NA_character_
+      )
+    )
+  }
   
-  pc_table = list()  # parameters in table format s.t. one row = one simulation scenario
-  if(nrow(fit_pars$w) > 0){
-    pc_table$w = dplyr::cross_join(dgp_pars, fit_pars$w[c("tte.dist", "prior.dist", "prior.belief")])
-  }
-  else{pc_table$w = NULL}
-  if(nrow(fit_pars$dw) > 0){
-    pc_table$dw = dplyr::cross_join(dgp_pars, fit_pars$dw[c("tte.dist", "prior.dist", "prior.belief")])
-  }
-  else{pc_table$dw = NULL}
-  if(nrow(fit_pars$pgw) > 0){
-    pc_table$pgw = dplyr::cross_join(dgp_pars, fit_pars$pgw[c("tte.dist", "prior.dist", "prior.belief")])
-  }
-  else{pc_table$pgw = NULL}
   pc_table = dplyr::bind_rows(pc_table)
   
   
   sim_pars = list(dgp = dgp_pars, fit = fit_pars, test = test_pars, add = add_pars, input = input_args, pc_table = pc_table)
+  
+  
+  cat(paste0("Each combination of sample scenario (and prior specification) leads to a total of ",
+             nrow(pc_table),
+             " different simulation settings. ",
+             "Each simulation scenario's data generation and posterior estimation will be repeated ", 
+             reps,
+             " times. ")) 
+  
+  
   
   return(sim_pars)
 }
