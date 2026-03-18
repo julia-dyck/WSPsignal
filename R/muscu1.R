@@ -20,4 +20,4 @@
 #' @seealso \code{\link{sim.datagen_tte}}
 #' @references \insertAllCited{}
 #'
-"muscu"
+"muscu1"
