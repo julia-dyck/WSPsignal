@@ -405,10 +405,11 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
   
   cat(paste0("Each combination of sample scenario (and prior specification) leads to a total of ",
              nrow(pc_table),
-             " different simulation settings. ",
-             "Each simulation scenario's data generation and posterior estimation will be repeated ", 
-             reps,
-             " times. ")) 
+             " different simulation settings. "#,
+             #"Each simulation scenario's data generation and posterior estimation will be repeated ", 
+             #reps,
+             #" times. "
+             )) 
   
   
   
