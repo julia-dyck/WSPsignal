@@ -204,7 +204,11 @@ eval.rank_auc = function(perf,
                effect.of.adr.relsd = rlist_f$effect.of.adr.relsd,
                effect.of.dist.prior.to.truth = NULL)
   }
-  
+  out$rank.tab = out$rank.tab %>%
+    dplyr::mutate(
+      dplyr::across(c(AUC, FPR, TPR, FNR, TNR), ~ round(.x, 3))
+    )
+  print(out$rank.tab)
   return(out)
 }
 
