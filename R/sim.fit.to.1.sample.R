@@ -36,15 +36,26 @@ sim.fit.to.1.sample = function(pc, pc_list){
   if("b" %in% est.approach){
     # tte and prior data preparation
     datstan = sim.fit.prep(ttedat = ttedat, pc = pc, pc_list = pc_list)
-    mod = bwsp_model(datstan = datstan,
-                     chains = pc_list$add$stanmod.chains,
-                     iter = pc_list$add$stanmod.iter,
-                     warmup = pc_list$add$stanmod.warmup)
     
-    btestres = bwsp_test(mod, 
-                         cred.level = pc_list$input$cred.level, 
-                         ci.type = pc_list$input$post.ci.type, 
-                         sensitivity.option = pc_list$input$sensitivity.option)
+    mod = tryCatch(
+      bwsp_model(datstan = datstan,
+                 chains = pc_list$add$stanmod.chains,
+                 iter = pc_list$add$stanmod.iter,
+                 warmup = pc_list$add$stanmod.warmup),
+      error = function(e) {
+        return(NULL)
+      }
+    )
+      
+    btestres = tryCatch(
+      bwsp_test(mod, 
+                cred.level = pc_list$input$cred.level, 
+                ci.type = pc_list$input$post.ci.type, 
+                sensitivity.option = pc_list$input$sensitivity.option),
+      error = function(e) {
+        return(NULL)
+      }
+    )
     
     ### extracting Bayesian posterior statistics
     bstats = tryCatch(
