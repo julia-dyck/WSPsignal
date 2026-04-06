@@ -132,9 +132,9 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                               tte.dist,          # |
                               prior.dist,        # |
                               fitpars.list,      # |
-                              post.ci.type,      # |
+                              post.ci.type = c("ETI", "HDI"),     
                               cred.level,        # v
-                              sensitivity.option,# -
+                              sensitivity.option = 1:3,
                               
                               reps = 100,        # additional parameters
                               batch.size = 10,
@@ -213,10 +213,11 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
   if (identical(est.approach, "f")) {
     prior.dist <- NA_character_
     fitpars.list <- list(w = data.frame(), dw = data.frame(), pgw = data.frame())
-    warning("Arguments prior.dist and fitpars.list are ignored. Reason: only frequentist estimation approach considered in simulation study. \n")
+    post.ci.type = "ETI"
+    warning("Arguments prior.dist, fitpars.list, post.ci.type and sensitivity.option are ignored. Reason: only frequentist estimation approach considered in simulation study. \n")
   }
   
-  if (!identical(est.approach, "f")) { #iif "b" considered, check for prior.dist and fitpars.list input
+  if (!identical(est.approach, "f")) { #if "b" considered, check for prior.dist and fitpars.list input
     ### checks for prior.dist
     if (any(duplicated(prior.dist))) {
       warning("Duplicate entries removed from prior.dist.\n")
