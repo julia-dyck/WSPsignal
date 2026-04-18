@@ -3,7 +3,8 @@ Title: Weibull Shape Parameter Tests For Signal Detection
 Version: 1.0.0
 Authors@R: 
     c(
-    person("Julia", "Dyck", , "j.dyck@uni-bielefeld.de", role = c("aut", "cre")),
+    person("Julia", "Dyck", , "j.dyck@uni-bielefeld.de", role = "cre"),
+    person("Julia", "Dyck", role = "aut"),
     person("Odile", "Sauzet", role = "aut")
     )
 Description: This is an R package to perform Bayesian or frequentist Weibull Shape Parameter (WSP) tests developed for signal detection in pharmacovigilance to flag associations between drugs and adverse events based on time-to-event data. The WSP test is based on the assumption of constant hazard reflected by a Weibull type distribution with shape parameters equal to one. Based on the shape parameter estimates (posterior distribution or point estimate), the WSP test method performs a hypothesis test on each shape parameter and combines them to a decision on the presence of a signal.
