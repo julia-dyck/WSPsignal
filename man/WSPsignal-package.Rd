@@ -6,10 +6,16 @@
 \alias{WSPsignal}
 \title{The 'WSPsignal' package.}
 \description{
-An R package to perform Bayesian Weibull Shape Parameter (BWSP)
+An R package to perform Bayesian and frequentist Weibull Shape Parameter (WSP)
 tests for signal detection.
 }
 \references{
+\insertRef{sauzet2022}{WSPsignal}
+
+\insertRef{sauzet2024}{WSPsignal}
+
+\insertRef{dyck2024bpgwsppreprint}{WSPsignal}
+
 Stan Development Team (NA). RStan: the R interface to Stan.
 R package version 2.32.6. https://mc-stan.org
 }
@@ -18,6 +24,7 @@ R package version 2.32.6. https://mc-stan.org
 
 Authors:
 \itemize{
+  \item Julia Dyck
   \item Odile Sauzet
 }
 
