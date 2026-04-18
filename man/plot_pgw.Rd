@@ -2,9 +2,9 @@
 % Please edit documentation in R/plot_pgw.R
 \name{plot_pgw}
 \alias{plot_pgw}
-\title{Visualize the power generalized Weibull distribution}
+\title{Plot functions of the power generalized Weibull distribution}
 \usage{
-plot_pgw(scale = 1, shape = 1, powershape = 1, ...)
+plot_pgw(scale = 1, shape = 1, powershape = 1)
 }
 \arguments{
 \item{scale}{scale parameter}
@@ -12,14 +12,19 @@ plot_pgw(scale = 1, shape = 1, powershape = 1, ...)
 \item{shape}{shape parameter}
 
 \item{powershape}{power shape parameter}
-
-\item{...}{optional plot arguments (with exceptions, eg. \code{type, lwd, main})}
 }
 \value{
-A plot of the PDF, CDF, hazard and survival function
+Produces a four-panel plot showing the density, cumulative distribution,
+survival, and hazard functions of the PGW distribution.
 }
 \description{
-Visualize the power generalized Weibull distribution
+Generates plots of the density, cumulative distribution, survival,
+and hazard functions of the power generalized Weibull (PGW) distribution
+for specified parameter values.
+
+The function can be used to explore the effect of the scale, shape,
+and power shape parameters on the distributional form and to support
+parameter selection for example when specifying prior means for Bayesian modeling.
 }
 \examples{
 plot_pgw(scale = 2, shape = 5, powershape = 10)

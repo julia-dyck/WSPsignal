@@ -1,12 +1,22 @@
-#' Visualize the power generalized Weibull distribution
+#' Plot functions of the power generalized Weibull distribution
 #'
+#' @description
+#' Generates plots of the density, cumulative distribution, survival,
+#' and hazard functions of the power generalized Weibull (PGW) distribution
+#' for specified parameter values.
+#'
+#' The function can be used to explore the effect of the scale, shape,
+#' and power shape parameters on the distributional form and to support
+#' parameter selection for example when specifying prior means for Bayesian modeling.
 #'
 #' @param scale scale parameter
 #' @param shape shape parameter
 #' @param powershape power shape parameter
-#' @param ... optional plot arguments (with exceptions, eg. \code{type, lwd, main})
 #'
-#' @return A plot of the PDF, CDF, hazard and survival function
+#'
+#' @return
+#' Produces a four-panel plot showing the density, cumulative distribution,
+#' survival, and hazard functions of the PGW distribution.
 #' 
 #' @examples
 #' plot_pgw(scale = 2, shape = 5, powershape = 10)
@@ -19,7 +29,7 @@
 #' 
 #' @export
 
-plot_pgw = function(scale = 1, shape = 1, powershape = 1,...){
+plot_pgw = function(scale = 1, shape = 1, powershape = 1){
 
   sim = rpgw(1000, scale, shape, powershape)
   m = mean(sim)
