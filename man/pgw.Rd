@@ -38,29 +38,40 @@ rpgw(n, scale = 1, shape = 1, powershape = 1)
 \item{n}{number of observations}
 }
 \value{
-A vector of cumulative probability values evaluated at each of the inserted quantiles.
+A numeric vector of
+
+\itemize{
+\item \code{spgw}: survival probabilities \eqn{S(x)} (or log-survival if \code{log = TRUE})
+\item \code{hpgw}: hazard values \eqn{h(x)} (or log-hazard if \code{log = TRUE})
+\item \code{ppgw}: cumulative distribution values \eqn{F(x)}
+\item \code{dpgw}: density values \eqn{f(x)} (or log-density if \code{log = TRUE})
+\item \code{qpgw}: quantiles corresponding to probabilities \code{p}
+\item \code{rpgw}: random samples
+}
 }
 \description{
 Survival, hazard, cumulative distribution,
 density, quantile and sampling function for the power generalized
-Weibull (PgW) distribution with parameters \code{scale}, \code{shape} and \code{powershape}.
+Weibull (PGW) distribution with parameters \code{scale}, \code{shape} and \code{powershape}.
 }
 \details{
-The survival function of the PgW distribution is:
+The survival function of the PGW distribution is
 \deqn{
     S(x) = \exp \left\{ 1 - \left[ 1 + \left(\frac{x}{\theta}\right)^{\nu}\right]^{\frac{1}{\gamma}} \right\}.
 }
+with scale \eqn{\theta}, shape \eqn{\nu} and power shape parameter \eqn{\gamma}.
+
 The hazard function is
 \deqn{
     h(x) = \frac{\nu}{\gamma\theta^{\nu}}\cdot x^{\nu-1}\cdot  \left[ 1 + \left(\frac{x}{\theta}\right)^{\nu}\right]^{\frac{1}{\gamma-1}}
 }
 The cumulative distribution function is then \eqn{F(x) = 1 - S(x)} and the density function
-is \eqn{S(x)\cdot h(x)}. The quantile function is the inverse of the cumulative
+is \eqn{f(x) = S(x)\cdot h(x)}. The quantile function is the inverse of the cumulative
 distribution function \eqn{F^{-1}(x)}.
 
-If both shape parameters equal 1, the PgW distribution reduces to the exponential distribution
+If both shape parameters equal 1, the PGW distribution reduces to the exponential distribution
 (see \code{\link[stats]{dexp}}) with \eqn{\texttt{rate} = 1/\texttt{scale}}
-If the power shape parameter equals 1, the PgW distribution simplifies to the Weibull distribution
+If the power shape parameter equals 1, the PGW distribution reduces to the Weibull distribution
 (see \code{\link[stats]{dweibull}}) with the same parametrization.
 
 If parameter values are not specified, they are set as
