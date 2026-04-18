@@ -4,7 +4,7 @@
 #' 
 #' @format  A data frame with 100 rows and 2 variables:
 #' \describe{
-#'   \item{time}{event-time if an event was observed, or censoring time if no event was observed,}
+#'   \item{time}{event time if an event was observed, or censoring time if no event was observed,}
 #'   \item{status}{event status; 1 if an event was observed, 0 if no event was observed.}
 #'}
 #' 

@@ -7,16 +7,16 @@
 \format{
 A data frame with 19 777 rows and 2 variables:
 \describe{
-\item{time}{event time (in days) or censoring time (365 days),}
-\item{status}{event indicator; 1 = event observed, 0 = censored.}
+\item{time}{event time (in days) if an event was observed or censoring time (365 days) if no event was observed,}
+\item{status}{event status; 1 if an event was observed, 0 if no event was observed.}
 }
 }
 \usage{
 muscu
 }
 \description{
-A simulated time-to-event (tte) dataset representing musculoskeletal pain
-following bisphosphonate intake.
+A simulated time-to-event (tte) dataset on time to musculoskeletal pain
+from first bisphosphonate intake.
 }
 \details{
 The data was generated using
