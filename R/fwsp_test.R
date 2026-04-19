@@ -6,15 +6,14 @@
 #
 #' 
 #' @param mod.output model output resulting from \code{\link{fwsp_model}}
-#' @param cred.level numeric or vector of credibility levels (i.e. 1 - significance level) 
+#' @param cred.level numeric or vector of confidence levels (i.e. 1 - significance level) 
 #' for the test(s) to be performed 
 #' 
-#' @return binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected; 
-#' see details for definition of \eqn{H_0} and \eqn{H_1}
+#' @return binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected
 #' 
 #' @details This function tests the null hypothesis that the shape parameter(s) of the
 #' Weibull family distribution are equal to one.
-#' The distribution specific definitions of the null and alternative hypotheses 
+#' The distribution specific definition of the null and alternative hypotheses 
 #' can be seen in \insertCite{sauzet2022;textual}{WSPsignal}.
 #' 
 #' For the \code{"w"} and \code{"dw"} case, the model output is a summary of a 
@@ -31,7 +30,7 @@
 #' shape estimates and their estimated standard errors extracted from the estimated
 #' Hessian matrix.
 #' Issues with standard error calculation from the estimated Hessian matrix
-#' may lead to \code{NA} test result which are then transformed to no signal (0) 
+#' may lead to a \code{NA} test results which are then transformed to no signal (0) 
 #' following \insertCite{sauzet2022;textual}{WSPsignal}.
 #'
 #' @references 
@@ -49,7 +48,7 @@
 #' 
 
 
-fwsp_test = function(mod.output, cred.level = 0.996){
+fwsp_test = function(mod.output, cred.level = 0.96){
   
   # argument check mod.output
   

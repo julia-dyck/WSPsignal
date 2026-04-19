@@ -4,17 +4,16 @@
 \alias{fwsp_test}
 \title{Frequentist Shape Parameter Test}
 \usage{
-fwsp_test(mod.output, cred.level = 0.996)
+fwsp_test(mod.output, cred.level = 0.96)
 }
 \arguments{
 \item{mod.output}{model output resulting from \code{\link{fwsp_model}}}
 
-\item{cred.level}{numeric or vector of credibility levels (i.e. 1 - significance level)
+\item{cred.level}{numeric or vector of confidence levels (i.e. 1 - significance level)
 for the test(s) to be performed}
 }
 \value{
-binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected;
-see details for definition of \eqn{H_0} and \eqn{H_1}
+binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected
 }
 \description{
 Frequentist hypothesis test based on the shape parameter(s) of a distribution of the
@@ -23,7 +22,7 @@ Weibull family.
 \details{
 This function tests the null hypothesis that the shape parameter(s) of the
 Weibull family distribution are equal to one.
-The distribution specific definitions of the null and alternative hypotheses
+The distribution specific definition of the null and alternative hypotheses
 can be seen in \insertCite{sauzet2022;textual}{WSPsignal}.
 
 For the \code{"w"} and \code{"dw"} case, the model output is a summary of a
@@ -40,7 +39,7 @@ of the power generalized Weibull distribution are equal to zero based on the
 shape estimates and their estimated standard errors extracted from the estimated
 Hessian matrix.
 Issues with standard error calculation from the estimated Hessian matrix
-may lead to \code{NA} test result which are then transformed to no signal (0)
+may lead to a \code{NA} test results which are then transformed to no signal (0)
 following \insertCite{sauzet2022;textual}{WSPsignal}.
 }
 \examples{
