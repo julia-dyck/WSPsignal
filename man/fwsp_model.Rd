@@ -11,16 +11,17 @@ fwsp_model(dat, tte.dist = c("dw"))
 event information (binary status) in second column}
 
 \item{tte.dist}{character specifying the distribution for the
-model; options are \code{"w", "dw", "pgw"} (see details)}
+model out of \code{"w", "dw", "pgw"} (see details)}
 }
 \value{
-Output of the fitted model. For \code{"w"}, a \code{summary.survreg} object;
-for \code{"dw"}, a list of two \code{summary.survreg} objects
-with \code{$uncens} containing the ML estimate
-obtained from the model to the tte data as is, and \code{$cens} containing the
-ML estimate obtained from the model fitted to the tte data censored at mid of observation period;
-for \code{pgw}, a list containing the maximum likelihood estimate
-(log of all parameters) obtained from \code{\link[stats]{nlm}}.
+A list with components depending on \code{tte.dist}:
+\itemize{
+\item \code{fit}: fitted model object
+(\code{summary.survreg} for \code{"w"}, a list of two \code{summary.survreg} objects for \code{"dw"},
+and an \code{nlm} output list for \code{"pgw"})
+\item \code{estimates}: data frame of parameter estimates in standard parametrization (scale, shape, powershape)
+\item \code{tte.dist}: character indicating the fitted tte distribution
+}
 }
 \description{
 Fits a frequentist model to time-to-event (tte) data via maximum
@@ -34,13 +35,15 @@ or a power generalized Weibull \code{("pgw")} model.
 
 The likelihood used in ML estimation is
 \deqn{\mathcal{L}(t) = \prod_{i=1}^N S(t_i)^{1-d_i}\cdot f(t_i)^{d_i}}
-with \eqn{S(t)} the survival function of the chosen distribution and \eqn{f(t)} the
-density function \insertCite{nikulin2016}{WSPsignal}. The pair \eqn{(t_i, d_i)}
-are the tte observations.
+with \eqn{S(t)}  being the survival function of the chosen distribution, \eqn{f(t)} the
+density \insertCite{nikulin2016}{WSPsignal}, and \eqn{(t_i, d_i)}
+the (right-censored) tte observations.
 
-Since the \code{survreg} function from the \code{survival} package uses a different parametrization,
-the parameters transformed to the parametrization used in \code{\link[stats]{rweibull}}
-and \code{\link{rpgw}} are printed after function call.
+For the estimation of the Weibull models\code{("w", "dw")}, the \code{\link[survival]{survreg}}
+function (with no covariates) is used.
+
+The \code{"pgw"} model is estimated by numerically minimizing the corresponding
+negative log-likelihood function with \code{\link[stats]{nlm}}.
 }
 \examples{
 head(tte)
