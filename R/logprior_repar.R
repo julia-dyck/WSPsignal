@@ -39,7 +39,6 @@
 #' @references 
 #' \insertAllCited{}
 #' 
-#' @seealso [gamprior_repar]
 #' @examples
 #' # obtain location and scale for lognormal distribution with mean = 1 and sd = 10
 #' m = 1; s = 10
@@ -57,7 +56,7 @@
 #' rope = qlnorm(p = c(0.1,0.9), meanlog = logpars[1], sdlog = logpars[2])
 #' rope
 #' 
-#'@export
+#'@noRd
 
 logprior_repar = function(mean, sd){
   if(mean <= 0 | sd <= 0) stop("mean and sd must be positive.")

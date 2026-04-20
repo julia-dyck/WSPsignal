@@ -19,20 +19,18 @@
 #' \deqn{E(X) = \frac{\alpha}{\beta}}
 #' \deqn{sd(X) = \frac{\alpha}{\beta^2}}
 #' 
-#' For \eqn{E(X), \;sd(X)>0} rearranging above equations to
+#' For \eqn{E(X), \;sd(X)>0} we can rearrange above equations to derive the shape and rate parameters:
 #' 
 #' \deqn{\alpha = \frac{\mu^2}{\sigma^2}}
 #' 
-#' \deqn{\beta = \frac{\mu}{\sigma^2}}
+#' \deqn{\beta = \frac{\mu}{\sigma^2}.}
 #' 
-#' is possible such that the shape parameter \eqn{\alpha} 
-#' and rate parameter \eqn{\beta} of the gamma distribution are 
-#' obtained.
 #' 
-#' The application purpose is to reparametrize gamma prior
+#' This function can be used to reparametrize the gamma prior
 #' mean and sd to the parameters used in \code{\link[stats]{qgamma}}, for instance to 
 #' calculate a ROPE \insertCite{kruschke2018}{WSPsignal} based on the prior belief representing the 
-#' null hypothesis in BWSP testing \insertCite{dyck2024bpgwsppreprint}{WSPsignal}.
+#' null hypothesis in BWSP testing \insertCite{dyck2024bpgwsppreprint}{WSPsignal} or visualize the
+#' prior distribution.
 #' 
 #' @examples
 #' # obtain shape and rate for gamma distribution with mean = 1 and sd = 10
@@ -41,7 +39,7 @@
 #' shape = gampars[1] # shape parameter
 #' rate = gampars[2] # rate parameter
 #' 
-#' # test: sample from the gamma distribution with the obtained parameters
+#' # test: sample from the gamma distribution with the derived parameters
 #' gamma_sample = rgamma(10000000, shape = shape, rate = rate)
 #' m_emp = mean(gamma_sample); m_emp # estimated mean
 #' s_emp = sd(gamma_sample); s_emp # estimated sd
@@ -54,8 +52,7 @@
 #' @references 
 #' \insertAllCited{}
 #'
-#' @seealso [logprior_repar]
-#' @export
+#' @noRd
 
 gamprior_repar = function(mean, sd){
   if(mean <= 0 | sd <= 0) stop("mean and sd must be positive.")

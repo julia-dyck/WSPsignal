@@ -30,6 +30,7 @@
 #'   \item \code{"pgw"}: shape and powershape
 #' }
 #'
+#' @noRd
 
 
 setup_rope = function(tte.dist = "dw", 
