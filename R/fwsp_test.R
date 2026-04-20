@@ -1,8 +1,7 @@
-#' Frequentist Shape Parameter Test
+#' Frequentist Weibull Shape Parameter Test
 #' 
-#' Frequentist hypothesis test based on the shape parameter(s) of a distribution of the 
-#' Weibull family.
-#' 
+#' Frequentist Weibull Shape Parameter (FWSP) test of the constant hazard (null-)hypothesis,
+#' based on the shape parameter(s) of Weibull family of distributions.
 #
 #' 
 #' @param mod.output model output resulting from \code{\link{fwsp_model}}

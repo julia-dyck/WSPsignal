@@ -2,7 +2,7 @@
 % Please edit documentation in R/fwsp_test.R
 \name{fwsp_test}
 \alias{fwsp_test}
-\title{Frequentist Shape Parameter Test}
+\title{Frequentist Weibull Shape Parameter Test}
 \usage{
 fwsp_test(mod.output, cred.level = 0.96)
 }
@@ -16,8 +16,8 @@ for the test(s) to be performed}
 binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected
 }
 \description{
-Frequentist hypothesis test based on the shape parameter(s) of a distribution of the
-Weibull family.
+Frequentist Weibull Shape Parameter (FWSP) test of the constant hazard (null-)hypothesis,
+based on the shape parameter(s) of Weibull family of distributions.
 }
 \details{
 This function tests the null hypothesis that the shape parameter(s) of the
