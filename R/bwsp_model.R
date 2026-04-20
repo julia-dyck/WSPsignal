@@ -5,37 +5,35 @@
 #' with \code{\link{bwsp_test}}.
 #' 
 #'
-#' @param datstan named list of data for the stanmodel; tte data can be 
-#' formated with \code{\link{tte2priordat}}
-#' @param tte.dist character indicating the modelling approach; options are
-#' \code{"w", "dw", "pgw"} (see details)
-#' @param prior.dist character indicating the prior distribution for the
-#' parameters of the tte distribution; options are 
-#' \code{"fg", "fl", "gg", "ll"} (see details)
+#' @param datstan named list of data for the stanmodel; output of \code{\link{tte2priordat}}
 #' @param chains number of Markov chains to run
 #' @param iter total number of iterations per chain (including warmup)
 #' @param warmup number of warmup iterations per chain
 #' 
 #' 
-#' @return A stanfit object or, in case of \code{tte.dist = "dw"}, a list of two stanfit objects
-#' with \code{$uncens} containing the stanfit object
-#' obtained from the model to the tte data as is, and \code{$cens} containing the stanfit object
-#' obtained from the model to the tte data censored at mid of observation period.
+#' @return
+#' A list with components:
+#' \itemize{
+#'   \item \code{fit}: fitted model object; a \code{stanfit} object for \code{"w"} and \code{"pgw"},
+#'   or a list of two \code{stanfit} objects (\code{$uncens}, \code{$cens}) for \code{"dw"}
+#'   \item \code{args_list}: list of model specifications, including the chosen
+#'   time-to-event distribution and prior settings
+#' }
 #' 
 #' 
 #' @details 
 #' The function applies the \code{\link[rstan]{sampling}} command with the No U-Turn sampler
-#' to fit a Bayesian model to 
-#' time-to-event data.
+#' to fit a Bayesian model to tte data.
 #' 
-#' The posterior is proportional to the likelihood times the prior. The likelihood is
-#' \deqn{\mathcal{L}(t| \Theta) = \prod_{i=1}^N S(t_i)^{1-d_i}\cdot f(t_i)^{d_i}} 
-#' with \eqn{S(t)} the survival function of the chosen distribution and \eqn{f(t)} the
-#' density function \insertCite{nikulin2016}{WSPsignal}. The pair \eqn{(t_i, d_i)} 
-#' are the tte observations.
+#' The posterior is proportional to the likelihood times the prior. 
+#' The likelihood used in ML estimation is 
+#' \deqn{\mathcal{L}(t) = \prod_{i=1}^N S(t_i)^{1-d_i}\cdot f(t_i)^{d_i}} 
+#' with \eqn{S(t)}  being the survival function of the chosen distribution, \eqn{f(t)} the
+#' density \insertCite{nikulin2016}{WSPsignal}, and \eqn{(t_i, d_i)} 
+#' the (right-censored) tte observations.
 #' 
-#' Prior and tte distribution are specified in data preparation with function 
-#' \code{\link{tte2priordat}}.
+#' Prior and tte distribution are specified in the previous data preparation step
+#' with function \code{\link{tte2priordat}}.
 #' 
 #' 
 #' @references 
@@ -58,11 +56,11 @@
 #'                       shape.sd = 10)
 #' 
 #' # model fitting
-#' fit = bwsp_model(datstan = dat_list,      # fit the model       
+#' mod = bwsp_model(datstan = dat_list,      # fit the model       
 #'                  chains = 4,              
 #'                  iter = 110,             # (posterior sample is
 #'                  warmup = 10)            # small for demo purpose)
-#' fit
+#' mod
 #' 
 #'
 #' @export
