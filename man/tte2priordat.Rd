@@ -92,8 +92,10 @@ lognormal \tab lognormal \tab ll \cr
 
 Prior means suitable to reflect the prior belief can be worked out by plotting the
 hazard and estimating the expected event time under different parameter combinations
-using \code{\link{plot_pgw}}(\code{powershape = 1} reduces the power
+using \code{\link{plot_pgw}} (setting argument \code{powershape = 1} reduces the power
 generalized Weibull distribution to Weibull) or \url{https://janoleko.shinyapps.io/pgwd/}.
+The default values for prior means correspond to the prior belief of
+constant hazard.
 
 Prior standard deviations should reflect the uncertainty about the prior belief
 (i.e. set smaller standard deviation in case of high certainty about prior belief vs. larger
