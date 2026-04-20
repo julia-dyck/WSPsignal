@@ -8,7 +8,7 @@
 #' @param cred.level numeric or vector of confidence levels (i.e. 1 - significance level) 
 #' for the test(s) to be performed 
 #' 
-#' @return binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected
+#' @return binary vector, 0 if \eqn{H_0} is accepted (no signal), 1 if \eqn{H_0} is rejected (signal)
 #' 
 #' @details This function tests the null hypothesis that the shape parameter(s) of the
 #' Weibull family distribution are equal to one.

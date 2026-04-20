@@ -13,7 +13,7 @@ fwsp_test(mod.output, cred.level = 0.96)
 for the test(s) to be performed}
 }
 \value{
-binary vector, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected
+binary vector, 0 if \eqn{H_0} is accepted (no signal), 1 if \eqn{H_0} is rejected (signal)
 }
 \description{
 Frequentist Weibull Shape Parameter (FWSP) test of the constant hazard (null-)hypothesis,
