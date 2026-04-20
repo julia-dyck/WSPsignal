@@ -1,6 +1,6 @@
 #' Extract credibility interval from Bayesian model output
 #' 
-#' Inner function to extract credibility interval from output returned by \link{\code{bwsp_model}}.
+#' Inner function to extract credibility interval from output returned by \code{bwsp_model} in simulations.
 #'
 #' @param mod.output A list returned by \code{bwsp_model()}.
 #'   Must contain elements:
@@ -38,7 +38,8 @@
 #'                       powershape_lower, powershape_upper)
 #' }
 #'
-#'
+#' @noRd
+#' 
 
 
 
