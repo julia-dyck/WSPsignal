@@ -1,32 +1,30 @@
 #' Bayesian Weibull Shape Parameter Test
 #' 
 #' @description 
-#' Bayesian hypothesis test based on the shape parameter(s) of a distribution of the 
-#' Weibull family.
+#' Bayesian Weibull Shape Parameter (BWSP) test of the constant hazard (null-)hypothesis,
+#' based on the shape parameter(s) of Weibull family of distributions.
 #' 
 #'
 #' @param mod.output model output resulting from \code{\link{bwsp_model}}
 #' @param cred.level numeric or vector of credibility levels; default is 0.8
-#' @param ci.type  character indicating whether to extract equal tailed
-#' intervals (\code{"ETI"}) or highest posterior density intervals (\code{"HDI"}) as
-#' credibility interval (CI) for BWSP testing; default is \code{"HDI"}
-#' @param sensitivity.option numeric value out of \code{1,2,3}; rule to be used to deduct a 
+#' @param ci.type  character indicating whether to extract an equal tailed
+#' interval (\code{"ETI"}) or highest posterior density interval (\code{"HDI"}) as
+#' posterior credibility interval (CI) for the BWSP test; default is \code{"HDI"}
+#' @param sensitivity.option numeric value out of \code{1,2,3}; combination rule to deduct a 
 #' binary outcome (signal/no signal) from one or two shape parameter tests; 
 #' default is \code{sensitivity.option = 2} (see details)
 #' 
 #' 
-#' @return binary, 0 if \eqn{H_0} is accepted, 1 if \eqn{H_1} is rejected; see details for definition
-#' of \eqn{H_0} and \eqn{H_1}
-#'
+#' @return binary vector, 0 if \eqn{H_0} is accepted (no signal), 1 if \eqn{H_1} is accepted (signal)
 #'
 #'
 #' @section Test concept: 
 #' 
-#' The Bayesian Weibull shape parameter (WSP) test is a hypothesis test 
-#' for signal detection of adverse drug reactions.
-#' It is based on the principle of non-constant hazard \insertCite{cornelius2012}{WSPsignal}
-#' which associates a constant hazard function with the absence of a drug-event 
-#' association and a non-constant hazard function with the presence of a drug-event
+#' The BWSP test is based on the principle of (non-)constant hazard 
+#' \insertCite{cornelius2012}{WSPsignal}
+#' which associates a constant hazard function with the absence of a drug-adverse event
+#' association 
+#' and a non-constant hazard with the presence of a drug-adverse event
 #' association.
 #' 
 #' This can be formalized as the following hypotheses
@@ -37,7 +35,7 @@
 #'  hypothesis \tab constant hazard function \tab non-constant hazard function \cr
 #'  under Weibull model \tab \eqn{\nu = 1} \tab \eqn{\nu \neq 1} \cr
 #'  under double Weibull model \tab \eqn{\nu_1 = 1 \text{ and } \nu_2 = 1} \tab \eqn{\nu_1 \neq 1 \text{ or } \nu_2 \neq 1} \cr
-#'  under PGW model \tab \eqn{\nu = 1 \text{ and } \gamma = 1} \tab \eqn{\nu \neq 1 \text{ or } \gamma \neq 1} \cr
+#'  under Power generalized Weibull model \tab \eqn{\nu = 1 \text{ and } \gamma = 1} \tab \eqn{\nu \neq 1 \text{ or } \gamma \neq 1} \cr
 #' }
 #' 
 #' 
@@ -50,28 +48,27 @@
 #' The same concept applies to the construction of the Bayesian Weibull and double
 #' Weibull shape parameter test.
 #' 
-#' The region of practical equivalence (ROPE) specified in the 
-#' \code{nullregion} argument represents the expected parameter value under \eqn{H_0}.
-#' The credibility region(s) specified in the \code{credregion} argument represent
-#' the posterior distribution of each shape parameter. 
-#' For the ROPE we recommend to set up an equal-tailed interval (ETI) with 
+#' The region of practical equivalence (ROPE) represents the expected parameter value under \eqn{H_0}.
+#' The posterior credibility interval(s) (CI) represent the posterior distribution 
+#' of each shape parameter. 
+#' For the ROPE, the function sets up an equal-tailed interval (ETI) 
 #' \deqn{[q_{(1-\alpha)/2}, q_{(1+\alpha)/2}]}
 #' based on the quantiles \eqn{q} of the shape parameters' prior distributions under 
 #' \eqn{H_0} at a chosen credibility level \eqn{1 - \alpha}.
-#' For the posterior CI, we recommend either an ETI at the same credibility level obtained from
+#' 
+#' For the posterior CI, the function calculates either an ETI at the same credibility level obtained from
 #' the empirical quantiles of the posterior distribution per shape parameter 
 #' or a highest density interval (HDI, \insertCite{kruschke2015;textual}{WSPsignal})
 #' \deqn{HDI(\nu) = \{\nu \; |\; p_1(\nu) \geq w\} \text{ with } w\in [0,1] 
 #' \text{ such that} \int_{\nu \; | \; p_1(\nu) \geq w} p_1(\nu|t)\;  d\nu = 1 - \alpha}
-#' at the same credibility level.
-#' See Examples for exemplary ROPE and post CI setup in R.
-#' Best choices for ROPE and CI can be obtained from a simulation study to tune the 
-#' BWSP test specifications.
 #' 
-#' The HDI+ROPE test checks the 
-#' relationship between ROPE and credibility region(s) leading to either acceptance,
+#' where \eqn{\nu} is one of the shape parameters, \eqn{p_1} it's posterior density and \eqn{t} the time variable.
+#' 
+#' 
+#' The CI+ROPE test \insertCite{kruschke2018}{WSPsignal} checks the 
+#' relationship between ROPE and posterior CI leading to either acceptance,
 #' rejection or no decision regarding the null hypothesis for a single shape parameter.
-#' Sensitivity options to generate a binary outcome, i.e. a signal or not, from HDI+ROPE test results 
+#' Sensitivity options to generate a binary outcome, i.e. a signal or not, from CI+ROPE test results 
 #' based on one (in case of \code{"w"}) or two (in case of \code{"dw", "pgw"}) shape parameters are:
 #' \tabular{ccccc}{
 #' HDI+ROPE \tab HDI+ROPE \tab combination \tab combination \tab combination \cr
@@ -94,10 +91,10 @@
 #' The hypotheses as stated above (see test concept) are implemented in \code{sensitivity.option = 1} whereas
 #' \code{sensitivity.option = 2} and \code{sensitivity.option = 3} lead to a signal in fewer cases.
 #' 
-#' More details on the HDI+ROPE test, recommendations for interval specifications
+#' More details on the CI+ROPE test, recommendations for interval specifications
 #' and the combination rules
-#' can be found in \insertCite{kruschke2018}{WSPsignal} and
-#' \insertCite{dyck2024bpgwsppreprint}{WSPsignal}.
+#' can be found in \insertCite{kruschke2018;textual}{WSPsignal} and
+#' \insertCite{dyck2024bpgwsppreprint;textual}{WSPsignal}.
 #' 
 #' 
 #' @references 
