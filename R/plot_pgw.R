@@ -59,8 +59,7 @@ plot_pgw = function(scale = 1, shape = 1, powershape = 1){
     plot(values[[i]],
          type = "l",
          lwd = 3,
-         main = function_name[i],
-         ...
+         main = function_name[i]
          )
     if(i == 1){
       graphics::abline(v = m, lwd = 3, lty = 2, col = "darkgrey")
