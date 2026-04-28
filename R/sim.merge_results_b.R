@@ -31,7 +31,7 @@ sim.merge_results_b = function(pc_list){
     if(nrow(pc_list$fit$w)>0){
       for(ind.fitw in 1:nrow(pc_list$fit$w)){ # go through weibull fitting parameter combis
         # set up one dgp+fit combination
-        pc_vect = sim.gather_pc_vect(pc_list$dgp[ind.dgp,], pc_list$fit$w[ind.fitw,c("tte.dist", "prior.dist", "prior.belief")])
+        pc_vect = sim.gather_pc_vect(pc_list$dgp[ind.dgp,], pc_list$fit$w[ind.fitw,c("tte.dist", "prior.dist", "prior.belief", "prior.sd")])
         # go through batches for one parcombi
         for(ind.batch in 1:pc_list$add$batch.nr){
           tryCatch({
@@ -52,7 +52,7 @@ sim.merge_results_b = function(pc_list){
     if(nrow(pc_list$fit$dw)>0){
       for(ind.fitdw in 1:nrow(pc_list$fit$dw)){
         # set up one dgp+fit combination
-        pc_vect = sim.gather_pc_vect(pc_list$dgp[ind.dgp,], pc_list$fit$dw[ind.fitdw,c("tte.dist", "prior.dist", "prior.belief")])
+        pc_vect = sim.gather_pc_vect(pc_list$dgp[ind.dgp,], pc_list$fit$dw[ind.fitdw,c("tte.dist", "prior.dist", "prior.belief", "prior.sd")])
         # go through batches for one parcombi
         for(ind.batch in 1:pc_list$add$batch.nr){
           tryCatch({
@@ -72,7 +72,7 @@ sim.merge_results_b = function(pc_list){
     if(nrow(pc_list$fit$pgw)>0){
       for(ind.fitpgw in 1:nrow(pc_list$fit$pgw)){
         # set up one dgp+fit combination
-        pc_vect = sim.gather_pc_vect(pc_list$dgp[ind.dgp,], pc_list$fit$pgw[ind.fitpgw,c("tte.dist", "prior.dist", "prior.belief")])
+        pc_vect = sim.gather_pc_vect(pc_list$dgp[ind.dgp,], pc_list$fit$pgw[ind.fitpgw,c("tte.dist", "prior.dist", "prior.belief", "prior.sd")])
         # go through batches for one parcombi
         for(ind.batch in 1:pc_list$add$batch.nr){
           tryCatch({

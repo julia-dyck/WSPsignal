@@ -58,7 +58,7 @@ eval.calc_perf_f = function(pc_list) {
   res.ext = res_f
   
   pc.pos = filter(pc_list$pc_table, adr.rate > 0)
-  pc.pos = unique(pc.pos[, -c(7:9)])  # Drop prior info (frequentist)
+  pc.pos = unique(pc.pos[, -c(7:10)])  # Drop prior info (frequentist)
   
   fwsp_cols = grep("^fwsp_", names(res.ext), value = TRUE)
   nr.combined.tests = length(fwsp_cols)

@@ -4,25 +4,25 @@
 \alias{sim.priors_template}
 \title{Template for prior specification in simulation study}
 \usage{
-sim.priors_template(tte.dist = c("w", "dw", "pgw"), prior.sds = NULL)
+sim.priors_template(tte.dist = c("w", "dw", "pgw"), prior.sds = 10)
 }
 \arguments{
 \item{tte.dist}{character vector specifying one or multiple modelling approaches; options are
 \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})}
 
 \item{prior.sds}{numeric value setting the same prior sd for all scale
-and shape parameters across all included model types. Defaults to \code{NULL},
-leaving all sd fields as \code{NA}.}
+and shape parameters across all included model types; default is 10.}
 }
 \value{
 A named list containing three data frames
-\code{$w}, \code{$dw}, and \code{$pgw}.
-Each is a data frame specifying prior beliefs and placeholder entries for prior means and sds.
+\code{$w}, \code{$dw}, and \code{$pgw} specifying prior beliefs and placeholder entries for prior means,
+and one vector specifying the prior standard deviations to be considered per parameter in each prior belief
+setting.
 }
 \description{
 Generates a structured template for specifying prior means and prior standard
 deviations (sds) for the Weibull, double Weibull, or Power generalized Weibull
-(PgW) model parameters to be inserted into \code{\link{sim.setup_sim_pars}}.
+model parameters to be inserted into \code{\link{sim.setup_sim_pars}}.
 }
 \details{
 The returned list contains one data frame per time-to-event (tte) distribution
@@ -31,7 +31,7 @@ For each chosen tte distribution, rows corresponding to
 different levels of prior belief about the the hazard function are provided, namely
 \code{"none"}, \code{"beginning"}, \code{"middle"}, and \code{"end"}
 \insertCite{dyck2024bpgwsppreprint}{WSPsignal}.
-Given the template, prior means and sds must be filled by the user before simulation.
+Given the template, prior means must be filled by the user before simulation.
 }
 \examples{
 ####  prior elicitation --------------------------------------------------------
@@ -56,9 +56,9 @@ plot_pgw(scale = 300, shape = 4, powershape = 1)   # under prior belief "end"
 fp_list = sim.priors_template(tte.dist = c("pgw"),
                               prior.sds = 10) # setup prior template
 # fill in prior template with values chosen in prior elicitation
-fp_list$pgw[,2] = c(1, 1, 20, 300)   # scale prior means
+fp_list$pgw$scale.mean_pgw = c(1, 1, 20, 300)     # scale prior means
 fp_list$pgw$shape.mean_pgw <- c(1, 0.207, 5.5, 4) # shape prior means
-fp_list$pgw[,6] = c(1, 1, 14, 1)     # powershape prior means
+fp_list$pgw$powershape.mean_pgw = c(1, 1, 14, 1)  # powershape prior means
 
 fp_list # filled fitpars.list ready for sim.setup_sim_pars()
 

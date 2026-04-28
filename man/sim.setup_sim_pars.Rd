@@ -126,12 +126,12 @@ fp_list # fitpars.list template
 # fill in prior template with values chosen in prior elicitation
 # for weibull models:
 fp_list$w[,2] = c(1, 1, 180, 300) # scale prior means
-fp_list$w[,4] = c(1, 0.207, 1, 4) # shape prior means
+fp_list$w[,3] = c(1, 0.207, 1, 4) # shape prior means
 
 # for pgw models:
 fp_list$pgw[,2] = c(1, 1, 20, 300)   # scale prior means
-fp_list$pgw[,4] = c(1, 0.207, 5.5, 4)# shape prior means
-fp_list$pgw[,6] = c(1, 1, 14, 1)     # powershape prior means
+fp_list$pgw[,3] = c(1, 0.207, 5.5, 4)# shape prior means
+fp_list$pgw[,4] = c(1, 1, 14, 1)     # powershape prior means
 
 fp_list # fitpars.list filled with means
 
@@ -141,6 +141,7 @@ pc_list = sim.setup_sim_pars(N = c(500, 3000, 5000),
                              adr.rate = c(0, 0.5, 1),
                              adr.relsd = 0.05,
                              study.period = 365,
+                             est.approach = c("f", "b"),
                              tte.dist = c("w", "pgw"),
                              prior.dist = c("ll", "gg"),
                              fitpars.list = fp_list,

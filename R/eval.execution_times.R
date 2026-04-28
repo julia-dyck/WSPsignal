@@ -16,7 +16,7 @@
 #' @export
 
 
-eval.execution_times = function(pc_list){
+eval.execution_times = function(pc_list, group.by = c("tte.dist", "prior.dist", "prior.sd")){
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-
@@ -54,6 +54,22 @@ eval.execution_times = function(pc_list){
     stop("Functions eval.non_conv_cases(), eval.execution_times() and eval.eff_sample_sizes() only applicable if Bayesian estimation is included in simulation study.\n")
   }
   
+  # group.by argument
+  allowed_group_by <- c("tte.dist", "prior.dist", "prior.sd")
+  
+  if (any(duplicated(group.by))) {
+    warning("Duplicate entries removed from group.by.\n")
+    group.by <- unique(group.by)
+  }
+  
+  if (!all(group.by %in% allowed_group_by)) {
+    stop(paste0(
+      "Argument 'group.by' must be a subset of: ",
+      paste(allowed_group_by, collapse = ", "),
+      ".\n"
+    ))
+  }
+  
   ## fct body ------------------------------------------------------------------
  
   if (!exists("res_b")) { 
@@ -72,15 +88,19 @@ eval.execution_times = function(pc_list){
   }
   
   # select relevant variables
-  time.df = res_b[, c("tte.dist", "prior.dist", "run.min")]
+  time.df = res_b[, c("tte.dist", "prior.dist", "prior.sd", "run.min")]
   # adjust format
   time.df$tte.dist <- as.factor(unlist(time.df$tte.dist))
   time.df$prior.dist <- as.factor(unlist(time.df$prior.dist))
+  time.df$prior.sd <- as.factor(unlist(time.df$prior.sd))
   time.df$run.min = as.numeric(unlist(time.df$run.min)) 
   
-  # execution time dist per tte.dist and prior.dist
-  time.summaries = dplyr::summarise(
-    dplyr::group_by(time.df, tte.dist, prior.dist),
+  # create grouping variable (same as for plot)
+  time.df$group <- do.call(interaction, c(time.df[group.by], sep = " - "))
+  
+  # summarise using that grouping
+  time.summaries <- dplyr::summarise(
+    dplyr::group_by(time.df, group),
     min = min(run.min, na.rm = TRUE),
     first_qu = stats::quantile(run.min, 0.25, na.rm = TRUE),
     median = stats::median(run.min, na.rm = TRUE),
@@ -90,20 +110,22 @@ eval.execution_times = function(pc_list){
     .groups = "drop"
   )
   
-  
   # group variable for plot
-  time.df$group <- interaction(time.df$tte.dist, time.df$prior.dist, sep = " - ")
-  
+  time.df$group <- do.call(interaction, c(time.df[group.by], sep = " - "))
   
   # plot
   p = ggplot2::ggplot(time.df, ggplot2::aes(x = group, y = run.min)) +
     ggplot2::geom_boxplot(width = 0.5, fill = "lightgrey") +
     ggplot2::labs(
-      x = "tte.dist - prior.dist combination",
-      y = "Run Time (min)",
+      x = paste(group.by, collapse = " - "),
+      y = "Execution time (min)",
       title = "Execution time in minutes"
     ) +
     ggplot2::theme_minimal()
+  
+  message("\nSummary:")
+  print(time.summaries)
+  print(p)
   
   return(list(summary = time.summaries,     # for overview
               plot = p,                     # for option to take plot as is and manipulate if further

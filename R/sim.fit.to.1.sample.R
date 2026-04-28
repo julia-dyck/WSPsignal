@@ -53,6 +53,7 @@ sim.fit.to.1.sample = function(pc, pc_list){
                 ci.type = pc_list$input$post.ci.type, 
                 sensitivity.option = pc_list$input$sensitivity.option),
       error = function(e) {
+        return(e)
         return(NULL)
       }
     )

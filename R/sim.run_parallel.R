@@ -105,12 +105,11 @@ sim.run_parallel = function(pc_list, subset_ind = NULL) {
   furrr::future_walk(
     .x = pc_table_as_list,
     .f = function(row) {
-      pc_vect = row[1:9]
+      pc_vect = row[1:10]
       ind.batch = row$batch_nr
       
       tryCatch({
         sim.load.scenario(pc = pc_vect, wd = pc_list$add$resultpath, batchnr = ind.batch)
-        message("File exists.")
       },
       error = function(cond) {
         sim.repeat.1.scenario(

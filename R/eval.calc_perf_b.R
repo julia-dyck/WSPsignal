@@ -61,8 +61,16 @@ eval.calc_perf_b = function(pc_list){
   # 0. -------------------------------------------------------------------------
   #### get rid of NAs in table, transform to long format
   
-  pc_cols = names(res_b)[1:9]
+  pc_cols = names(res_b)[1:10]
   
+  bwsp_w_fl_cols   = grep("^bwsp_w_fl", names(res_b), value = TRUE)
+  bwsp_dw_fl_cols  = grep("^bwsp_dw_fl", names(res_b), value = TRUE)
+  bwsp_pgw_fl_cols = grep("^bwsp_pgw_fl", names(res_b), value = TRUE)
+
+  bwsp_w_fg_cols   = grep("^bwsp_w_fg", names(res_b), value = TRUE)
+  bwsp_dw_fg_cols  = grep("^bwsp_dw_fg", names(res_b), value = TRUE)
+  bwsp_pgw_fg_cols = grep("^bwsp_pgw_fg", names(res_b), value = TRUE)
+
   bwsp_w_ll_cols = grep("^bwsp_w_ll", names(res_b), value = TRUE)
   bwsp_dw_ll_cols = grep("^bwsp_dw_ll", names(res_b), value = TRUE)
   bwsp_pgw_ll_cols = grep("^bwsp_pgw_ll", names(res_b), value = TRUE)
@@ -73,6 +81,32 @@ eval.calc_perf_b = function(pc_list){
   
   # filter for subtables that contain test results
   
+  # for prior.dist == "fl"
+  res_b_w_fl = res_b %>% filter(tte.dist == "w", prior.dist == "fl") %>%
+    select(all_of(c(pc_cols, bwsp_w_fl_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_w_fl_", "bwsp_", .x), starts_with("bwsp_w_fl"))
+
+  res_b_dw_fl = res_b %>% filter(tte.dist == "dw", prior.dist == "fl") %>%
+    select(all_of(c(pc_cols, bwsp_dw_fl_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_dw_fl_", "bwsp_", .x), starts_with("bwsp_dw_fl"))
+
+  res_b_pgw_fl = res_b %>% filter(tte.dist == "pgw", prior.dist == "fl") %>%
+    select(all_of(c(pc_cols, bwsp_pgw_fl_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_pgw_fl_", "bwsp_", .x), starts_with("bwsp_pgw_fl"))
+
+  # for prior.dist == "fg"
+  res_b_w_fg = res_b %>% filter(tte.dist == "w", prior.dist == "fg") %>%
+    select(all_of(c(pc_cols, bwsp_w_fg_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_w_fg_", "bwsp_", .x), starts_with("bwsp_w_fg"))
+
+  res_b_dw_fg = res_b %>% filter(tte.dist == "dw", prior.dist == "fg") %>%
+    select(all_of(c(pc_cols, bwsp_dw_fg_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_dw_fg_", "bwsp_", .x), starts_with("bwsp_dw_fg"))
+
+  res_b_pgw_fg = res_b %>% filter(tte.dist == "pgw", prior.dist == "fg") %>%
+    select(all_of(c(pc_cols, bwsp_pgw_fg_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_pgw_fg_", "bwsp_", .x), starts_with("bwsp_pgw_fg"))
+
   # for prior.dist == "ll"
   res_b_w_ll = res_b %>% filter(tte.dist == "w", prior.dist == "ll") %>%
     select(all_of(c(pc_cols, bwsp_w_ll_cols))) %>% 
@@ -102,7 +136,9 @@ eval.calc_perf_b = function(pc_list){
   # bind rows to one long table
   res_b_long = dplyr::bind_rows(
     res_b_w_ll, res_b_dw_ll, res_b_pgw_ll,
-    res_b_w_gg, res_b_dw_gg, res_b_pgw_gg
+    res_b_w_gg, res_b_dw_gg, res_b_pgw_gg,
+    res_b_w_fl, res_b_dw_fl, res_b_pgw_fl,
+    res_b_w_fg, res_b_dw_fg, res_b_pgw_fg
   )
   
   
@@ -143,6 +179,7 @@ eval.calc_perf_b = function(pc_list){
     tte.dist_i = pc.pos$tte.dist[i]
     prior.dist_i = pc.pos$prior.dist[i]
     prior.belief_i = pc.pos$prior.belief[i]
+    prior.sd_i = pc.pos$prior.sd[i]
     
     res.test0 = res.ext %>%
       dplyr::filter(adr.rate == 0,
@@ -152,7 +189,8 @@ eval.calc_perf_b = function(pc_list){
                     (is.na(adr.relsd) | adr.relsd == adr.relsd_i),
                     tte.dist == tte.dist_i,
                     prior.dist == prior.dist_i,
-                    prior.belief == prior.belief_i)
+                    prior.belief == prior.belief_i,
+                    prior.sd == prior.sd_i)
     
     res.test1 = res.ext %>%
       dplyr::filter(adr.rate == adr.rate_i,
@@ -162,7 +200,8 @@ eval.calc_perf_b = function(pc_list){
                     (is.na(adr.relsd) | adr.relsd == adr.relsd_i),
                     tte.dist == tte.dist_i,
                     prior.dist == prior.dist_i,
-                    prior.belief == prior.belief_i)
+                    prior.belief == prior.belief_i,
+                    prior.sd == prior.sd_i)
     
     res.test = res.ext %>%
       dplyr::filter((adr.rate == 0 | adr.rate == adr.rate_i),
@@ -172,7 +211,8 @@ eval.calc_perf_b = function(pc_list){
                     (is.na(adr.relsd) | adr.relsd == adr.relsd_i),
                     tte.dist == tte.dist_i,
                     prior.dist == prior.dist_i,
-                    prior.belief == prior.belief_i)
+                    prior.belief == prior.belief_i,
+                    prior.sd == prior.sd_i)
     
     run.reps[i] = nrow(res.test) # number of repetitions obtained for this scenario
     
@@ -344,33 +384,33 @@ eval.calc_perf_b = function(pc_list){
   # merge fprs and tprs
   pm_long = dplyr::left_join(fprs_long, tprs_long, by = c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist", 
-    "prior.dist", "prior.belief", "dist.prior.to.truth",
+    "prior.dist", "prior.sd", "prior.belief", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option"
   ))
   # merge fprs, tprs and fnrs
   pm_long = dplyr::left_join(pm_long, fnrs_long, by = c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist", 
-    "prior.dist", "prior.belief", "dist.prior.to.truth",
+    "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option"
   ))
   # merge fprs, tprs, fnrs and tnrs
   pm_long = dplyr::left_join(pm_long, tnrs_long, by = c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist", 
-    "prior.dist", "prior.belief", "dist.prior.to.truth",
+    "prior.dist", "prior.belief",  "prior.sd", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option"
   ))
   # merge fprs, tprs, fnrs, tnrs and aucs
   # (this is the final result)
   pm_long = dplyr::left_join(pm_long, aucs_long, by = c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist", 
-    "prior.dist", "prior.belief", "dist.prior.to.truth",
+    "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option"
   ))
   
   # select relevant columns:
   pm_long <- pm_long[, c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", 
-    "tte.dist", "prior.dist", "prior.belief", "dist.prior.to.truth",
+    "tte.dist", "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option", 
     "auc", "fpr", "tpr", "fnr", "tnr"
   )]

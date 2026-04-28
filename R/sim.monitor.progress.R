@@ -31,7 +31,7 @@ sim.monitor.progress = function(pc_list){
       },
       error=function(cond) {
         # if not, return a warning 
-        warning(paste0(paste(c(pc_list$pc_table[i,], "bADR_sim", ind.batch, ".RData") ,collapse="_"), " not found."))
+        # warning(paste0(paste(c(pc_list$pc_table[i,], "bADR_sim", ind.batch, ".RData") ,collapse="_"), " not found."))
       }
       )
     }

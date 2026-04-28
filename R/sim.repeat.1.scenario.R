@@ -13,6 +13,7 @@
 #' - tte.dist: time-to-event distribution
 #' - prior.dist: prior distribution
 #' - prior.belief: prior belief
+#' - prior.sd: prior.sd (for each parameter)
 #' @param pc_list list containing all parameter combinations for the simulation study
 #'                (necessary to extract further parameters for simulation study specification)
 #' @param batch.ind integer indicating the pc batch index (for saving purposes)

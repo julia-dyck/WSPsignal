@@ -8,11 +8,15 @@ sim.setup_fit_pars = function(tte.dist = c("w", "dw", "pgw"),
                               prior.belief = c("none", "beginning", "middle", "end"),
                               prior.dist = c("fg", "gg", "fl", "ll"),
                               fit_pars_list = NULL) {
-  
+  # arg checks -----------------------------------------------------------------
   if (is.null(fit_pars_list)) {
     message("No 'fit_pars_list' was provided.\nPlease generate a prior parameter template using:\n\n  fit_pars_list <- sim.priors_template(tte.dist = c(",
             paste(tte.dist, collapse = ", "), "))\n\nThen fill in the required prior means and standard deviations.\nOnce complete, re-run sim.setup_simpars() with argument fitpars.list = your_filled_out_list.")
     return(invisible(NULL))
+  }
+  
+  if (is.null(fit_pars_list$prior.sds)) {
+    stop("fit_pars_list must contain element 'prior.sds'.")
   }
   
   for (dist_name in tte.dist) {
@@ -41,9 +45,16 @@ sim.setup_fit_pars = function(tte.dist = c("w", "dw", "pgw"),
     }
   }
   
+  # fct body -------------------------------------------------------------------
+  
+  prior.sds <- fit_pars_list$prior.sds
+  
   dist_pc = expand.grid(tte.dist = tte.dist,
                         prior.dist = prior.dist,
-                        prior.belief = prior.belief)
+                        prior.belief = prior.belief,
+                        prior.sd = prior.sds,
+                        KEEP.OUT.ATTRS = FALSE,
+                        stringsAsFactors = FALSE)
   
   fit_pc = list()
   

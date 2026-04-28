@@ -4,7 +4,11 @@
 \alias{eval.eff_sample_sizes}
 \title{Evaluate effective sample sizes by tte and prior distribution}
 \usage{
-eval.eff_sample_sizes(pc_list, threshold = 10000)
+eval.eff_sample_sizes(
+  pc_list,
+  group.by = c("tte.dist", "prior.dist", "prior.sd"),
+  threshold = 10000
+)
 }
 \arguments{
 \item{pc_list}{a list containing simulation parameters (see \code{\link{sim.setup_sim_pars}})}

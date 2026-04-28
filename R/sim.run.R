@@ -91,12 +91,11 @@ sim.run = function(pc_list, subset_ind = NULL){
   pc_table_ext = dplyr::cross_join(pc_table, data.frame(batch_nr = 1:pc_list$add$batch.nr))
   
   for(ind in 1:nrow(pc_table_ext)){
-    pc_vect = pc_table_ext[ind, 1:9]
-    ind.batch = pc_table_ext[ind, 10]
+    pc_vect = pc_table_ext[ind, 1:10]
+    ind.batch = pc_table_ext[ind, 11]
     
     tryCatch({
       sim.load.scenario(pc = pc_vect, wd = pc_list$add$resultpath, batchnr = ind.batch)
-      message("File exists.")
     },
     error = function(cond) {
       sim.repeat.1.scenario(

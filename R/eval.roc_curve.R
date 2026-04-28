@@ -57,7 +57,7 @@ eval.roc_curve = function(rank.tab, n = 10) {
   # argument checks ------------------------------------------------------------
   
   # arg check rank.tab
-  required_cols = c("test.type", "tte.dist", "prior.dist", "post.ci.type", 
+  required_cols = c("test.type", "tte.dist", "prior.dist", "prior.sd", "post.ci.type", 
                     "cred.level","sensitivity.option", "AUC", "FPR", "TPR", "FNR", "TNR")
   
   valid_ranktab = is.data.frame(rank.tab) && all(required_cols %in% names(rank.tab))
@@ -87,7 +87,7 @@ eval.roc_curve = function(rank.tab, n = 10) {
   rank.tab = rank.tab %>%
     dplyr::slice(1:n) %>%
     dplyr::mutate(
-      spec = paste(tte.dist, prior.dist, post.ci.type, cred.level, sensitivity.option, sep = " | "),
+      spec = paste(tte.dist, prior.dist, prior.sd, post.ci.type, cred.level, sensitivity.option, sep = " | "),
       spec = factor(spec, levels = unique(spec))  # preserve legend order
     )
   
@@ -112,7 +112,7 @@ eval.roc_curve = function(rank.tab, n = 10) {
       TPR_vec = list(c(0, TPR, 1))
     ) %>%
     tidyr::unnest(cols = c(FPR_vec, TPR_vec)) %>%
-    dplyr::mutate(spec = factor(paste(tte.dist, prior.dist, post.ci.type, cred.level, sensitivity.option, sep = " | "),
+    dplyr::mutate(spec = factor(paste(tte.dist, prior.dist, prior.sd, post.ci.type, cred.level, sensitivity.option, sep = " | "),
                                 levels = unique(rank.tab$spec))) %>%
     dplyr::group_by(spec) %>%
     dplyr::mutate(point = dplyr::row_number()) %>%

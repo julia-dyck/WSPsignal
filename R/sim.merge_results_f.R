@@ -29,8 +29,8 @@ sim.merge_results_f = function(pc_list){
   )
 
   for(ind in 1:nrow(pc_table_ext)){
-    pc_vect = pc_table_ext[ind, 1:9]
-    ind.batch = pc_table_ext[ind, 10]
+    pc_vect = pc_table_ext[ind, 1:10]
+    ind.batch = pc_table_ext[ind, 11]
     
     tryCatch({
       batch = sim.load.scenario(pc = pc_vect, wd = pc_list$add$resultpath, batchnr = ind.batch, bayes = F)

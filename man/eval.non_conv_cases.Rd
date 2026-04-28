@@ -4,7 +4,10 @@
 \alias{eval.non_conv_cases}
 \title{Evaluate number of non-convergence cases by tte and prior distribution}
 \usage{
-eval.non_conv_cases(pc_list)
+eval.non_conv_cases(
+  pc_list,
+  group.by = c("tte.dist", "prior.dist", "prior.sd")
+)
 }
 \arguments{
 \item{pc_list}{list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}}

@@ -88,12 +88,12 @@
 #' # fill in prior template with values chosen in prior elicitation
 #' # for weibull models:
 #' fp_list$w[,2] = c(1, 1, 180, 300) # scale prior means
-#' fp_list$w[,4] = c(1, 0.207, 1, 4) # shape prior means
+#' fp_list$w[,3] = c(1, 0.207, 1, 4) # shape prior means
 #' 
 #' # for pgw models:
 #' fp_list$pgw[,2] = c(1, 1, 20, 300)   # scale prior means
-#' fp_list$pgw[,4] = c(1, 0.207, 5.5, 4)# shape prior means
-#' fp_list$pgw[,6] = c(1, 1, 14, 1)     # powershape prior means
+#' fp_list$pgw[,3] = c(1, 0.207, 5.5, 4)# shape prior means
+#' fp_list$pgw[,4] = c(1, 1, 14, 1)     # powershape prior means
 #' 
 #' fp_list # fitpars.list filled with means
 #' 
@@ -103,6 +103,7 @@
 #'                              adr.rate = c(0, 0.5, 1),
 #'                              adr.relsd = 0.05,
 #'                              study.period = 365,
+#'                              est.approach = c("f", "b"),
 #'                              tte.dist = c("w", "pgw"),
 #'                              prior.dist = c("ll", "gg"),
 #'                              fitpars.list = fp_list,
@@ -228,8 +229,8 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
       stop(paste0("Argument prior.dist must be out of: ", paste(allowed_priors, collapse = ", "),".\n"))
     
     ### checks regarding fitpars.list
-    if(!setequal(names(fitpars.list), c("w", "dw", "pgw")))
-      stop("Argument fitpars.list must be a list with elements $w, $dw and $pgw.\nSetup a fitpars.list template with sim.priors_template.\n")
+    if(!setequal(names(fitpars.list), c("w", "dw", "pgw", "prior.sds")))
+      stop("Argument fitpars.list must be a list with elements $w, $dw, $pgw and $prior.sds.\nSetup a fitpars.list template with sim.priors_template.\n")
     # check whether tte.dist matches tte.dist defined fitpars.list
     tte.dist.in.fitpars.list <- names(Filter(function(x) is.data.frame(x) && nrow(x) > 0, fitpars.list))
     # Check matching distributions
@@ -352,6 +353,7 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                     est.approach = est.approach,
                     tte.dist = tte.dist, 
                     prior.belief = c("none", "beginning", "middle", "end"), # fixed (matching adr.when)
+                    prior.sds = fitpars.list$prior.sds,
                     prior.dist = prior.dist, 
                     post.ci.type = post.ci.type, 
                     cred.level = cred.level, 
@@ -374,15 +376,15 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
     
     pc_table = list()
     if(nrow(fit_pars$w) > 0){
-      pc_table$w = dplyr::cross_join(dgp_pars, fit_pars$w[c("tte.dist","prior.dist","prior.belief")])
+      pc_table$w = dplyr::cross_join(dgp_pars, fit_pars$w[c("tte.dist","prior.dist","prior.belief", "prior.sd")])
     } else pc_table$w = NULL
     
     if(nrow(fit_pars$dw) > 0){
-      pc_table$dw = dplyr::cross_join(dgp_pars, fit_pars$dw[c("tte.dist","prior.dist","prior.belief")])
+      pc_table$dw = dplyr::cross_join(dgp_pars, fit_pars$dw[c("tte.dist","prior.dist","prior.belief", "prior.sd")])
     } else pc_table$dw = NULL
     
     if(nrow(fit_pars$pgw) > 0){
-      pc_table$pgw = dplyr::cross_join(dgp_pars, fit_pars$pgw[c("tte.dist","prior.dist","prior.belief")])
+      pc_table$pgw = dplyr::cross_join(dgp_pars, fit_pars$pgw[c("tte.dist","prior.dist","prior.belief", "prior.sd")])
     } else pc_table$pgw = NULL
     
   } else {
@@ -393,25 +395,45 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
       data.frame(
         tte.dist = tte.dist,
         prior.dist = NA_character_,
-        prior.belief = NA_character_
+        prior.belief = NA_character_,
+        prior.sd = NA_character_
       )
     )
   }
   
   pc_table = dplyr::bind_rows(pc_table)
   
+  pc_table_freq = dplyr::select(pc_table, -prior.dist, -prior.belief, -prior.sd)
+  pc_table_freq = dplyr::distinct(pc_table_freq)
   
   sim_pars = list(dgp = dgp_pars, fit = fit_pars, test = test_pars, add = add_pars, input = input_args, pc_table = pc_table)
   
   
-  cat(paste0("Each combination of sample scenario (and prior specification) leads to a total of ",
-             nrow(pc_table),
-             " different simulation settings. "#,
-             #"Each simulation scenario's data generation and posterior estimation will be repeated ", 
-             #reps,
-             #" times. "
-             )) 
   
+  ## message regarding nr of parameter combinations and reps
+  if (identical(est.approach, "b")) {
+    cat(paste0("Each combination of sample scenario and prior specification leads to a total of ",
+               nrow(pc_table),
+               " Bayesian simulation settings.\n"))
+  }
+  
+  if (identical(est.approach, "f")) {
+    cat(paste0("Each combination of sample scenario leads to a total of ",
+               nrow(pc_table_freq),
+               " frequentist simulation settings.\n"))
+  }
+  
+  if (setequal(est.approach, c("b","f"))) {
+    cat(paste0("Each combination of sample scenario (and prior specification) leads to a total of ",
+               nrow(pc_table),
+               " Bayesian and ",
+               nrow(pc_table_freq),
+               " frequentist simulation settings.\n"))
+  }
+  
+  # cat(paste0("Each simulation scenario's data generation and model estimation will be repeated ",
+  #            reps,
+  #            " times.\n"))
   
   
   return(sim_pars)

@@ -27,7 +27,7 @@
 
 
 
-eval.non_conv_cases = function(pc_list){
+eval.non_conv_cases = function(pc_list, group.by = c("tte.dist", "prior.dist", "prior.sd")){
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-
@@ -65,6 +65,22 @@ eval.non_conv_cases = function(pc_list){
     stop("Functions eval.non_conv_cases(), eval.execution_times() and eval.eff_sample_sizes() only applicable if Bayesian estimation is included in simulation study.\n")
   }
   
+  # group.by argument
+  allowed_group_by <- c("tte.dist", "prior.dist", "prior.sd")
+  
+  if (any(duplicated(group.by))) {
+    warning("Duplicate entries removed from group.by.\n")
+    group.by <- unique(group.by)
+  }
+  
+  if (!all(group.by %in% allowed_group_by)) {
+    stop(paste0(
+      "Argument 'group.by' must be a subset of: ",
+      paste(allowed_group_by, collapse = ", "),
+      ".\n"
+    ))
+  }
+  
   ## fct body ------------------------------------------------------------------
   
   # shorten object names
@@ -81,15 +97,19 @@ eval.non_conv_cases = function(pc_list){
   pc_table = cbind(pc_table, reps.notrun = pc_table$reps.planned - pc_table$reps.done)
   
   
-  # sum up numbers for groups depending on tte.dist, prior.dist
+  # sum up numbers for groups depending on tte.dist, prior.dist, prior.sd 
+  # (or subset specified in group.by argument)
+  nonconv.tab = dplyr::group_by(pc_table, dplyr::across(all_of(group.by)))
+  
   nonconv.tab = dplyr::summarise(
-    dplyr::group_by(pc_table, tte.dist, prior.dist),
+    nonconv.tab,
     total.planned = sum(reps.planned),
     total.notrun = sum(reps.notrun),
     prop.notrun = total.notrun / total.planned,
     .groups = "drop"
   )
   
+  print(nonconv.tab)
   return(nonconv.tab)
   
 }

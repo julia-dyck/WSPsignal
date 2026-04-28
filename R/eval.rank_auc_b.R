@@ -13,7 +13,7 @@ eval.rank_auc_b = function(perf_b){
   # ranking under correct prior belief
   tab.ranked <- tab.df %>%
     dplyr::filter(dist.prior.to.truth == "correct specification") %>% # only for correct prior spec for now
-    dplyr::group_by(tte.dist, prior.dist, post.ci.type, cred.level, sensitivity.option) %>% # group by fit&test specifications
+    dplyr::group_by(tte.dist, prior.dist, prior.sd, post.ci.type, cred.level, sensitivity.option) %>% # group by fit&test specifications
     dplyr::summarise(AUC = mean(auc), FPR = mean(fpr), TPR = mean(tpr), FNR = mean(fnr), TNR = mean(tnr), 
                      .groups = "drop") %>%
     dplyr::arrange(dplyr::desc(AUC)) # ranking by AUC
@@ -23,14 +23,16 @@ eval.rank_auc_b = function(perf_b){
   
   opti.tte.dist = tab.ranked$tte.dist[1]
   opti.prior.dist = tab.ranked$prior.dist[1]
+  opti.prior.sd = tab.ranked$prior.sd[1]
   opti.post.ci.type = tab.ranked$post.ci.type[1]
   opti.cred.level = tab.ranked$cred.level[1]
   opti.sensitivity.option = tab.ranked$sensitivity.option[1]
-  
+
   
   # optimal fit & test specification according to ranking under correct prior belief
   tab.opti = tab.df %>% filter(tte.dist == opti.tte.dist, 
                                prior.dist == opti.prior.dist,
+                               prior.sd == opti.prior.sd,
                                post.ci.type == opti.post.ci.type,
                                cred.level == opti.cred.level,
                                sensitivity.option == opti.sensitivity.option,
