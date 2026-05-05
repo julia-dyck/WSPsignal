@@ -6,30 +6,6 @@
 eval.rank_auc_f = function(perf_f){
   require(dplyr)
   
-  # 0. argument check
-  required_cols <- c(
-    "N","br","adr.rate","adr.when","adr.relsd","study.period",
-    "tte.dist","cred.level",
-    "auc","fpr","tpr","fnr","tnr"
-  )
-  
-  num_cols <- c(
-    "N","br","adr.rate","adr.when","adr.relsd","study.period",
-    "cred.level","auc","fpr","tpr","fnr","tnr"
-  )
-  
-  chr_cols <- c("tte.dist")
-  
-  if (
-    !is.data.frame(perf_f) ||
-    !all(required_cols %in% names(perf_f)) ||
-    !all(vapply(perf_f[num_cols], is.numeric, logical(1))) ||
-    !all(vapply(perf_f[chr_cols], is.character, logical(1)))
-  ) {
-    stop("Argument `perf_f` has wrong format. It must be the output of eval.calc_perf_f().")
-  }
-  
-  
   tab.df = perf_f
   
   # 1. summarize and rank fit & test specifications
