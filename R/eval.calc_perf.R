@@ -81,15 +81,6 @@ eval.calc_perf = function(pc_list){
   if("f" %in% est.approach){
     out_f = eval.calc_perf_f(pc_list)
     out_f_ext = cbind(test.type = rep("fwsp", nrow(out_f)), out_f)
-    # add missing columns to match required format (relevant when "b" not in est.approach)
-    out_f_ext <- out_f_ext %>%
-      mutate(
-        prior.dist = NA_character_,
-        prior.belief = NA_character_,
-        dist.prior.to.truth = NA_character_,
-        post.ci.type = NA_character_,
-        sensitivity.option = NA_real_
-      )
   }
   else{out_f_ext = NULL}
   

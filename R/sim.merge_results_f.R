@@ -42,6 +42,14 @@ sim.merge_results_f = function(pc_list){
     })
   }
   
+  # remove 2/3 of results (so repetitions match the announced number)
+  fwsp_cols <- grep("^fwsp_", names(res_f), value = TRUE)
+  
+  for (col in fwsp_cols) {
+    dist_col <- sub("^fwsp_([^_]+)_.*", "\\1", col)  # extract w/dw/pgw
+    res_f[[col]][res_f$tte.dist != dist_col] <- NA
+  }
+  
   return(res_f)
 }
 

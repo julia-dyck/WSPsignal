@@ -102,13 +102,13 @@ eval.rank_auc = function(perf,
   # for perf
   required_cols = c(
     "test.type", "N","br","adr.rate","adr.when","adr.relsd","study.period",
-    "tte.dist","prior.dist","prior.belief","dist.prior.to.truth",
+    "tte.dist","prior.dist","prior.belief", "prior.sd","dist.prior.to.truth",
     "post.ci.type","cred.level","sensitivity.option",
     "auc","fpr","tpr","fnr","tnr"
   )
   num_cols = c(
     "N","br","adr.rate","adr.when","adr.relsd","study.period",
-    "cred.level","auc","fpr","tpr","fnr","tnr"
+    "prior.sd", "cred.level", "sensitivity.option","auc","fpr","tpr","fnr","tnr"
   )
   chr_cols <- c(
     "test.type", "tte.dist","prior.dist","prior.belief",
@@ -165,15 +165,24 @@ eval.rank_auc = function(perf,
     rtab_f_ext = cbind(test.type = rep("fwsp", nrow(rtab_f)), rtab_f)
   }
   else{ # generate table, reduce to zero rows, to keep column structure
-    rtab_f_ext = data.frame(test.type = "fwsp", tte.dist = "w", prior.dist = "ll",
-                            post.ci.type = "hdi", cred.level = 0.9, sensitivity.option = 1,
+    rtab_f_ext = data.frame(test.type = "fwsp", tte.dist = "w", cred.level = 0.9,
                             AUC = 0.999, FPR = 0.99, TPR = 0.99, FNR = 0.99, TNR = 0.99)
     rtab_f_ext = rtab_f_ext[0,]
   } 
   
   # combine bwsp & fwsp ranking tables
-  rtab = dplyr::bind_rows(rtab_b_ext, rtab_f_ext) %>%
-    dplyr::arrange(dplyr::desc(AUC))
+  if (nrow(rtab_b_ext) > 0 & nrow(rtab_f_ext) > 0) {
+    rtab = dplyr::bind_rows(rtab_b_ext, rtab_f_ext) %>%
+      dplyr::arrange(dplyr::desc(AUC))
+  } else if (nrow(rtab_b_ext) > 0) {
+    rtab = rtab_b_ext %>%
+      dplyr::arrange(dplyr::desc(AUC))
+  } else if (nrow(rtab_f_ext) > 0) {
+    rtab = rtab_f_ext %>%
+      dplyr::arrange(dplyr::desc(AUC))
+  } else {
+    rtab = rtab_b_ext  # empty with correct structure
+  }
   
   if(nrow(rtab) == 0){
     # ie. when filter leads to empty ranking table
