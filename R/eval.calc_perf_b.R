@@ -384,7 +384,7 @@ eval.calc_perf_b = function(pc_list){
   # merge fprs and tprs
   pm_long = dplyr::left_join(fprs_long, tprs_long, by = c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist", 
-    "prior.dist", "prior.sd", "prior.belief", "dist.prior.to.truth",
+    "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option"
   ))
   # merge fprs, tprs and fnrs
@@ -409,8 +409,8 @@ eval.calc_perf_b = function(pc_list){
   
   # select relevant columns:
   pm_long <- pm_long[, c(
-    "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", 
-    "tte.dist", "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
+    "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist",
+    "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
     "post.ci.type", "cred.level", "sensitivity.option", 
     "auc", "fpr", "tpr", "fnr", "tnr"
   )]
