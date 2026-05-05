@@ -40,6 +40,7 @@ eval.calc_perf_f = function(pc_list) {
     stop("Argument pc_list has wrong format. It must be a list produced by sim.setup_sim_pars().\n")
   }
   # fct body -------------------------------------------------------------------
+  
   # Load results
   if (!exists("res_f")) {
     tryCatch({
@@ -54,11 +55,45 @@ eval.calc_perf_f = function(pc_list) {
     message("Object `res_f` currently loaded in environment is used to calculate performance measures.")
   }
   
-  res_f$lab = ifelse(res_f$adr.rate > 0, 1, 0)
-  res.ext = res_f
+  # 0. -------------------------------------------------------------------------
+  #### reshape and remove NA test results
   
+  pc_cols = names(res_f)[1:10]
+  
+  fwsp_w_cols   = grep("^fwsp_w_", names(res_f), value = TRUE)
+  fwsp_dw_cols  = grep("^fwsp_dw_", names(res_f), value = TRUE)
+  fwsp_pgw_cols = grep("^fwsp_pgw_", names(res_f), value = TRUE)
+  
+  # build clean subtables
+  res_f_w = res_f %>%
+    filter(tte.dist == "w") %>%
+    select(all_of(c(pc_cols, fwsp_w_cols))) %>%
+    rename_with(~ sub("^fwsp_w_", "fwsp_", .x), starts_with("fwsp_w"))
+  
+  res_f_dw = res_f %>%
+    filter(tte.dist == "dw") %>%
+    select(all_of(c(pc_cols, fwsp_dw_cols))) %>%
+    rename_with(~ sub("^fwsp_dw_", "fwsp_", .x), starts_with("fwsp_dw"))
+  
+  res_f_pgw = res_f %>%
+    filter(tte.dist == "pgw") %>%
+    select(all_of(c(pc_cols, fwsp_pgw_cols))) %>%
+    rename_with(~ sub("^fwsp_pgw_", "fwsp_", .x), starts_with("fwsp_pgw"))
+  
+  # combine
+  res_f_long = dplyr::bind_rows(res_f_w, res_f_dw, res_f_pgw)
+  
+  
+  # 1. -------------------------------------------------------------------------
+  #### add label for true adr status
+  res_f_long$lab = ifelse(res_f_long$adr.rate > 0, 1, 0)
+  res.ext = res_f_long
+  
+  
+  # 2. ------------------------------------------------------------------------- 
+  #### calculate AUC for each simulation scenario (= one row of pc_list$pc_table)
   pc.pos = filter(pc_list$pc_table, adr.rate > 0)
-  pc.pos = unique(pc.pos[, -c(7:10)])  # Drop prior info (frequentist)
+  pc.pos = unique(pc.pos[, -c(8:10)])  # Drop prior info (frequentist)
   
   fwsp_cols = grep("^fwsp_", names(res.ext), value = TRUE)
   nr.combined.tests = length(fwsp_cols)
@@ -81,13 +116,13 @@ eval.calc_perf_f = function(pc_list) {
              (is.na(adr.when) | adr.when == scenario$adr.when),
              N == scenario$N,
              br == scenario$br,
-             (is.na(adr.relsd) | adr.relsd == scenario$adr.relsd))
+             (is.na(adr.relsd) | adr.relsd == scenario$adr.relsd),
+             tte.dist == scenario$tte.dist)
     
     run.reps[i] = nrow(res.test)
     
     labels = matrix(res.test$lab, nrow = run.reps[i], ncol = nr.combined.tests, byrow = FALSE)
     predictions = as.matrix(res.test[, fwsp_cols])
-    predictions[is.na(predictions)] = 0
     
     # Calculate AUCs
     pred.obj = ROCR::prediction(predictions, labels)
@@ -112,6 +147,7 @@ eval.calc_perf_f = function(pc_list) {
   tnrs = cbind(pc.pos, tnrs)
   aucs = cbind(pc.pos, aucs)
   
+  
   # reshape performance measure matrices to long format
   
   fpr_cols <- grep("^fpr_", names(fprs), value = TRUE)
@@ -125,8 +161,7 @@ eval.calc_perf_f = function(pc_list) {
     direction = "long"
   )
   rownames(fprs_long) <- NULL
-  # Extract tte.dist, and cred.level from test_spec
-  fprs_long$tte.dist <- sub(".*_(w|dw|pgw).*", "\\1", fprs_long$test_spec)
+  # Extract cred.level from test_spec and save in its own column
   fprs_long$cred.level <- as.numeric(sub(".*_(\\d+\\.?\\d*)$", "\\1", fprs_long$test_spec))
   
   tpr_cols <- grep("^tpr_", names(tprs), value = TRUE)
@@ -140,8 +175,7 @@ eval.calc_perf_f = function(pc_list) {
     direction = "long"
   )
   rownames(tprs_long) <- NULL
-  # Extract tte.dist, and cred.level from test_spec
-  tprs_long$tte.dist <- sub(".*_(w|dw|pgw).*", "\\1", tprs_long$test_spec)
+  # Extract cred.level from test_spec and save in its own column
   tprs_long$cred.level <- as.numeric(sub(".*_(\\d+\\.?\\d*)$", "\\1", tprs_long$test_spec))
   
   fnr_cols <- grep("^fnr_", names(fnrs), value = TRUE)
@@ -155,8 +189,7 @@ eval.calc_perf_f = function(pc_list) {
     direction = "long"
   )
   rownames(fnrs_long) <- NULL
-  # Extract tte.dist, and cred.level from test_spec
-  fnrs_long$tte.dist <- sub(".*_(w|dw|pgw).*", "\\1", fnrs_long$test_spec)
+  # Extract cred.level from test_spec and save in its own column
   fnrs_long$cred.level <- as.numeric(sub(".*_(\\d+\\.?\\d*)$", "\\1", fnrs_long$test_spec))
   
   tnr_cols <- grep("^tnr_", names(tnrs), value = TRUE)
@@ -170,8 +203,7 @@ eval.calc_perf_f = function(pc_list) {
     direction = "long"
   )
   rownames(tnrs_long) <- NULL
-  # Extract tte.dist, and cred.level from test_spec
-  tnrs_long$tte.dist <- sub(".*_(w|dw|pgw).*", "\\1", tnrs_long$test_spec)
+  # Extract cred.level from test_spec and save in its own column
   tnrs_long$cred.level <- as.numeric(sub(".*_(\\d+\\.?\\d*)$", "\\1", tnrs_long$test_spec))
   
   # reshape aucs to long format
@@ -186,8 +218,7 @@ eval.calc_perf_f = function(pc_list) {
     direction = "long"
   )
   rownames(aucs_long) <- NULL
-  # Extract tte.dist, and cred.level from test_spec
-  aucs_long$tte.dist <- sub(".*_(w|dw|pgw).*", "\\1", aucs_long$test_spec)
+  # Extract cred.level from test_spec and save in its own column
   aucs_long$cred.level <- as.numeric(sub(".*_(\\d+\\.?\\d*)$", "\\1", aucs_long$test_spec))
   
   # merge performance measure matrices fprs, tprs, auc to one
@@ -217,6 +248,23 @@ eval.calc_perf_f = function(pc_list) {
   pm_long <- pm_long[, c(
     "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", 
     "tte.dist", "cred.level", 
+    "auc", "fpr", "tpr", "fnr", "tnr"
+  )]
+  
+  # add missing columns to match required format (relevant when "b" not in est.approach)
+  pm_long <- pm_long %>%
+    mutate(
+      prior.dist = NA_character_,
+      prior.belief = NA_character_,
+      prior.sd = NA_real_,
+      dist.prior.to.truth = NA_character_,
+      post.ci.type = NA_character_,
+      sensitivity.option = NA_real_
+    )
+  pm_long = pm_long[, c(
+    "N", "br", "adr.rate", "adr.when", "adr.relsd", "study.period", "tte.dist",
+    "prior.dist", "prior.belief", "prior.sd", "dist.prior.to.truth",
+    "post.ci.type", "cred.level", "sensitivity.option", 
     "auc", "fpr", "tpr", "fnr", "tnr"
   )]
   
