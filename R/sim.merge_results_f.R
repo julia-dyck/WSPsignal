@@ -23,12 +23,16 @@ sim.merge_results_f = function(pc_list){
   pc_table = pc_list$pc_table
   pc_table_ext = dplyr::cross_join(pc_table, data.frame(batch_nr = 1:pc_list$add$batch.nr))
   
+  # filter for unique frequentist scenarios (to match communicated reps in sim)
+  ind_f = as.numeric(rownames(unique(pc_table_ext[, !grepl("prior", names(pc_table_ext))])))
+  
+  # prepare empty object for merged results
   res_f = data.frame(matrix(nrow = 0, ncol = ncol(pc_list$pc_table) + 3*length(pc_list$input$cred.level)))
   colnames(res_f) = c(colnames(pc_list$pc_table), 
                       paste0("fwsp_", rep(c("w", "dw", "pgw"), each = length(pc_list$input$cred.level)), "_", rep(pc_list$input$cred.level, times = 3))
   )
 
-  for(ind in 1:nrow(pc_table_ext)){
+  for(ind in ind_f){
     pc_vect = pc_table_ext[ind, 1:10]
     ind.batch = pc_table_ext[ind, 11]
     
