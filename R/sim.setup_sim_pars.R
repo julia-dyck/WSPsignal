@@ -403,7 +403,7 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
   
   pc_table = dplyr::bind_rows(pc_table)
   
-  pc_table_freq = dplyr::select(pc_table, -prior.dist, -prior.belief, -prior.sd)
+  pc_table_freq = dplyr::select(pc_table, -dplyr::contains("prior"))
   pc_table_freq = dplyr::distinct(pc_table_freq)
   
   sim_pars = list(dgp = dgp_pars, fit = fit_pars, test = test_pars, add = add_pars, input = input_args, pc_table = pc_table)
@@ -431,9 +431,9 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                " frequentist simulation settings.\n"))
   }
   
-  # cat(paste0("Each simulation scenario's data generation and model estimation will be repeated ",
-  #            reps,
-  #            " times.\n"))
+  cat(paste0("Each simulation scenario's data generation and model estimation will be repeated ",
+             reps,
+             " times.\n"))
   
   
   return(sim_pars)
