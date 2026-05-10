@@ -8,7 +8,7 @@
 #'
 #' @param tte.dist character vector specifying one or multiple modelling approaches; options are
 #' \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})
-#' @param prior.sds numeric value setting the same prior sd for all scale
+#' @param prior.sds numeric vector setting the same prior sd for all scale
 #' and shape parameters across all included model types; default is 10.
 #'
 #' @details
@@ -23,7 +23,7 @@
 #' @return
 #' A named list containing three data frames 
 #' \code{$w}, \code{$dw}, and \code{$pgw} specifying prior beliefs and placeholder entries for prior means,
-#' and one vector specifying the prior standard deviations to be considered per parameter in each prior belief
+#' and one vector \code{$prior.sds} specifying the prior standard deviations to be considered per parameter in each prior belief
 #' setting.
 #'
 #'

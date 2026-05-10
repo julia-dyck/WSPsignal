@@ -37,23 +37,24 @@ sim.setup_sim_pars(
 \item{study.period}{scalar specifying the length of the study period}
 
 \item{est.approach}{character vector specifying one or two estimation approaches; options are
-\code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})}
+Bayesian \code{"b"} and frequentist \code{"f"}}
 
 \item{tte.dist}{character vector specifying one or multiple modelling approaches; options are
-\code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}})}
+\code{"w", "dw", "pgw"} (see \code{\link{bwsp_model, fwsp_model}})}
 
 \item{prior.dist}{character indicating the prior distribution for the parameters
-of the tte distribution; options are "fg", "fl", "gg", "ll" (see \code{\link{bwsp_model}})}
+of the Bayesian time-to-event (tte) distribution; options are "fg", "fl", "gg", "ll" (see \code{\link{bwsp_model}})}
 
-\item{fitpars.list}{list with one data.frame per tte distribution containing
-the prior specifications for model fitting; setup with \code{\link{sim.priors_template}}}
+\item{fitpars.list}{list with one dataframe per tte distribution containing
+the prior specifications for BWSP model fitting; setup with \code{\link{sim.priors_template}}}
 
 \item{post.ci.type}{character indicating whether to extract equal tailed
 intervals (\code{"ETI"}) or highest posterior density intervals (\code{"HDI"}) as
-credibility interval (CI) for BWSP testing (see \code{\link{bwsp_test}} details)}
+credibility interval (CI) for BWSP testing (see \code{\link{bwsp_test}})}
 
 \item{cred.level}{vector of credibility levels used for construction
-of region of practical equivalence (ROPE) and posterior CI}
+of region of practical equivalence (ROPE) and posterior CI for the BWSP tests (see \code{\link{bwsp_test}}) or
+vector of confidence levels for FWSP tests (see \code{\link{fwsp_test}}).}
 
 \item{sensitivity.option}{vector of sensitivity options for the BWSP test
 (see \code{\link{bwsp_test}})}
@@ -63,7 +64,7 @@ of region of practical equivalence (ROPE) and posterior CI}
 \item{batch.size}{number of simulation repetitions to be saved in a batch (see details);
 default is 10}
 
-\item{resultpath}{directory where intermediate results of the simulation
+\item{resultpath}{directory where output of this function and intermediate results of the simulation
 are saved}
 
 \item{stanmod.chains}{number of Markov chains (see \code{\link[rstan]{sampling}});
@@ -72,35 +73,32 @@ default is 4}
 \item{stanmod.iter}{total number of iterations per chain including warmup
 (see \code{\link[rstan]{sampling}}); default is 11000}
 
-\item{stanmod.warmup}{number of warmup (aka burnin) iterations per chain
+\item{stanmod.warmup}{number of warmup (aka burn-in) iterations per chain
 (see \code{\link[rstan]{sampling}}); default is 1000}
 }
 \value{
 A list containing all simulation specifications in the format required for
-\code{\link{sim.run}}.
+\code{\link{sim.run}} or \code{\link{sim.run_parallel}}.
 }
 \description{
-Sets up parameters for a simulation study to tune the Bayesian Weibull shape parameter (BWSP) test.
+Sets up parameters for a simulation study to tune the Weibull shape parameter (WSP) test.
 Simulation parameters encompass data generating process (DGP) parameters (\code{N,..., study.period}),
-tuning parameters for the BWSP test (\code{tte.dist,..., sensitivity.option}),
+tuning parameters for the WSP test (\code{est.approach,..., sensitivity.option}),
 and additional parameters (\code{reps,..., stanmod.warmup}).
 }
 \details{
-The purpose of the simulation study is to evaluate the performance of different BWSP
+The purpose of the simulation study is to evaluate the performance of different WSP
 tests for data scenarios of interest following the tuning
 scheme developed in \insertCite{dyck2024bpgwsppreprint;textual}{WSPsignal}.
 
 DGP parameters (\code{N,..., study.period}) should
-reflect the data characteristics of interest. Given the intention to apply the
-WSP test to a specific real data set, the DGP parameters should reflect its features.
+reflect the data characteristics of interest.
 Within simulation, data are generated with \code{\link{sim.datagen_tte}}.
 
-Tuning parameters for the BWSP test (\code{tte.dist,..., sensitivity.option})
-lead to a range of tuning combinations evaluated during the simulation study to
-find the best test tuning.
-Among them, argument \code{fitpars.list} contains the prior means and sds for the
-prior distributions (\code{prior.dist}) for all scale and shape parameters.
-A template for the \code{fitpars.list} to be filled can be generated with
+Tuning parameters for the WSP test (\code{est.approach,..., sensitivity.option})
+lead to a range of tuning combinations for the WSP tests
+evaluated during the simulation study to find the best test specification.
+Argument \code{fitpars.list} needs to be prepared with
 \code{\link{sim.priors_template}}. Note, that the \code{tte.dist} argument
 in \code{\link{sim.priors_template}} and in \code{\link{sim.setup_sim_pars}} must
 match.
@@ -136,23 +134,23 @@ fp_list$pgw[,4] = c(1, 1, 14, 1)     # powershape prior means
 fp_list # fitpars.list filled with means
 
 # setup parameter combination list for simulation
-pc_list = sim.setup_sim_pars(N = c(500, 3000, 5000),
-                             br = 0.1,
-                             adr.rate = c(0, 0.5, 1),
-                             adr.relsd = 0.05,
-                             study.period = 365,
-                             est.approach = c("f", "b"),
-                             tte.dist = c("w", "pgw"),
-                             prior.dist = c("ll", "gg"),
-                             fitpars.list = fp_list,
-                             post.ci.type = c("ETI", "HDI"),
+pc_list = sim.setup_sim_pars(N = c(500, 3000, 5000),             # DGP parameters
+                             br = 0.1,                           # |
+                             adr.rate = c(0, 0.5, 1),            # |
+                             adr.relsd = 0.05,                   # |
+                             study.period = 365,                 # v
+                             est.approach = c("f", "b"),         # Tuning parameters
+                             tte.dist = c("w", "pgw"),           # |
+                             prior.dist = c("ll", "gg"),         # |
+                             fitpars.list = fp_list,             # |
+                             post.ci.type = c("ETI", "HDI"),     # |
                              cred.level = c(seq(0.5,0.9, by = 0.05)), 
-                             sensitivity.option = 1:3,
-                             reps = 100, # additional parameters
-                             batch.size = 10,
+                             sensitivity.option = 1:3,           # v
+                             reps = 100,                         # Additional parameters
+                             batch.size = 10,                    # |
                              resultpath = paste0(getwd(),"/simulation_results"),
-                             stanmod.iter = 11000,
-                             stanmod.warmup = 1000
+                             stanmod.iter = 11000,               # |
+                             stanmod.warmup = 1000               # v
                              )
                              
 

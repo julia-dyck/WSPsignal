@@ -2,7 +2,7 @@
 % Please edit documentation in R/eval.execution_times.R
 \name{eval.execution_times}
 \alias{eval.execution_times}
-\title{Evaluate execution times by tte and prior distribution}
+\title{Evaluate execution times}
 \usage{
 eval.execution_times(
   pc_list,
@@ -11,6 +11,9 @@ eval.execution_times(
 }
 \arguments{
 \item{pc_list}{list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}}
+
+\item{group.by}{character vector specifying grouping variables; must be a
+subset of \code{c("tte.dist", "prior.dist", "prior.sd")}}
 }
 \value{
 A list with summary statistics (\verb{$summary}), a ggplot2 object (\verb{$plot}),
@@ -18,10 +21,25 @@ and the data (\verb{$df}) on which summary and plot are based.
 }
 \description{
 Only for Bayesian estimation approach.
-Summarizes and visualizes execution times of the models fitted during the simulation study grouped
-by time-to-event (tte) and prior distribution types to guide the
-tte and prior distributional choices (along with other diagnostics such as
+Summarizes execution times of the models fitted optionally
+grouped by one or multiple model specifications.
+This helps assess which of the modelling choices is suitable
+for CI+ROPE testing (along with other diagnostics such as
 \code{\link{eval.non_conv_cases}} and \code{\link{eval.eff_sample_sizes}}).
+}
+\details{
+Calculations are based on the stored result file obtained with
+\code{\link{sim.merge_results}}.
+}
+\examples{
+\dontrun{
+# summarize execution times by tte and prior distribution and prior sd
+eval.execution_times(pc_list)
+
+# summarize execution times only by tte distribution
+eval.execution_times(pc_list, group.by = "tte.dist")
+}
+
 }
 \seealso{
 \code{\link{eval.non_conv_cases}}, \code{\link{eval.eff_sample_sizes}}

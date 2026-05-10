@@ -10,20 +10,20 @@ sim.run(pc_list, subset_ind = NULL)
 \item{pc_list}{list of parameter combinations generated with \code{\link{sim.setup_sim_pars}}}
 
 \item{subset_ind}{vector of integers specifying which rows of \code{pc_list$pc_table}
-to be considered in simulation runs; defaults all rows}
+to be considered in simulation runs; defaults to all rows}
 }
 \description{
-Runs simulations for all data generating processes, model and test alternatives
-specified in \code{pc_list}. If part of the simulations is already run and saved in the
-determined resultpath, only missing simulations are run and saved.
+Runs simulations for all specified data-generating processes, model
+and test configurations defined in \code{pc_list}. If simulations for some scenarios
+have already been completed, the function resumes from the remaining scenarios.
 }
 \details{
-This function runs the simulations in serial. To parallelise the
+This function executes simulations sequentially. For parallel
 execution, see \code{\link{sim.run_parallel}}.
 }
 \examples{
  \dontrun{
- sim.run(pc_list, subset_ind = NULL) # run all simulations
+ sim.run(pc_list) # run all simulations
  
  
  # To run only a subset of simulation scenarios, specify the indices of the rows

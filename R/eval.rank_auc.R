@@ -1,13 +1,13 @@
-#' Classification of WSP test configurations by AUC 
+#' Ranking of WSP test configurations
 #'
-#' Classifies all model and test specifications grouped by simulation scenarios in terms
+#' Ranks all model and test specifications grouped by simulation scenarios in terms
 #' of the corresponding area under the curve (AUC) value for Weibull Shape Parameter 
 #' (WSP) tests.
 #'
 #' @param perf data frame containing performance results for WSP tests returned 
 #' by \code{\link{eval.calc_perf}}
 #' @param test.type.subset character to filter for Bayesian and frequentist
-#' WSP (BWSP, FWSP) test types to be considered in the ranking; 
+#' WSP test types to be considered in the ranking; 
 #' must be a subset of \code{c("bwsp", "fwsp")}
 #'
 #' @param tte.dist.subset character to filter for the time-to-event (tte)
@@ -17,23 +17,27 @@
 #' @param prior.dist.subset character to filter for the prior distribution
 #'   (relevant only for BWSP tests), must be a subset of
 #'   \code{c("fg", "fl", "gg", "ll")}
+#'   
+#' @param prior.sd.subset numeric to filter for the prior standard deviation
+#'   (relevant only for BWSP tests), must be a subset of prior.sds considered 
+#'   in the simulation
 #'
 #' @return A list containing 
 #' \itemize{
 #' \item \code{$rank.tab}: Ranking of fit and WSP test specifications according 
-#' to AUC averaged over all sample scenarios (- for BWSP tests given a correct 
+#' to AUC averaged over all sample scenarios (for BWSP tests given a correct 
 #' specification of prior belief)
 #' \item \code{$effect.of.N}: Effect of sample size on AUC for the optimal fit 
-#' and WSP test (- for BWSP tests given a correct specification of prior belief)
+#' and WSP test (for BWSP tests given a correct specification of prior belief)
 #' \item \code{$effect.of.br}: Effect of background rate on AUC for the optimal fit
-#' and WSP test (- for BWSP tests given a correct specification of prior belief)
+#' and WSP test (for BWSP tests given a correct specification of prior belief)
 #' \item \code{$effect.of.adr.rate}: Effect of ADR rate on AUC for the optimal fit
-#' and WSP test (- for BWSP tests given a correct specification of prior belief)
+#' and WSP test (for BWSP tests given a correct specification of prior belief)
 #' \item \code{$effect.of.adr.when}: Effect of true expected event times on AUC 
-#' for the optimal fit and WSP test (- for BWSP tests given a correct 
+#' for the optimal fit and WSP test (for BWSP tests given a correct 
 #' specification of prior belief)
 #' \item \code{$effect.of.adr.relsd}: Effect of relative standard deviation of event 
-#' time on AUC for the optimal fit and WSP test (- for BWSP tests given a correct 
+#' time on AUC for the optimal fit and WSP test (for BWSP tests given a correct 
 #' specification of prior belief)
 #' \item \code{$effect.of.dist.prior.to.truth}: Effect of distance of prior belief 
 #' to true \code{adr.when} on AUC for the optimal fit and WSP test (only BWSP)
@@ -45,10 +49,9 @@
 #' 
 #' The filter mechanism enables filtering for a subset of test specifications. 
 #' This is helpful for example when tte distributions, prior distributions or 
-#' an estimation approach are no longer under consideration after inspecting the 
-#' model diagnostics with \code{\link{eval.execution_times}}, 
-#' \code{\link{eval.non_conv_cases}} and \code{\link{eval.eff_sample_sizes}}, 
-#' or when inspection of only one tte distribution was the objective from the beginning.
+#' an estimation approach are no longer under consideration for instance after 
+#' inspecting the model diagnostics with \code{\link{eval.execution_times}}, 
+#' \code{\link{eval.non_conv_cases}} and \code{\link{eval.eff_sample_sizes}}.
 #' 
 #' 
 #' 
@@ -58,7 +61,6 @@
 #' @examples
 #' \dontrun{
 #' # loading of performance metrics returned by eval.calc_perf function,
-#' # called perf here
 #' load(paste0(pc_list$add$resultpath, "/perf.RData"))
 #' 
 #' # ranking of all WSP tests considered in simulation setup
@@ -73,18 +75,10 @@
 #' 
 #' # ranking of subset of all Bayesian WSP tests with "ll"-prior considered in 
 #' # the simulation setup
-#' rank_b_ll = eval.rank_auc(perf, test.type.subset = "bwsp", 
-#'                        tte.dist.subset = "pgw",
+#' rank_b_ll = eval.rank_auc(perf, test.type.subset = "bwsp",
 #'                        prior.dist.subset = "ll")
 #'                        
-#' # ranking of subset of all frequentist WSP tests with prior distribution 
-#' # specification -> leads to warning as prior dist specification has no effect
-#' # on subset
-#' rank_f = eval.rank_auc(perf, test.type.subset = "fwsp", 
-#'                            prior.dist.subset = "fg")
-#' 
 #' }
-#' 
 #'
 #' @export
 #'
@@ -95,7 +89,8 @@
 eval.rank_auc = function(perf, 
                          test.type.subset = c("bwsp", "fwsp"), 
                          tte.dist.subset = c("w", "dw", "pgw"), 
-                         prior.dist.subset = c("fg", "fl", "gg", "ll")){
+                         prior.dist.subset = c("fg", "fl", "gg", "ll"),
+                         prior.sd.subset = NULL){
   require(dplyr)
   
   # 0. argument checks ---------------------------------------------------------
@@ -138,6 +133,10 @@ eval.rank_auc = function(perf,
   if (!("bwsp" %in% test.type.subset) && !identical(prior.dist.subset, c("fg","fl","gg","ll"))) {
     warning("No 'bwsp' tests are considered. Argument `prior.dist.subset` has no effect.")
   }
+  
+  # TODO: if prior.sd.subset not NULL, 
+  # gather unique vector of prior.sd values in perf table and check whether 
+  # prior.sd.subset is a subset of unique prior.sd vector
   
   ## fct body ------------------------------------------------------------------
   # apply filter options

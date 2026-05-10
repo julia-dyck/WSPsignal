@@ -1,13 +1,15 @@
-#' Evaluate effective sample sizes by tte and prior distribution
+#' Evaluate effective sample sizes
 #'
 #' Only for Bayesian estimation approach.
-#' Summarizes and visualizes effective sample sizes of the stan models fitted during 
-#' the simulation study, grouped by time-to-event (tte) and prior distribution types. 
-#' This helps assess which of the tte and prior distribution choices is suitable 
-#' for HDI+ROPE testing (along with other diagnostics such as 
+#' Summarizes effective sample sizes of the stan models fitted optionally
+#' grouped by one or multiple model specifications.
+#' This helps assess which of the modelling choices is suitable 
+#' for CI+ROPE testing (along with other diagnostics such as 
 #' \code{\link{eval.non_conv_cases}} and \code{\link{eval.execution_times}}).
 #'
-#' @param pc_list a list containing simulation parameters (see \code{\link{sim.setup_sim_pars}})
+#' @param pc_list list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}
+#' @param group.by character vector specifying grouping variables; must be a 
+#' subset of \code{c("tte.dist", "prior.dist", "prior.sd")}
 #' @param threshold numeric threshold for effective sample size acceptable for 
 #' HDI+ROPE testing (10000 by default as recommended by \insertCite{kruschke2015;textual}{WSPsignal})
 #'
@@ -15,6 +17,15 @@
 #' and the data (`$df`) on which summary and plot are based.
 #' 
 #' @seealso \code{\link{eval.non_conv_cases}}, \code{\link{eval.execution_times}}
+#' 
+#' @examples
+#' \dontrun{
+#' # summarize effective sample sizes by tte and prior distribution and prior sd
+#' eval.eff_sample_sizes(pc_list)
+#'
+#' # summarize effective sample sizes only by tte distribution
+#' eval.eff_sample_sizes(pc_list, group.by = "tte.dist")
+#' }
 #' 
 #' @references
 #'   \insertAllCited{}

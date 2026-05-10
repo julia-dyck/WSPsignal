@@ -2,7 +2,7 @@
 % Please edit documentation in R/eval.non_conv_cases.R
 \name{eval.non_conv_cases}
 \alias{eval.non_conv_cases}
-\title{Evaluate number of non-convergence cases by tte and prior distribution}
+\title{Evaluate number of non-convergence cases}
 \usage{
 eval.non_conv_cases(
   pc_list,
@@ -11,12 +11,16 @@ eval.non_conv_cases(
 }
 \arguments{
 \item{pc_list}{list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}}
+
+\item{group.by}{character vector specifying grouping variables; must be a
+subset of \code{c("tte.dist", "prior.dist", "prior.sd")}}
 }
 \value{
 A data frame with the following columns:
 \itemize{
-\item \code{tte.dist}: The tte distribution as grouping factor.
-\item \code{prior.dist}: The prior distribution as grouping factor.
+\item \code{tte.dist}: The tte distribution as grouping factor (if selected).
+\item \code{prior.dist}: The prior distribution as grouping factor (if selected).
+\item \code{prior.sd}: The prior standard deviation as grouping factor (if selected).
 \item \code{total.planned}: The total number of planned repetitions in this group.
 \item \code{total.notrun}: The total number of repetitions that were not run in this group.
 \item \code{prop.notrun}: The proportion of repetitions that were not run in this group.
@@ -24,15 +28,25 @@ A data frame with the following columns:
 }
 \description{
 Only for Bayesian estimation approach.
-Summarizes the number of planned vs. not successfully run simulations grouped by \code{tte.dist}
-and \code{prior.dist}. The purpose of the table is to guide the
-time-to-event (tte) and prior distributional choices (along with other diagnostics
-such as \code{\link{eval.execution_times}} and \code{\link{eval.eff_sample_sizes}}).
+Summarizes the number of planned vs. not successfully run simulations optionally
+grouped by one or multiple model specifications.
+This helps assess which of the modelling choices is suitable
+for CI+ROPE testing (along with other diagnostics such as
+\code{\link{eval.execution_times}} and \code{\link{eval.eff_sample_sizes}}).
 }
 \details{
-Calculations are based on the stored result batch files of the simulation study.
-Unsuccessfully run simulations are missing (supposedly due to non-convergence during
-model estimation).
+Calculations are based on the stored result file obtained with
+\code{\link{sim.merge_results}}.
+}
+\examples{
+\dontrun{
+# summarize non-convergence cases by tte and prior distribution and prior sd
+eval.non_conv_cases(pc_list)
+
+# summarize non-convergence cases only by tte distribution
+eval.non_conv_cases(pc_list, group.by = "tte.dist")
+}
+
 }
 \seealso{
 \code{\link{eval.execution_times}}, \code{\link{eval.eff_sample_sizes}}

@@ -1,7 +1,7 @@
-#' Calculate performance metrics for WSP test configurations in simulation
+#' Compute performance metrics for WSP test configurations
 #'
-#' Computes performance metrics for all the specified Bayesian and  
-#' frequentist Weibull Shape Parameter (BWSP, BWSP) test configurations across simulated scenarios.
+#' Computes performance metrics for all the specified Weibull Shape Parameter (WSP) 
+#' test configurations across simulated scenarios.
 #' The output provides the base for a ranking of tests (see \code{\link{eval.rank_auc}}).
 #'
 #' @param pc_list list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}
@@ -10,24 +10,22 @@
 #' test configuration, and corresponding performance measurements in additional columns, namely 
 #' the \eqn{auc}, \eqn{fpr}, \eqn{tpr}, \eqn{fnr} and \eqn{tnr}.
 #' 
-#' Scenarios with incomplete amount of simulations return `NA` for performance metrics.
-#' FWSP tests return `NA` for scenario/model characteristics only relevant for 
-#' BWSP test specification.
+#' Scenarios with incomplete number of repetitions return `NA` for performance metrics.
+#' Frequentist WSP tests return `NA` for scenario/model characteristics that are only relevant for 
+#' Bayesian WSP test specification.
 #' 
 #' 
 #'
 #' @details 
+#' Based on the merged simulation results obtained with 
+#' \code{\link{sim.merge_results}}, the function performs WSP tests for all 
+#' specified model and test configurations. Bayesian WSP tests depend on the 
+#' combination of time-to-event (tte) distribution, prior model specification,
+#' posterior credibility interval (CI) type, credibility level and sensitivity 
+#' option (see \code{\link{bwsp_test}}). Frequentist WSP tests depend on the 
+#' tte distribution and confidence level (see \code{\link{fwsp_test}}).
 #' 
-#' 
-#' Based the merged simulation results (obtained with 
-#' \code{\link{sim.merge_results}}), the function performs WSP tests for all 
-#' specified test setups - for Bayesian tests depending on the combination of posterior 
-#' credibility interval (CI) type, credibility level and the sensitivity option 
-#' (see \code{\link{bwsp_test}} and \code{pc_list$test}); for frequentist tests 
-#' depending on the credibility level (see \code{\link{fwsp_test}} and pc_list$input$cred.level).
-#' 
-#' Given binary test results the function calculates
-#' for each subset representing one scenario and test combination the 
+#' Given binary test results the function computes the
 #' following performance measures:
 #'   
 #' \itemize{
@@ -46,16 +44,16 @@
 #' }
 #' with \eqn{FP} being the number of false positive cases, \eqn{TN} the number of true negative
 #' cases, \eqn{TP} the number of true positive cases and \eqn{FN} the number of false negative cases
-#' among simulation repetitions, as well, as
+#' among simulation repetitions, as well as
 #'
 #' \itemize{
-#' \item Area under the ROC curve:
+#' \item Area under the ROC curve (AUC):
 #'   
 #' The AUC is the area under the receiver operating characteristic (ROC) 
 #' graph \insertCite{fawcett2004}{WSPsignal}. 
-#' Here, we use the ROC curve with one threshold based on equal numbers
+#' Here, the ROC curve with one threshold based on equal numbers
 #' of ADR-positive and control 
-#' scenarios. It is computed using the \code{\link[ROCR]{performance}} function. 
+#' scenarios is computed using the \code{\link[ROCR]{performance}} function. 
 #' 
 #' }
 #' 

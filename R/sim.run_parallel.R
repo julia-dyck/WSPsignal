@@ -1,23 +1,23 @@
 #' Run simulation (in parallel)
 #' 
-#' Runs simulations for all data generating processes, model and test alternatives
-#' specified in pc_list. If part of the simulations is already run and saved in the 
-#' detemined resultpath, only missing simulations are run and saved.
+#' Runs simulations in parallel for all specified data-generating processes, model 
+#' and test configurations defined in \code{pc_list}. If simulations for some scenarios 
+#' have already been completed, the function resumes from the remaining scenarios.
 #' 
-#' Simulation runs can be parallelized using the \code{\link[future]{plan}} 
-#' command (see example).
 #' 
-#' @param pc_list list of parameter combinations obtained from \code{\link{sim.setup_sim_pars}}
+#' @param pc_list list of parameter combinations generated with \code{\link{sim.setup_sim_pars}}
 #' @param subset_ind vector of integers specifying which rows of \code{pc_list$pc_table} 
-#' to be considered in simulation runs
+#' to be considered in simulation runs; defaults to all rows
 #' 
+#' @details Parallelization needs to be initialized using the \code{\link[future]{plan}} 
+#' command (see example).
 #' 
 #' 
 #' @examples 
 #' \dontrun{
 #'  # install.packages(future)
 #'  future::plan(multisession, workers = availableCores()) # or another plan strategy
-#'  sim.run_parallel(pc_list, subset_ind = NULL) # run all simulations
+#'  sim.run_parallel(pc_list) # run all simulations
 #'  
 #'  
 #'  # To run only a subset of simulation scenarios, specify the indices of the rows

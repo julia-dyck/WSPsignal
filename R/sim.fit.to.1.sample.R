@@ -73,13 +73,13 @@ sim.fit.to.1.sample = function(pc, pc_list){
   
   ### Frequentist model fitting (MLE)
   if("f" %in% est.approach){
-    mod.w = fwsp_model(dat = ttedat, tte.dist = "w")
+    mod.w = suppressMessages(fwsp_model(dat = ttedat, tte.dist = "w"))
     test.w = fwsp_test(mod.w, cred.level = pc_list$input$cred.level)
-    mod.dw = fwsp_model(dat = ttedat, tte.dist = "dw")
+    mod.dw = suppressMessages(fwsp_model(dat = ttedat, tte.dist = "dw"))
     test.dw = fwsp_test(mod.dw, cred.level = pc_list$input$cred.level)
     
     mod.pgw = tryCatch(
-      fwsp_model(dat = ttedat, tte.dist = "pgw"),
+     suppressMessages(fwsp_model(dat = ttedat, tte.dist = "pgw")),
       error = function(e) {
         return(NULL)
       }
