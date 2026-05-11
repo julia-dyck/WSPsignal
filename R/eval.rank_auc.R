@@ -134,14 +134,29 @@ eval.rank_auc = function(perf,
     warning("No 'bwsp' tests are considered. Argument `prior.dist.subset` has no effect.")
   }
   
-  # TODO: if prior.sd.subset not NULL, 
-  # gather unique vector of prior.sd values in perf table and check whether 
-  # prior.sd.subset is a subset of unique prior.sd vector
+  # check: prior.sd.subset
+  if (!is.null(prior.sd.subset) && (
+      !is.numeric(prior.sd.subset) ||
+      !all(prior.sd.subset %in% unique(stats::na.omit(perf$prior.sd)))
+    )
+  ) {
+    stop(
+      paste0(
+        "Argument `prior.sd.subset` must be NULL or a subset of prior.sd values ",
+        paste(sort(unique(stats::na.omit(perf$prior.sd))), collapse = ", "),
+        "."
+      )
+    )
+  }
   
   ## fct body ------------------------------------------------------------------
   # apply filter options
   perf = perf %>% dplyr::filter(tte.dist %in% tte.dist.subset) %>%
     dplyr::filter(prior.dist %in% c(prior.dist.subset,NA))
+  
+  if (!is.null(prior.sd.subset)) {
+    perf = perf %>% dplyr::filter(prior.sd %in% c(prior.sd.subset, NA))
+  }
   
   # apply ranking fcts
   if(("bwsp" %in% test.type.subset) & (sum(perf$test.type == "bwsp") > 0)){
