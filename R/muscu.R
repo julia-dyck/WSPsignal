@@ -12,7 +12,7 @@
 #'
 #' @details
 #' The data was generated using 
-#' \code{\link{sim.datagen_tte(genpar = c(19777, 0.01, 0.89, 160/365, 0.1, 365))}} 
+#' \code{sim.datagen_tte(genpar = c(19777, 0.01, 0.89, 160/365, 0.1, 365))}
 #' with parameters derived from the case study presented in 
 #' \insertCite{dyck2024bpgwsppreprint;textual}{WSPsignal}.
 #' 
