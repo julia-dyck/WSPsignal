@@ -16,7 +16,7 @@
 #' @param est.approach character vector specifying one or two estimation approaches; options are
 #'        Bayesian \code{"b"} and frequentist \code{"f"}
 #' @param tte.dist character vector specifying one or multiple modelling approaches; options are
-#' \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model, fwsp_model}})
+#' \code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}}, \code{\link{fwsp_model}})
 #' @param prior.dist character indicating the prior distribution for the parameters 
 #' of the Bayesian time-to-event (tte) distribution; options are "fg", "fl", "gg", "ll" (see \code{\link{bwsp_model}})
 #' @param fitpars.list list with one dataframe per tte distribution containing

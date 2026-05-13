@@ -8,7 +8,7 @@ eval.roc_curve(rank.tab, n = 10)
 }
 \arguments{
 \item{rank.tab}{data frame of ranked test specifications obtained from
-\link{eval.rank_auc} (\code{output$rank.tab})}
+\code{\link{eval.rank_auc}} (\code{output$rank.tab})}
 
 \item{n}{number of top-ranked test specifications to plot (10 by default)}
 }
@@ -30,7 +30,7 @@ of ADR-positive and control scenarios.
 
 For definitions of the performance metrics \code{AUC, FPR, TPR, FNR}
 and \code{TNR} returned in printed output,
-see the details section of \link{eval.calc_perf}.
+see the details section of \code{\link{eval.calc_perf}}.
 
 The ggplot output can be adjusted to individual needs by adding \code{ggplot2}
 layers to the output.

@@ -40,7 +40,7 @@ sim.setup_sim_pars(
 Bayesian \code{"b"} and frequentist \code{"f"}}
 
 \item{tte.dist}{character vector specifying one or multiple modelling approaches; options are
-\code{"w", "dw", "pgw"} (see \code{\link{bwsp_model, fwsp_model}})}
+\code{"w", "dw", "pgw"} (see \code{\link{bwsp_model}}, \code{\link{fwsp_model}})}
 
 \item{prior.dist}{character indicating the prior distribution for the parameters
 of the Bayesian time-to-event (tte) distribution; options are "fg", "fl", "gg", "ll" (see \code{\link{bwsp_model}})}
