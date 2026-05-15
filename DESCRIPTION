@@ -26,6 +26,7 @@ Imports:
     ROCR,
     stats,
     graphics,
+    magrittr,
     dplyr,
     ggplot2,
     survival,
