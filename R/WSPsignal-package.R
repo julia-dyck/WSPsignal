@@ -13,6 +13,7 @@
 #' @importFrom rstantools rstan_config
 #' @importFrom RcppParallel RcppParallelLibs
 #' @importFrom Rdpack reprompt
+#' @importFrom magrittr %>%
 #'
 #' @references
 #' \insertRef{sauzet2022}{WSPsignal}
