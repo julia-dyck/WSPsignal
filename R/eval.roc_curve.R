@@ -50,10 +50,7 @@
 #' @export
 
 eval.roc_curve = function(rank.tab, n = 10) {
-  require(ggplot2)
-  require(dplyr)
-  require(tidyr)
-  
+
   # argument checks ------------------------------------------------------------
   
   # arg check rank.tab

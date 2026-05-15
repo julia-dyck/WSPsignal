@@ -6,7 +6,6 @@
 
 
 eval.calc_perf_f = function(pc_list) {
-  # require(dplyr)
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-
@@ -47,7 +46,7 @@ eval.calc_perf_f = function(pc_list) {
       load(paste0(pc_list$add$resultpath, "/res_f.RData"))
       message("res_f.RData successfully loaded")
     }, error = function(cond) {
-      sim.merge_results(pc_list, save = TRUE, bayes = FALSE)
+      sim.merge_results(pc_list, save = TRUE)
       load(paste0(pc_list$add$resultpath, "/res_f.RData"))
       message("Batches merged and loaded")
     })
@@ -68,17 +67,17 @@ eval.calc_perf_f = function(pc_list) {
   res_f_w = res_f %>%
     dplyr::filter(tte.dist == "w") %>%
     dplyr::select(dplyr::all_of(c(pc_cols, fwsp_w_cols))) %>%
-    rename_with(~ sub("^fwsp_w_", "fwsp_", .x), dplyr::starts_with("fwsp_w"))
+    dplyr::rename_with(~ sub("^fwsp_w_", "fwsp_", .x), dplyr::starts_with("fwsp_w"))
   
   res_f_dw = res_f %>%
     dplyr::filter(tte.dist == "dw") %>%
     dplyr::select(dplyr::all_of(c(pc_cols, fwsp_dw_cols))) %>%
-    rename_with(~ sub("^fwsp_dw_", "fwsp_", .x), dplyr::starts_with("fwsp_dw"))
+    dplyr::rename_with(~ sub("^fwsp_dw_", "fwsp_", .x), dplyr::starts_with("fwsp_dw"))
   
   res_f_pgw = res_f %>%
     dplyr::filter(tte.dist == "pgw") %>%
     dplyr::select(dplyr::all_of(c(pc_cols, fwsp_pgw_cols))) %>%
-    rename_with(~ sub("^fwsp_pgw_", "fwsp_", .x), dplyr::starts_with("fwsp_pgw"))
+    dplyr::rename_with(~ sub("^fwsp_pgw_", "fwsp_", .x), dplyr::starts_with("fwsp_pgw"))
   
   # combine
   res_f_long = dplyr::bind_rows(res_f_w, res_f_dw, res_f_pgw)
@@ -152,7 +151,7 @@ eval.calc_perf_f = function(pc_list) {
   
   fpr_cols <- grep("^fpr_", names(fprs), value = TRUE)
   # Reshape
-  fprs_long <- reshape(
+  fprs_long <- stats::reshape(
     fprs[, c(setdiff(names(fprs), fpr_cols), fpr_cols)],
     varying = fpr_cols,
     v.names = "fpr",
@@ -166,7 +165,7 @@ eval.calc_perf_f = function(pc_list) {
   
   tpr_cols <- grep("^tpr_", names(tprs), value = TRUE)
   # Reshape
-  tprs_long <- reshape(
+  tprs_long <- stats::reshape(
     tprs[, c(setdiff(names(tprs), tpr_cols), tpr_cols)],
     varying = tpr_cols,
     v.names = "tpr",
@@ -180,7 +179,7 @@ eval.calc_perf_f = function(pc_list) {
   
   fnr_cols <- grep("^fnr_", names(fnrs), value = TRUE)
   # Reshape
-  fnrs_long <- reshape(
+  fnrs_long <- stats::reshape(
     fnrs[, c(setdiff(names(fnrs), fnr_cols), fnr_cols)],
     varying = fnr_cols,
     v.names = "fnr",
@@ -194,7 +193,7 @@ eval.calc_perf_f = function(pc_list) {
   
   tnr_cols <- grep("^tnr_", names(tnrs), value = TRUE)
   # Reshape
-  tnrs_long <- reshape(
+  tnrs_long <- stats::reshape(
     tnrs[, c(setdiff(names(tnrs), tnr_cols), tnr_cols)],
     varying = tnr_cols,
     v.names = "tnr",
@@ -209,7 +208,7 @@ eval.calc_perf_f = function(pc_list) {
   # reshape aucs to long format
   auc_cols <- grep("^auc_", names(aucs), value = TRUE)
   # Reshape
-  aucs_long <- reshape(
+  aucs_long <- stats::reshape(
     aucs[, c(setdiff(names(aucs), auc_cols), auc_cols)],
     varying = auc_cols,
     v.names = "auc",
@@ -253,7 +252,7 @@ eval.calc_perf_f = function(pc_list) {
   
   # add missing columns to match required format (relevant when "b" not in est.approach)
   pm_long <- pm_long %>%
-    mutate(
+    dplyr::mutate(
       prior.dist = NA_character_,
       prior.belief = NA_character_,
       prior.sd = NA_real_,

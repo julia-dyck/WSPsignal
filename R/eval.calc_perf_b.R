@@ -7,7 +7,6 @@
 
 
 eval.calc_perf_b = function(pc_list){
-  require(dplyr) # for the pipe operator
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-

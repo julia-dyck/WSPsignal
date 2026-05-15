@@ -53,18 +53,18 @@ setup_rope = function(tte.dist = "dw",
     distpars_shape_c = logprior_repar(shape_c.mean, shape_c.sd) 
     distpars_powershape = logprior_repar(powershape.mean, powershape.sd) 
     
-    rope_shape = qlnorm(p = ci_boundaries, meanlog = distpars_shape[1], sdlog = distpars_shape[2])
-    rope_shape_c = qlnorm(p = ci_boundaries, meanlog = distpars_shape_c[1], sdlog = distpars_shape_c[2])
-    rope_powershape = qlnorm(p = ci_boundaries, meanlog = distpars_powershape[1], sdlog = distpars_powershape[2]) 
+    rope_shape = stats::qlnorm(p = ci_boundaries, meanlog = distpars_shape[1], sdlog = distpars_shape[2])
+    rope_shape_c = stats::qlnorm(p = ci_boundaries, meanlog = distpars_shape_c[1], sdlog = distpars_shape_c[2])
+    rope_powershape = stats::qlnorm(p = ci_boundaries, meanlog = distpars_powershape[1], sdlog = distpars_powershape[2]) 
   }
   if(prior.dist == "gg"){
     distpars_shape = gamprior_repar(shape.mean, shape.sd) # from mean, sd to lognormal parameters
     distpars_shape_c = gamprior_repar(shape_c.mean, shape_c.sd) 
     distpars_powershape = gamprior_repar(powershape.mean, powershape.sd) 
     
-    rope_shape = qgamma(p = ci_boundaries, shape = distpars_shape[1], rate = distpars_shape[2])
-    rope_shape_c = qgamma(p = ci_boundaries, shape = distpars_shape_c[1], rate = distpars_shape_c[2])
-    rope_powershape = qgamma(p = ci_boundaries, shape = distpars_powershape[1], rate = distpars_powershape[2]) 
+    rope_shape = stats::qgamma(p = ci_boundaries, shape = distpars_shape[1], rate = distpars_shape[2])
+    rope_shape_c = stats::qgamma(p = ci_boundaries, shape = distpars_shape_c[1], rate = distpars_shape_c[2])
+    rope_powershape = stats::qgamma(p = ci_boundaries, shape = distpars_powershape[1], rate = distpars_powershape[2]) 
   }
   
   # gather relevant ropes as vector

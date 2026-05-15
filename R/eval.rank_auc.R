@@ -91,7 +91,7 @@ eval.rank_auc = function(perf,
                          tte.dist.subset = c("w", "dw", "pgw"), 
                          prior.dist.subset = c("fg", "fl", "gg", "ll"),
                          prior.sd.subset = NULL){
-  # require(dplyr)
+
   
   # 0. argument checks ---------------------------------------------------------
   # for perf

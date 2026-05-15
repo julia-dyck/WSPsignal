@@ -28,6 +28,7 @@ Imports:
     graphics,
     magrittr,
     dplyr,
+    tidyr,
     ggplot2,
     survival,
     furrr

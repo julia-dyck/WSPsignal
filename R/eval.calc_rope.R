@@ -29,8 +29,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
-        upper = qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        lower = stats::qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        upper = stats::qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     } 
@@ -42,8 +42,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
-        upper = qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
+        lower = stats::qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
+        upper = stats::qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     }
@@ -85,8 +85,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
-        upper = qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        lower = stats::qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        upper = stats::qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     } 
@@ -98,8 +98,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
-        upper = qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
+        lower = stats::qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
+        upper = stats::qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     }
@@ -125,8 +125,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
-        upper = qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        lower = stats::qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        upper = stats::qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     } 
@@ -138,8 +138,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
-        upper = qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
+        lower = stats::qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
+        upper = stats::qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     }
@@ -171,8 +171,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
-        upper = qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        lower = stats::qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        upper = stats::qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     } 
@@ -184,8 +184,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
-        upper = qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
+        lower = stats::qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
+        upper = stats::qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     }
@@ -211,8 +211,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
-        upper = qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        lower = stats::qlnorm((1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
+        upper = stats::qlnorm(cred + (1 - cred) / 2, meanlog = pars[1], sdlog = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     } 
@@ -224,8 +224,8 @@ eval.calc_rope = function(rope.infos.row, cred.levels){
       
       for (i in 1:length(cred.levels)) {
         cred = cred.levels[i]
-        lower = qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
-        upper = qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
+        lower = stats::qgamma((1 - cred) / 2, shape = pars[1], rate = pars[2])
+        upper = stats::qgamma(cred + (1 - cred) / 2, shape = pars[1], rate = pars[2])
         ropes.list[[i]] = c(lower, upper)
       }
     }
