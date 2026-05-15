@@ -65,7 +65,7 @@
 #' 
 
 eval.calc_perf = function(pc_list){
-  require(dplyr)
+  # require(dplyr)
   est.approach = pc_list$input$est.approach
   
   # calc performance measures for all Bayesian test types

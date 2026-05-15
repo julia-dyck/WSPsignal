@@ -6,7 +6,7 @@
 
 
 eval.calc_perf_f = function(pc_list) {
-  require(dplyr)
+  # require(dplyr)
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-
@@ -66,19 +66,19 @@ eval.calc_perf_f = function(pc_list) {
   
   # build clean subtables
   res_f_w = res_f %>%
-    filter(tte.dist == "w") %>%
-    select(all_of(c(pc_cols, fwsp_w_cols))) %>%
-    rename_with(~ sub("^fwsp_w_", "fwsp_", .x), starts_with("fwsp_w"))
+    dplyr::filter(tte.dist == "w") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, fwsp_w_cols))) %>%
+    rename_with(~ sub("^fwsp_w_", "fwsp_", .x), dplyr::starts_with("fwsp_w"))
   
   res_f_dw = res_f %>%
-    filter(tte.dist == "dw") %>%
-    select(all_of(c(pc_cols, fwsp_dw_cols))) %>%
-    rename_with(~ sub("^fwsp_dw_", "fwsp_", .x), starts_with("fwsp_dw"))
+    dplyr::filter(tte.dist == "dw") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, fwsp_dw_cols))) %>%
+    rename_with(~ sub("^fwsp_dw_", "fwsp_", .x), dplyr::starts_with("fwsp_dw"))
   
   res_f_pgw = res_f %>%
-    filter(tte.dist == "pgw") %>%
-    select(all_of(c(pc_cols, fwsp_pgw_cols))) %>%
-    rename_with(~ sub("^fwsp_pgw_", "fwsp_", .x), starts_with("fwsp_pgw"))
+    dplyr::filter(tte.dist == "pgw") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, fwsp_pgw_cols))) %>%
+    rename_with(~ sub("^fwsp_pgw_", "fwsp_", .x), dplyr::starts_with("fwsp_pgw"))
   
   # combine
   res_f_long = dplyr::bind_rows(res_f_w, res_f_dw, res_f_pgw)
@@ -92,7 +92,7 @@ eval.calc_perf_f = function(pc_list) {
   
   # 2. ------------------------------------------------------------------------- 
   #### calculate AUC for each simulation scenario (= one row of pc_list$pc_table)
-  pc.pos = filter(pc_list$pc_table, adr.rate > 0)
+  pc.pos = dplyr::filter(pc_list$pc_table, adr.rate > 0)
   pc.pos = unique(pc.pos[, -c(8:10)])  # Drop prior info (frequentist)
   
   fwsp_cols = grep("^fwsp_", names(res.ext), value = TRUE)
@@ -112,7 +112,7 @@ eval.calc_perf_f = function(pc_list) {
     scenario <- pc.pos[i, ]
     
     res.test = res.ext %>%
-      filter((adr.rate == 0 | adr.rate == scenario$adr.rate),
+      dplyr::filter((adr.rate == 0 | adr.rate == scenario$adr.rate),
              (is.na(adr.when) | adr.when == scenario$adr.when),
              N == scenario$N,
              br == scenario$br,

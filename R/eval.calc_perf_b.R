@@ -82,56 +82,56 @@ eval.calc_perf_b = function(pc_list){
   # filter for subtables that contain test results
   
   # for prior.dist == "fl"
-  res_b_w_fl = res_b %>% filter(tte.dist == "w", prior.dist == "fl") %>%
-    select(all_of(c(pc_cols, bwsp_w_fl_cols))) %>%
-    dplyr::rename_with(~ sub("^bwsp_w_fl_", "bwsp_", .x), starts_with("bwsp_w_fl"))
+  res_b_w_fl = res_b %>% dplyr::filter(tte.dist == "w", prior.dist == "fl") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_w_fl_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_w_fl_", "bwsp_", .x), dplyr::starts_with("bwsp_w_fl"))
 
-  res_b_dw_fl = res_b %>% filter(tte.dist == "dw", prior.dist == "fl") %>%
-    select(all_of(c(pc_cols, bwsp_dw_fl_cols))) %>%
-    dplyr::rename_with(~ sub("^bwsp_dw_fl_", "bwsp_", .x), starts_with("bwsp_dw_fl"))
+  res_b_dw_fl = res_b %>% dplyr::filter(tte.dist == "dw", prior.dist == "fl") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_dw_fl_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_dw_fl_", "bwsp_", .x), dplyr::starts_with("bwsp_dw_fl"))
 
-  res_b_pgw_fl = res_b %>% filter(tte.dist == "pgw", prior.dist == "fl") %>%
-    select(all_of(c(pc_cols, bwsp_pgw_fl_cols))) %>%
-    dplyr::rename_with(~ sub("^bwsp_pgw_fl_", "bwsp_", .x), starts_with("bwsp_pgw_fl"))
+  res_b_pgw_fl = res_b %>% dplyr::filter(tte.dist == "pgw", prior.dist == "fl") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_pgw_fl_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_pgw_fl_", "bwsp_", .x), dplyr::starts_with("bwsp_pgw_fl"))
 
   # for prior.dist == "fg"
-  res_b_w_fg = res_b %>% filter(tte.dist == "w", prior.dist == "fg") %>%
-    select(all_of(c(pc_cols, bwsp_w_fg_cols))) %>%
-    dplyr::rename_with(~ sub("^bwsp_w_fg_", "bwsp_", .x), starts_with("bwsp_w_fg"))
+  res_b_w_fg = res_b %>% dplyr::filter(tte.dist == "w", prior.dist == "fg") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_w_fg_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_w_fg_", "bwsp_", .x), dplyr::starts_with("bwsp_w_fg"))
 
-  res_b_dw_fg = res_b %>% filter(tte.dist == "dw", prior.dist == "fg") %>%
-    select(all_of(c(pc_cols, bwsp_dw_fg_cols))) %>%
-    dplyr::rename_with(~ sub("^bwsp_dw_fg_", "bwsp_", .x), starts_with("bwsp_dw_fg"))
+  res_b_dw_fg = res_b %>% dplyr::filter(tte.dist == "dw", prior.dist == "fg") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_dw_fg_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_dw_fg_", "bwsp_", .x), dplyr::starts_with("bwsp_dw_fg"))
 
-  res_b_pgw_fg = res_b %>% filter(tte.dist == "pgw", prior.dist == "fg") %>%
-    select(all_of(c(pc_cols, bwsp_pgw_fg_cols))) %>%
-    dplyr::rename_with(~ sub("^bwsp_pgw_fg_", "bwsp_", .x), starts_with("bwsp_pgw_fg"))
+  res_b_pgw_fg = res_b %>% dplyr::filter(tte.dist == "pgw", prior.dist == "fg") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_pgw_fg_cols))) %>%
+    dplyr::rename_with(~ sub("^bwsp_pgw_fg_", "bwsp_", .x), dplyr::starts_with("bwsp_pgw_fg"))
 
   # for prior.dist == "ll"
-  res_b_w_ll = res_b %>% filter(tte.dist == "w", prior.dist == "ll") %>%
-    select(all_of(c(pc_cols, bwsp_w_ll_cols))) %>% 
-    dplyr::rename_with(~ sub("^bwsp_w_ll_", "bwsp_", .x), starts_with("bwsp_w_ll"))
+  res_b_w_ll = res_b %>% dplyr::filter(tte.dist == "w", prior.dist == "ll") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_w_ll_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_w_ll_", "bwsp_", .x), dplyr::starts_with("bwsp_w_ll"))
   
-  res_b_dw_ll = res_b %>% filter(tte.dist == "dw", prior.dist == "ll") %>%
-    select(all_of(c(pc_cols, bwsp_dw_ll_cols))) %>% 
-    dplyr::rename_with(~ sub("^bwsp_dw_ll_", "bwsp_", .x), starts_with("bwsp_dw_ll"))
+  res_b_dw_ll = res_b %>% dplyr::filter(tte.dist == "dw", prior.dist == "ll") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_dw_ll_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_dw_ll_", "bwsp_", .x), dplyr::starts_with("bwsp_dw_ll"))
   
-  res_b_pgw_ll = res_b %>% filter(tte.dist == "pgw", prior.dist == "ll") %>%
-    select(all_of(c(pc_cols, bwsp_pgw_ll_cols))) %>% 
-    dplyr::rename_with(~ sub("^bwsp_pgw_ll_", "bwsp_", .x), starts_with("bwsp_pgw_ll"))
+  res_b_pgw_ll = res_b %>% dplyr::filter(tte.dist == "pgw", prior.dist == "ll") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_pgw_ll_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_pgw_ll_", "bwsp_", .x), dplyr::starts_with("bwsp_pgw_ll"))
   
   # for prior.dist == "gg"
-  res_b_w_gg = res_b %>% filter(tte.dist == "w", prior.dist == "gg") %>%
-    select(all_of(c(pc_cols, bwsp_w_gg_cols))) %>% 
-    dplyr::rename_with(~ sub("^bwsp_w_gg_", "bwsp_", .x), starts_with("bwsp_w_gg"))
+  res_b_w_gg = res_b %>% dplyr::filter(tte.dist == "w", prior.dist == "gg") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_w_gg_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_w_gg_", "bwsp_", .x), dplyr::starts_with("bwsp_w_gg"))
   
-  res_b_dw_gg = res_b %>% filter(tte.dist == "dw", prior.dist == "gg") %>%
-    select(all_of(c(pc_cols, bwsp_dw_gg_cols))) %>% 
-    dplyr::rename_with(~ sub("^bwsp_dw_gg_", "bwsp_", .x), starts_with("bwsp_dw_gg"))
+  res_b_dw_gg = res_b %>% dplyr::filter(tte.dist == "dw", prior.dist == "gg") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_dw_gg_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_dw_gg_", "bwsp_", .x), dplyr::starts_with("bwsp_dw_gg"))
   
-  res_b_pgw_gg = res_b %>% filter(tte.dist == "pgw", prior.dist == "gg") %>%
-    select(all_of(c(pc_cols, bwsp_pgw_gg_cols))) %>% 
-    dplyr::rename_with(~ sub("^bwsp_pgw_gg_", "bwsp_", .x), starts_with("bwsp_pgw_gg"))
+  res_b_pgw_gg = res_b %>% dplyr::filter(tte.dist == "pgw", prior.dist == "gg") %>%
+    dplyr::select(dplyr::all_of(c(pc_cols, bwsp_pgw_gg_cols))) %>% 
+    dplyr::rename_with(~ sub("^bwsp_pgw_gg_", "bwsp_", .x), dplyr::starts_with("bwsp_pgw_gg"))
   
   # bind rows to one long table
   res_b_long = dplyr::bind_rows(
@@ -151,7 +151,7 @@ eval.calc_perf_b = function(pc_list){
   #### calculate AUC for each simulation scenario (= one row of pc_list$pc_table)
   
   ## control cases are matched to each ADR-positive scenario for AUC calc
-  pc.pos = filter(pc_list$pc_table, adr.rate > 0) # only ADR-positive scenarios
+  pc.pos = dplyr::filter(pc_list$pc_table, adr.rate > 0) # only ADR-positive scenarios
   
   # Identify all bwsp_test result columns
   bwsp_cols = grep("^bwsp_", names(res.ext), value = TRUE)
