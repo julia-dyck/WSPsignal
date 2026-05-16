@@ -298,7 +298,7 @@ eval.calc_perf_b = function(pc_list){
   
   fpr_cols <- grep("^fpr_", names(fprs), value = TRUE)
   # Reshape
-  fprs_long <- reshape(
+  fprs_long <- stats::reshape(
     fprs[, c(setdiff(names(fprs), fpr_cols), fpr_cols)],
     varying = fpr_cols,
     v.names = "fpr",
@@ -315,7 +315,7 @@ eval.calc_perf_b = function(pc_list){
   
   tpr_cols <- grep("^tpr_", names(tprs), value = TRUE)
   # Reshape
-  tprs_long <- reshape(
+  tprs_long <- stats::reshape(
     tprs[, c(setdiff(names(tprs), tpr_cols), tpr_cols)],
     varying = tpr_cols,
     v.names = "tpr",
@@ -331,7 +331,7 @@ eval.calc_perf_b = function(pc_list){
   
   fnr_cols <- grep("^fnr_", names(fnrs), value = TRUE)
   # Reshape
-  fnrs_long <- reshape(
+  fnrs_long <- stats::reshape(
     fnrs[, c(setdiff(names(fnrs), fnr_cols), fnr_cols)],
     varying = fnr_cols,
     v.names = "fnr",
@@ -347,7 +347,7 @@ eval.calc_perf_b = function(pc_list){
   
   tnr_cols <- grep("^tnr_", names(tnrs), value = TRUE)
   # Reshape
-  tnrs_long <- reshape(
+  tnrs_long <- stats::reshape(
     tnrs[, c(setdiff(names(tnrs), tnr_cols), tnr_cols)],
     varying = tnr_cols,
     v.names = "tnr",
@@ -364,7 +364,7 @@ eval.calc_perf_b = function(pc_list){
   # reshape aucs to long format
   auc_cols <- grep("^auc_", names(aucs), value = TRUE)
   # Reshape
-  aucs_long <- reshape(
+  aucs_long <- stats::reshape(
     aucs[, c(setdiff(names(aucs), auc_cols), auc_cols)],
     varying = auc_cols,
     v.names = "auc",

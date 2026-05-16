@@ -110,7 +110,7 @@ eval.non_conv_cases = function(pc_list, group.by = c("tte.dist", "prior.dist", "
   
   # sum up numbers for groups depending on tte.dist, prior.dist, prior.sd 
   # (or subset specified in group.by argument)
-  nonconv.tab = dplyr::group_by(pc_table, dplyr::across(all_of(group.by)))
+  nonconv.tab = dplyr::group_by(pc_table, dplyr::across(dplyr::all_of(group.by)))
   
   nonconv.tab = dplyr::summarise(
     nonconv.tab,
