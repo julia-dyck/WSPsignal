@@ -1,5 +1,5 @@
 Package: WSPsignal
-Title: Weibull Shape Parameter Tests For Signal Detection
+Title: Weibull Shape Parameter Tests for Signal Detection
 Version: 1.0.0
 Authors@R: 
     c(
@@ -32,8 +32,6 @@ Imports:
     ggplot2,
     survival,
     furrr
-Suggests:
-    tidyr
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
