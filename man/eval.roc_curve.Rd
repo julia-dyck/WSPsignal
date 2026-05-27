@@ -42,12 +42,12 @@ eval.roc_curve(rank$rank.tab, n = 1) # top 1 test
 eval.roc_curve(rank$rank.tab, n = 10) # top 10 tests
 
 # exemplary further processing of the plot
-library(patchwork) # again, formatted next to each other
+library(patchwork) # above plots next to each other
 # Left plot: n=1, no legend, no title
 p1 <- eval.roc_curve(rank$rank.tab, n = 1) +
   ggplot2::guides(color = "none", fill = "none") +
   ggplot2::labs(title = NULL)
-Right plot: n=10, legend, no title
+# Right plot: n=10, legend, no title
 p2 <- eval.roc_curve(rank$rank.tab, n = 10) +
   ggplot2::labs(title = NULL)
 # Combine with patchwork and add global title
