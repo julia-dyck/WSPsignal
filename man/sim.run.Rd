@@ -12,6 +12,10 @@ sim.run(pc_list, subset_ind = NULL)
 \item{subset_ind}{vector of integers specifying which rows of \code{pc_list$pc_table}
 to be considered in simulation runs; defaults to all rows}
 }
+\value{
+No return value. This function is called for
+running simulations and writing results to disk.
+}
 \description{
 Runs simulations for all specified data-generating processes, model
 and test configurations defined in \code{pc_list}. If simulations for some scenarios

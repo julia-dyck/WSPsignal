@@ -11,6 +11,8 @@
 #' @details This function executes simulations sequentially. For parallel 
 #' execution, see \code{\link{sim.run_parallel}}.
 #' 
+#' @return No return value. This function is called for
+#' running simulations and writing results to disk.
 #' 
 #' @examples 
 #'  \dontrun{

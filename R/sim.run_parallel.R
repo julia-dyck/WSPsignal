@@ -12,6 +12,9 @@
 #' @details Parallelization needs to be initialized using the \code{\link[future]{plan}} 
 #' command (see example).
 #' 
+#' @return No return value. This function is called for
+#' running simulations and writing results to disk.
+#' 
 #' 
 #' @examples 
 #' \dontrun{
