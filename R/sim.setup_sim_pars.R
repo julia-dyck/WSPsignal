@@ -409,28 +409,36 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
   
   ## message regarding nr of parameter combinations and reps
   if (identical(est.approach, "b")) {
-    cat(paste0("Each combination of sample scenario and prior specification leads to a total of ",
-               nrow(pc_table),
-               " Bayesian simulation settings.\n"))
+    message(
+      "Each combination of sample scenario and prior specification leads to a total of ",
+      nrow(pc_table),
+      " Bayesian simulation settings."
+    )
   }
   
   if (identical(est.approach, "f")) {
-    cat(paste0("Each combination of sample scenario leads to a total of ",
-               nrow(pc_table_freq),
-               " frequentist simulation settings.\n"))
+    message(
+      "Each combination of sample scenario leads to a total of ",
+      nrow(pc_table_freq),
+      " frequentist simulation settings."
+    )
   }
   
   if (setequal(est.approach, c("b","f"))) {
-    cat(paste0("Each combination of sample scenario (and prior specification) leads to a total of ",
-               nrow(pc_table),
-               " Bayesian and ",
-               nrow(pc_table_freq),
-               " frequentist simulation settings.\n"))
+    message(
+      "Each combination of sample scenario (and prior specification) leads to a total of ",
+      nrow(pc_table),
+      " Bayesian and ",
+      nrow(pc_table_freq),
+      " frequentist simulation settings."
+    )
   }
   
-  cat(paste0("Each simulation scenario's data generation and model estimation will be repeated ",
-             reps,
-             " times.\n"))
+  message(
+    "Each simulation scenario's data generation and model estimation will be repeated ",
+    reps,
+    " times."
+  )
   
   
   return(sim_pars)

@@ -77,12 +77,13 @@ plot_pgw = function(scale = 1, shape = 1, powershape = 1){
   }
   graphics::par(mfrow = c(1,1))
  
-  cat(paste0("scale = ", scale, ", shape = ", shape, ", powershape = ", powershape,
-             " lead to "))
- #cat("\n")
-  cat("mean event time = ", m)
-  #cat("\n")
-  cat(" and median event time = ", med)
+  message(
+    "scale = ", scale,
+    ", shape = ", shape,
+    ", powershape = ", powershape,
+    " lead to mean event time = ", m,
+    " and median event time = ", med
+  )
 }
 
 
