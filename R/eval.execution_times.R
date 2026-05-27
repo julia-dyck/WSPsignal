@@ -94,7 +94,7 @@ eval.execution_times = function(pc_list, group.by = c("tte.dist", "prior.dist", 
     load(paste0(pc_list$add$resultpath, "/res_b.RData"))
     message("res_b.RData successfully loaded")
   }, error = function(cond) {
-    sim.merge_results(pc_list, save = T)
+    sim.merge_results(pc_list, save = TRUE)
     load(paste0(pc_list$add$resultpath, "/res_b.RData"))
     print(" batches merged and loaded")
   })

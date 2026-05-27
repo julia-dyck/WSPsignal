@@ -62,7 +62,7 @@ sim.repeat.1.scenario = function(pc, pc_list, batch.ind) {
 }
 
 # # testing
-# repeated.runs = sim.repeat.1.scenario(pc = pc, pc_list = pc_list, batch.ind = 1, save = F)
+# repeated.runs = sim.repeat.1.scenario(pc = pc, pc_list = pc_list, batch.ind = 1, save = FALSE)
 
 
 ## END OF DOC

@@ -37,7 +37,7 @@ sim.merge_results_f = function(pc_list){
     ind.batch = pc_table_ext[ind, 11]
     
     tryCatch({
-      batch = sim.load.scenario(pc = pc_vect, wd = pc_list$add$resultpath, batchnr = ind.batch, bayes = F)
+      batch = sim.load.scenario(pc = pc_vect, wd = pc_list$add$resultpath, batchnr = ind.batch, bayes = FALSE)
       res_f = rbind(res_f, batch)
     },
     error = function(cond) {

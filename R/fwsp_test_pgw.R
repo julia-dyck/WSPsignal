@@ -27,16 +27,16 @@ fwsp_test_pgw = function(mod.output, cred.level = 1 - c(1:10/1000, 2:10/100)){
   }
   alphas = 1 - cred.level
   
-  if(is.vector(mod.output) == F){
+  if(is.vector(mod.output) == FALSE){
     rej.H0 = rep(NA, length(alphas))
   }
-  else if(is.numeric(mod.output$hessian) == F){
+  else if(is.numeric(mod.output$hessian) == FALSE){
     rej.H0 = rep(NA, length(alphas))
   }
   else{
     varmatrix = try(solve(mod.output$hessian))
     # print(varmatrix)
-    if(is.matrix(varmatrix) == F){  
+    if(is.matrix(varmatrix) == FALSE){  
       rej.H0 = rep(NA, length(alphas))
     }
     else if(sum(is.na(varmatrix)) > 0){ 

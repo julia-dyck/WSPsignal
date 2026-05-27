@@ -105,7 +105,7 @@ eval.eff_sample_sizes = function(pc_list,
       load(paste0(pc_list$add$resultpath, "/res_b.RData"))
       message("res_b.RData successfully loaded")
     }, error = function(cond) {
-      sim.merge_results(pc_list, save = T)
+      sim.merge_results(pc_list, save = TRUE)
       load(paste0(pc_list$add$resultpath, "/res_b.RData"))
       message(" batches merged and loaded")
     })

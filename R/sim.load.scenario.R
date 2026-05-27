@@ -11,7 +11,7 @@
 #' same pc
 #' 
 #' @param bayes logical argument to specify whether to load the simulation results 
-#' obtained with Bayesian (, if \code{bayes = T}; default) or frequentist estimation 
+#' obtained with Bayesian (, if \code{bayes = TRUE}; default) or frequentist estimation 
 #' approach
 #' 
 #' @return A dataframe \code{res.batch}.
@@ -19,12 +19,12 @@
 #' @noRd
 
 
-sim.load.scenario = function(wd, pc, batchnr = 1, bayes = T){
+sim.load.scenario = function(wd, pc, batchnr = 1, bayes = TRUE){
   
-  if(bayes == T){
+  if(bayes == TRUE){
     filename = paste(c(pc, "bADR_sim", batchnr, ".RData") ,collapse="_")
   }
-  if(bayes == F){
+  if(bayes == FALSE){
     filename = paste(c(pc, "fADR_sim", batchnr, ".RData") ,collapse="_")
   }
   

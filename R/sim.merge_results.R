@@ -13,7 +13,7 @@
 #'       
 #' @export
 
-sim.merge_results = function(pc_list, save = T){
+sim.merge_results = function(pc_list, save = TRUE){
   
   ## argument checks -----------------------------------------------------------
   # argument check for pc_list
@@ -58,7 +58,7 @@ sim.merge_results = function(pc_list, save = T){
   
   if("b" %in% est.approach){
     res_b = sim.merge_results_b(pc_list = pc_list)
-    if(save == T){
+    if(save == TRUE){
       # save result
       path = pc_list$add$resultpath
       filename = "res_b.RData"
@@ -68,7 +68,7 @@ sim.merge_results = function(pc_list, save = T){
   }
   if("f" %in% est.approach){
     res_f = sim.merge_results_f(pc_list = pc_list)
-    if(save == T){
+    if(save == TRUE){
       # save result
       path = pc_list$add$resultpath
       filename = "res_f.RData"
@@ -76,7 +76,7 @@ sim.merge_results = function(pc_list, save = T){
       message(sprintf("res_f saved to: %s", file.path(path, filename)))
     }
   }
-  if(save == F){
+  if(save == FALSE){
     if("b" %in% est.approach && "f" %in% est.approach){
       return(list(res_b = res_b, res_f = res_f))
     } else if("b" %in% est.approach){

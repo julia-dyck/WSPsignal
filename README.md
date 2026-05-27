@@ -21,8 +21,8 @@ devtools::install_github(repo = "julia-dyck/WSPsignal")
 ## Reproduction of simulation study
 To reproduce the simulation study presented in [Dyck & Sauzet (2024)](https://arxiv.org/abs/2412.05463) fork the repository, install the package with
 ``` r
-Rcpp::compileAttributes(verbose = T) 
-pkgbuild::compile_dll(force = T, debug = F) 
+Rcpp::compileAttributes(verbose = TRUE) 
+pkgbuild::compile_dll(force = TRUE, debug = F) 
 devtools::install_github(repo = "julia-dyck/WSPsignal") 
 ```
 and apply commands in "WSPsignal/simulation_comparative/conduction_comp" (adjustment of file paths necessary, simulation can take long depending on local device).

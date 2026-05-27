@@ -48,7 +48,7 @@ eval.calc_perf_b = function(pc_list){
       load(paste0(pc_list$add$resultpath, "/res_b.RData"))
       message("res_b.RData successfully loaded")
     }, error = function(cond) {
-      sim.merge_results(pc_list, save = T)
+      sim.merge_results(pc_list, save = TRUE)
       load(paste0(pc_list$add$resultpath, "/res_b.RData"))
       message(" batches merged and loaded")
     })
@@ -220,7 +220,7 @@ eval.calc_perf_b = function(pc_list){
      if(run.reps[i] == 2*pc_list$add$reps){ # calc perf measures if all repetitions did run successfully
       
       # set up labels and predictions in a matrix
-      labels = matrix(res.test$lab, nrow = run.reps[i], ncol = nr.combined.tests, byrow = F)
+      labels = matrix(res.test$lab, nrow = run.reps[i], ncol = nr.combined.tests, byrow = FALSE)
       predictions = data.frame(res.test)[,bwsp_cols] %>%
         as.matrix()
 

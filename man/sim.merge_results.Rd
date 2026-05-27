@@ -4,7 +4,7 @@
 \alias{sim.merge_results}
 \title{Merge result table batches from simulation study}
 \usage{
-sim.merge_results(pc_list, save = T)
+sim.merge_results(pc_list, save = TRUE)
 }
 \arguments{
 \item{pc_list}{list of parameter combinations generated with \code{\link{sim.setup_sim_pars}}}

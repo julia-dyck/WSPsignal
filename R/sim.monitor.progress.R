@@ -27,7 +27,7 @@ sim.monitor.progress = function(pc_list){
                                           sim.load.scenario(pc = pc_list$pc_table[i,], 
                                                             wd= pc_list$add$resultpath, 
                                                             batchnr = ind.batch,
-                                                            bayes = T))
+                                                            bayes = TRUE))
       },
       error=function(cond) {
         # if not, return a warning 

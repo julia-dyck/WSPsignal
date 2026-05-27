@@ -100,7 +100,7 @@ fwsp_model = function(dat,
   
   if(tte.dist == "pgw"){
     # fit model
-    res.pgw = try(stats::nlm(mllk_pgw, p = c(0,0,0), dat = dat, hessian = T))
+    res.pgw = try(stats::nlm(mllk_pgw, p = c(0,0,0), dat = dat, hessian = TRUE))
     outprint = data.frame(parameter = c("scale", "shape", "powershape"),
                           estimate = c(exp(res.pgw$estimate[1]), exp(res.pgw$estimate[2]), exp(res.pgw$estimate[3])),
                           row.names = NULL)
