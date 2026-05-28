@@ -19,7 +19,7 @@ sim.setup_sim_pars(
   sensitivity.option = 1:3,
   reps = 100,
   batch.size = 10,
-  resultpath = paste0(getwd(), "/results_raw"),
+  resultpath,
   stanmod.chains = 4,
   stanmod.iter = 11000,
   stanmod.warmup = 1000
@@ -65,7 +65,7 @@ vector of confidence levels for FWSP tests (see \code{\link{fwsp_test}}).}
 default is 10}
 
 \item{resultpath}{directory where output of this function and intermediate results of the simulation
-are saved}
+are stored; needs explicit specification}
 
 \item{stanmod.chains}{number of Markov chains (see \code{\link[rstan]{sampling}});
 default is 4}
@@ -148,7 +148,7 @@ pc_list = sim.setup_sim_pars(N = c(500, 3000, 5000),             # DGP parameter
                              sensitivity.option = 1:3,           # v
                              reps = 100,                         # Additional parameters
                              batch.size = 10,                    # |
-                             resultpath = paste0(getwd(),"/simulation_results"),
+                             resultpath = tempdir(),             # |
                              stanmod.iter = 11000,               # |
                              stanmod.warmup = 1000               # v
                              )

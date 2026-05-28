@@ -33,7 +33,7 @@
 #' @param batch.size number of simulation repetitions to be saved in a batch (see details); 
 #' default is 10
 #' @param resultpath directory where output of this function and intermediate results of the simulation
-#' are saved
+#' are stored; needs explicit specification
 #' @param stanmod.chains number of Markov chains (see \code{\link[rstan]{sampling}}); 
 #' default is 4
 #' @param stanmod.iter total number of iterations per chain including warmup 
@@ -110,7 +110,7 @@
 #'                              sensitivity.option = 1:3,           # v
 #'                              reps = 100,                         # Additional parameters
 #'                              batch.size = 10,                    # |
-#'                              resultpath = paste0(getwd(),"/simulation_results"),
+#'                              resultpath = tempdir(),             # |
 #'                              stanmod.iter = 11000,               # |
 #'                              stanmod.warmup = 1000               # v
 #'                              )
@@ -136,7 +136,7 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
                               sensitivity.option = 1:3,
                               reps = 100,        # additional parameters
                               batch.size = 10,
-                              resultpath = paste0(getwd(), "/results_raw"),
+                              resultpath,
                               stanmod.chains = 4,
                               stanmod.iter = 11000,
                               stanmod.warmup = 1000
@@ -290,8 +290,9 @@ sim.setup_sim_pars = function(N,                 # dgp parameters
     stop("Argument batch.size must be an integer divisor of reps such that batch.size times an integer number of batches is exactly the specified number of reps.\n")
   }
   
-  if (!is.character(resultpath) || length(resultpath) != 1)
-    stop("Argument resultpath must be a single character string.\n")
+  if (!is.character(resultpath) || length(resultpath) != 1) {
+    stop("Argument resultpath must be a single character string providing a directory where intermediate files and results are stored.\n")
+  }
   
   if (!is.numeric(stanmod.chains) || length(stanmod.chains) != 1)
     stop("Argument stanmod.chains must be a single numeric value.\n")
