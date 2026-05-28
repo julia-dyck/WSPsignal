@@ -10,6 +10,7 @@
 #' @param pc_list list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}
 #' @param group.by character vector specifying grouping variables; must be a 
 #' subset of \code{c("tte.dist", "prior.dist", "prior.sd")}
+#' @param verbose logical; if \code{TRUE} (default), output is printed to the console
 #' 
 #' @return A data frame with the following columns:
 #'   - `tte.dist`: The tte distribution as grouping factor (if selected).
@@ -38,7 +39,9 @@
 
 
 
-eval.non_conv_cases = function(pc_list, group.by = c("tte.dist", "prior.dist", "prior.sd")){
+eval.non_conv_cases = function(pc_list, 
+                               group.by = c("tte.dist", "prior.dist", "prior.sd"),
+                               verbose = TRUE){
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-
@@ -120,7 +123,10 @@ eval.non_conv_cases = function(pc_list, group.by = c("tte.dist", "prior.dist", "
     .groups = "drop"
   )
   
-  print(nonconv.tab)
+  if(verbose == TRUE){
+    print(nonconv.tab)
+  }
+  
   return(nonconv.tab)
   
 }

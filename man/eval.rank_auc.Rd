@@ -9,7 +9,8 @@ eval.rank_auc(
   test.type.subset = c("bwsp", "fwsp"),
   tte.dist.subset = c("w", "dw", "pgw"),
   prior.dist.subset = c("fg", "fl", "gg", "ll"),
-  prior.sd.subset = NULL
+  prior.sd.subset = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ distributions considered in the ranking, must be a subset of
 \item{prior.sd.subset}{numeric to filter for the prior standard deviation
 (relevant only for BWSP tests), must be a subset of prior.sds considered
 in the simulation}
+
+\item{verbose}{logical; if \code{TRUE} (default), \code{$rank.tab} of output list is printed to the console}
 }
 \value{
 A list containing

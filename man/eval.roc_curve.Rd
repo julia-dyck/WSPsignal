@@ -4,13 +4,15 @@
 \alias{eval.roc_curve}
 \title{Plot ROC curves for top WSP test specifications}
 \usage{
-eval.roc_curve(rank.tab, n = 10)
+eval.roc_curve(rank.tab, n = 10, verbose = TRUE)
 }
 \arguments{
 \item{rank.tab}{data frame of ranked test specifications obtained from
 \code{\link{eval.rank_auc}} (\code{output$rank.tab})}
 
 \item{n}{number of top-ranked test specifications to plot (10 by default)}
+
+\item{verbose}{logical; if \code{TRUE} (default), plot is printed to the console}
 }
 \value{
 A ggplot object displaying ROC curves with shaded AUC regions.

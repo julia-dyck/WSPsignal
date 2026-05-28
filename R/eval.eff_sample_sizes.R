@@ -12,6 +12,8 @@
 #' subset of \code{c("tte.dist", "prior.dist", "prior.sd")}
 #' @param threshold numeric threshold for effective sample size acceptable for 
 #' HDI+ROPE testing (10000 by default as recommended by \insertCite{kruschke2015;textual}{WSPsignal})
+#' @param verbose logical; if \code{TRUE} (default), summary statistics
+#' and plot are printed to the console
 #'
 #' @return A list with summary statistics (`$summary`), a ggplot2 object (`$plot`), 
 #' and the data (`$df`) on which summary and plot are based.
@@ -36,7 +38,8 @@
 
 eval.eff_sample_sizes = function(pc_list,
                                  group.by = c("tte.dist", "prior.dist", "prior.sd"),
-                                 threshold = 10000){
+                                 threshold = 10000,
+                                 verbose = TRUE){
   
   ## argument checks -----------------------------------------------------------
   # argument check for pc_list
@@ -189,9 +192,12 @@ eval.eff_sample_sizes = function(pc_list,
     
     ggplot2::theme(legend.position = "top")
   
-  message("\nSummary:")
-  print(n_eff.summaries)
-  print(p)
+  if(verbose == TRUE){
+    message("\nSummary:")
+    print(n_eff.summaries)
+    print(p)
+  }
+  
   
   return(list(summary = n_eff.summaries,     # for overview
               plot = p,                     # for option to take plot as is and manipulate if further

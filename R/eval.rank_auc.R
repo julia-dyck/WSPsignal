@@ -21,6 +21,9 @@
 #' @param prior.sd.subset numeric to filter for the prior standard deviation
 #'   (relevant only for BWSP tests), must be a subset of prior.sds considered 
 #'   in the simulation
+#'   
+#' @param verbose logical; if \code{TRUE} (default), \code{$rank.tab} of output list is printed to the console
+#' 
 #'
 #' @return A list containing 
 #' \itemize{
@@ -90,7 +93,8 @@ eval.rank_auc = function(perf,
                          test.type.subset = c("bwsp", "fwsp"), 
                          tte.dist.subset = c("w", "dw", "pgw"), 
                          prior.dist.subset = c("fg", "fl", "gg", "ll"),
-                         prior.sd.subset = NULL){
+                         prior.sd.subset = NULL,
+                         verbose = TRUE){
 
   
   # 0. argument checks ---------------------------------------------------------
@@ -231,7 +235,11 @@ eval.rank_auc = function(perf,
     dplyr::mutate(
       dplyr::across(c(AUC, FPR, TPR, FNR, TNR), ~ round(.x, 3))
     )
-  print(out$rank.tab)
+  
+  if(verbose == TRUE){
+    print(out$rank.tab) 
+  }
+  
   return(out)
 }
 

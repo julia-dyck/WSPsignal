@@ -10,6 +10,8 @@
 #' @param pc_list list of simulation parameters generated with \code{\link{sim.setup_sim_pars}}
 #' @param group.by character vector specifying grouping variables; must be a 
 #' subset of \code{c("tte.dist", "prior.dist", "prior.sd")}
+#' @param verbose logical; if \code{TRUE} (default), summary statistics
+#' and plot are printed to the console
 #' 
 #' @details
 #' Calculations are based on the stored result file obtained with
@@ -32,7 +34,9 @@
 #' @export
 
 
-eval.execution_times = function(pc_list, group.by = c("tte.dist", "prior.dist", "prior.sd")){
+eval.execution_times = function(pc_list, 
+                                group.by = c("tte.dist", "prior.dist", "prior.sd"),
+                                verbose = TRUE){
   
   ## argument checks -----------------------------------------------------------
   pc_list_is_valid <-
@@ -139,9 +143,12 @@ eval.execution_times = function(pc_list, group.by = c("tte.dist", "prior.dist", 
     ) +
     ggplot2::theme_minimal()
   
-  message("\nSummary:")
-  print(time.summaries)
-  print(p)
+  if(verbose == TRUE){
+    message("\nSummary:")
+    print(time.summaries)
+    print(p) 
+  }
+  
   
   return(list(summary = time.summaries,     # for overview
               plot = p,                     # for option to take plot as is and manipulate if further

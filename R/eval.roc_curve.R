@@ -6,6 +6,7 @@
 #' @param rank.tab data frame of ranked test specifications obtained from 
 #' \code{\link{eval.rank_auc}} (\code{output$rank.tab})
 #' @param n number of top-ranked test specifications to plot (10 by default)
+#' @param verbose logical; if \code{TRUE} (default), plot is printed to the console
 #'
 #' @return A ggplot object displaying ROC curves with shaded AUC regions.
 #' 
@@ -49,7 +50,7 @@
 #'
 #' @export
 
-eval.roc_curve = function(rank.tab, n = 10) {
+eval.roc_curve = function(rank.tab, n = 10, verbose = TRUE) {
 
   # argument checks ------------------------------------------------------------
   
@@ -77,8 +78,6 @@ eval.roc_curve = function(rank.tab, n = 10) {
   
   # arrange command to make sure, even merged tables are ranked top down!
   rank.tab = dplyr::arrange(rank.tab, dplyr::desc(AUC))
-  # print top n tests in console as well
-  print(rank.tab[1:n,])
   
   # Add combined label
   rank.tab = rank.tab %>%
@@ -115,7 +114,7 @@ eval.roc_curve = function(rank.tab, n = 10) {
     dplyr::mutate(point = dplyr::row_number()) %>%
     dplyr::ungroup()
   
-  ggplot2::ggplot() +
+  p = ggplot2::ggplot() +
     # ROC area (polygon to bottom)
     ggplot2::geom_polygon(data = roc_df,
                           ggplot2::aes(x = FPR_full, y = TPR_full, group = spec, fill = spec),
@@ -143,6 +142,15 @@ eval.roc_curve = function(rank.tab, n = 10) {
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(legend.position = "right")
+  
+  if (verbose) {
+    # print top n tests in console 
+    print(rank.tab[1:n, ])
+    # print plot to console
+    print(p)
+  }
+  
+  return(p)
   
 }
 

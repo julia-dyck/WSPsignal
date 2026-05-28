@@ -6,7 +6,8 @@
 \usage{
 eval.execution_times(
   pc_list,
-  group.by = c("tte.dist", "prior.dist", "prior.sd")
+  group.by = c("tte.dist", "prior.dist", "prior.sd"),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -14,6 +15,9 @@ eval.execution_times(
 
 \item{group.by}{character vector specifying grouping variables; must be a
 subset of \code{c("tte.dist", "prior.dist", "prior.sd")}}
+
+\item{verbose}{logical; if \code{TRUE} (default), summary statistics
+and plot are printed to the console}
 }
 \value{
 A list with summary statistics (\verb{$summary}), a ggplot2 object (\verb{$plot}),

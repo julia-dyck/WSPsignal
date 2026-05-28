@@ -6,7 +6,8 @@
 \usage{
 eval.non_conv_cases(
   pc_list,
-  group.by = c("tte.dist", "prior.dist", "prior.sd")
+  group.by = c("tte.dist", "prior.dist", "prior.sd"),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -14,6 +15,8 @@ eval.non_conv_cases(
 
 \item{group.by}{character vector specifying grouping variables; must be a
 subset of \code{c("tte.dist", "prior.dist", "prior.sd")}}
+
+\item{verbose}{logical; if \code{TRUE} (default), output is printed to the console}
 }
 \value{
 A data frame with the following columns:
