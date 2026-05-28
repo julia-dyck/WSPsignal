@@ -28,7 +28,7 @@ command (see example).
 \examples{
 \dontrun{
  # install.packages(future)
- future::plan(multisession, workers = availableCores()) # or another plan strategy
+ future::plan(multisession, workers = future::availableCores()) # or another plan strategy
  sim.run_parallel(pc_list) # run all simulations
  
  
