@@ -11,10 +11,10 @@
 #' @return
 #' A list with components depending on \code{tte.dist}:
 #' \itemize{
+#'   \item \code{estimates}: data frame of parameter estimates in standard parametrization (scale, shape, powershape)
 #'   \item \code{fit}: fitted model object
 #'     (\code{summary.survreg} for \code{"w"}, a list of two \code{summary.survreg} objects for \code{"dw"},
 #'     and an \code{nlm} output list for \code{"pgw"})
-#'   \item \code{estimates}: data frame of parameter estimates in standard parametrization (scale, shape, powershape)
 #'   \item \code{tte.dist}: character indicating the fitted tte distribution
 #' }
 #' 
@@ -75,9 +75,8 @@ fwsp_model = function(dat,
     outprint = data.frame(parameter = c("scale", "shape"),
                           estimate = c(exp(res.w$coefficients[1]), 1/res.w$scale),
                           row.names = NULL)
-    message("Weibull parameter estimates in rweibull parametrization:")
-    print(outprint)
-    return(list(fit = res.w, estimates = outprint, tte.dist = tte.dist))
+    
+    return(list(estimates = outprint, fit = res.w, tte.dist = tte.dist))
   }
   
   if(tte.dist == "dw"){
@@ -93,9 +92,8 @@ fwsp_model = function(dat,
                           estimate = c(exp(res.w$coefficients[1]), 1/res.w$scale, 
                                        exp(res.c.w$coefficients[1]), 1/res.c.w$scale),
                           row.names = NULL)
-    message("Double Weibull parameter estimates in rweibull parametrization:")
-    print(outprint)
-    return(list(fit = list(uncens = res.w, cens = res.c.w), estimates = outprint, tte.dist = tte.dist))
+    
+    return(list(estimates = outprint, fit = list(uncens = res.w, cens = res.c.w), tte.dist = tte.dist))
   }
   
   if(tte.dist == "pgw"){
@@ -104,9 +102,8 @@ fwsp_model = function(dat,
     outprint = data.frame(parameter = c("scale", "shape", "powershape"),
                           estimate = c(exp(res.pgw$estimate[1]), exp(res.pgw$estimate[2]), exp(res.pgw$estimate[3])),
                           row.names = NULL)
-    message("Power generalized Weibull parameter estimates in rpgw parametrization:")
-    print(outprint)
-    return(list(fit = res.pgw, estimates = outprint, tte.dist = tte.dist))
+   
+    return(list(estimates = outprint, fit = res.pgw, tte.dist = tte.dist))
   }
   
   return(mod)

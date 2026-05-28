@@ -121,8 +121,7 @@ bwsp_model_dw = function(datstan,
     )
   }
   
-  print(output_uncens, probs = NULL)
-  print(output_cens, probs = NULL)
+  
   output = list(uncens = output_uncens, cens = output_cens)
   return(output)
 }

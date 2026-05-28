@@ -16,10 +16,10 @@ model out of \code{"w", "dw", "pgw"} (see details)}
 \value{
 A list with components depending on \code{tte.dist}:
 \itemize{
+\item \code{estimates}: data frame of parameter estimates in standard parametrization (scale, shape, powershape)
 \item \code{fit}: fitted model object
 (\code{summary.survreg} for \code{"w"}, a list of two \code{summary.survreg} objects for \code{"dw"},
 and an \code{nlm} output list for \code{"pgw"})
-\item \code{estimates}: data frame of parameter estimates in standard parametrization (scale, shape, powershape)
 \item \code{tte.dist}: character indicating the fitted tte distribution
 }
 }

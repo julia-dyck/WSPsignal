@@ -60,7 +60,7 @@
 #'                  chains = 4,              
 #'                  iter = 110,             # (posterior sample is
 #'                  warmup = 10)            # small for demo purpose)
-#' mod
+#' mod$fit
 #' 
 #'
 #' @export
