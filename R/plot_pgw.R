@@ -30,12 +30,18 @@
 #' @export
 
 plot_pgw = function(scale = 1, shape = 1, powershape = 1){
-
+  
+  # par settings management
+  oldpar <- par(no.readonly = TRUE) # save current par settings
+  on.exit(par(oldpar)) # reset par settings when fct is exited
+  
+  # bootstrap estimates for mean, median, standard deviation
   sim = rpgw(1000, scale, shape, powershape)
   m = mean(sim)
   med = stats::median(sim)
   std = stats::sd(sim)
 
+  # plot settings
   x_upper = m + 2*std
   if(is.finite(x_upper)){
     x = seq(from = 0, to = x_upper, by = x_upper/100)
@@ -54,6 +60,7 @@ plot_pgw = function(scale = 1, shape = 1, powershape = 1){
   par_name = c("scale", "shape", "powershape")
   par_vect = c(scale, shape, powershape)
 
+  # plotting
   graphics::par(mfrow = c(2,2))
   for(i in 1:4){
     plot(values[[i]],
