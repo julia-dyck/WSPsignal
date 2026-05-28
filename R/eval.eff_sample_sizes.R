@@ -117,6 +117,10 @@ eval.eff_sample_sizes = function(pc_list,
     message("Object `res_b` loaded in current environment is used to extract effective sample sizes.")
   }
   
+  if (!"ga.po.n_eff" %in% names(res_b) || is.null(res_b$ga.po.n_eff)) {
+    res_b$ga.po.n_eff <- rep(list(NA), nrow(res_b))
+  }
+  
   # NULL values ~> NA
   res_b$nu.po.n_eff <- lapply(res_b$nu.po.n_eff, function(x) if (length(x) == 0) NA else x)
   res_b$ga.po.n_eff <- lapply(res_b$ga.po.n_eff, function(x) if (length(x) == 0) NA else x)
