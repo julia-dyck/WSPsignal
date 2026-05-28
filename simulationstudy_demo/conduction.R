@@ -1,6 +1,11 @@
 #### simulationstudy_demo 
 #### as R script
 
+#### comment on version:
+# This R script is executable only with the tagged R package version
+# https://github.com/julia-dyck/WSPsignal/releases/tag/corresponding_to_BPgWSP_preprint
+# NOT with the actual version
+
 #### prep ----------------------------------------------------------------------
 # packages
 
