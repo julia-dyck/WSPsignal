@@ -32,8 +32,8 @@
 plot_pgw = function(scale = 1, shape = 1, powershape = 1){
   
   # par settings management
-  oldpar <- par(no.readonly = TRUE) # save current par settings
-  on.exit(par(oldpar)) # reset par settings when fct is exited
+  oldpar <- graphics::par(no.readonly = TRUE) # save current par settings
+  on.exit(graphics::par(oldpar)) # reset par settings when fct is exited
   
   # bootstrap estimates for mean, median, standard deviation
   sim = rpgw(1000, scale, shape, powershape)

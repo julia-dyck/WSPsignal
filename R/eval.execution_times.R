@@ -23,13 +23,48 @@
 #' @seealso \code{\link{eval.non_conv_cases}}, \code{\link{eval.eff_sample_sizes}}
 #'
 #' @examples
-#' \dontrun{
-#' # summarize execution times by tte and prior distribution and prior sd
-#' eval.execution_times(pc_list)
+#' # The package ships with a small precomputed toy simulation study with small
+#' # numbers of repetitions (rep) and posterior sample sizes (stanmod.iter, stanmod.warmup). 
+#' # The simulation parameters below match the shipped example results.
 #'
-#' # summarize execution times only by tte distribution
-#' eval.execution_times(pc_list, group.by = "tte.dist")
-#' }
+#' #### prep:
+#' toy_path <- system.file("extdata", "toysim", package = "WSPsignal")
+#'
+#' # setup prior template
+#' fp_list <- sim.priors_template(tte.dist = c("w", "pgw"), prior.sds = 10)
+#'
+#' # fill in prior template with prior means
+#' fp_list$w[,2] <- c(1, 1, 180, 300)
+#' fp_list$w[,3] <- c(1, 0.207, 1, 4)
+#'
+#' fp_list$pgw[,2] <- c(1, 1, 20, 300)
+#' fp_list$pgw[,3] <- c(1, 0.207, 5.5, 4)
+#' fp_list$pgw[,4] <- c(1, 1, 14, 1)
+#'
+#' # recreate simulation settings used for the toy example
+#' pc_list <- sim.setup_sim_pars(
+#'   N = 500,
+#'   br = 0.1,
+#'   adr.rate = c(0, 1),
+#'   adr.relsd = 0.05,
+#'   study.period = 365,
+#'   est.approach = c("f", "b"),
+#'   tte.dist = c("w", "pgw"),
+#'   prior.dist = "ll",
+#'   fitpars.list = fp_list,
+#'   post.ci.type = c("ETI", "HDI"),
+#'   cred.level = seq(0.5, 0.9, by = 0.05),
+#'   sensitivity.option = 1:3,
+#'   reps = 6,
+#'   batch.size = 3,
+#'   resultpath = toy_path,
+#'   stanmod.iter = 1100,
+#'   stanmod.warmup = 100
+#' )
+#'
+#' #### summarize execution times only by tte distribution (only varying factor)
+#' ex_times = eval.execution_times(pc_list, group.by = "tte.dist")
+#' 
 #' 
 #' @export
 

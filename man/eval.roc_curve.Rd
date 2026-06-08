@@ -38,23 +38,55 @@ The ggplot output can be adjusted to individual needs by adding \code{ggplot2}
 layers to the output.
 }
 \examples{
-\dontrun{
-# Given object rank as output of eval.rank_auc:
-eval.roc_curve(rank$rank.tab, n = 1) # top 1 test
-eval.roc_curve(rank$rank.tab, n = 10) # top 10 tests
+# The package ships with a small precomputed toy simulation study with small
+# numbers of repetitions (rep) and posterior sample sizes (stanmod.iter, stanmod.warmup). 
+# The simulation parameters below match the shipped example results.
 
-# exemplary further processing of the plot
-library(patchwork) # above plots next to each other
-# Left plot: n=1, no legend, no title
-p1 <- eval.roc_curve(rank$rank.tab, n = 1) +
-  ggplot2::guides(color = "none", fill = "none") +
-  ggplot2::labs(title = NULL)
-# Right plot: n=10, legend, no title
-p2 <- eval.roc_curve(rank$rank.tab, n = 10) +
-  ggplot2::labs(title = NULL)
-# Combine with patchwork and add global title
-(p1 | p2) + patchwork::plot_annotation(title = "ROC curves")
-}
+#### prep:
+toy_path <- system.file("extdata", "toysim", package = "WSPsignal")
+
+# setup prior template
+fp_list <- sim.priors_template(tte.dist = c("w", "pgw"), prior.sds = 10)
+
+# fill in prior template with prior means
+fp_list$w[,2] <- c(1, 1, 180, 300)
+fp_list$w[,3] <- c(1, 0.207, 1, 4)
+
+fp_list$pgw[,2] <- c(1, 1, 20, 300)
+fp_list$pgw[,3] <- c(1, 0.207, 5.5, 4)
+fp_list$pgw[,4] <- c(1, 1, 14, 1)
+
+# recreate simulation settings used for the toy example
+pc_list <- sim.setup_sim_pars(
+  N = 500,
+  br = 0.1,
+  adr.rate = c(0, 1),
+  adr.relsd = 0.05,
+  study.period = 365,
+  est.approach = c("f", "b"),
+  tte.dist = c("w", "pgw"),
+  prior.dist = "ll",
+  fitpars.list = fp_list,
+  post.ci.type = c("ETI", "HDI"),
+  cred.level = seq(0.5, 0.9, by = 0.05),
+  sensitivity.option = 1:3,
+  reps = 6,
+  batch.size = 3,
+  resultpath = toy_path,
+  stanmod.iter = 1100,
+  stanmod.warmup = 100
+)
+
+# compute performance metrics based on merged simulation results
+perf = eval.calc_perf(pc_list)
+
+# rank WSP test conficurations
+rank = eval.rank_auc(perf, verbose = FALSE)
+
+#### plot ROC curves for top WSP test specifications
+
+roc = eval.roc_curve(rank$rank.tab)
+
 
 }
 \references{

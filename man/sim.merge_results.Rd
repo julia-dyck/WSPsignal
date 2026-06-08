@@ -21,3 +21,51 @@ simulation scenario per row).
 Merges result table batches from simulation study obtained from using
 \code{\link{sim.run}} or \code{\link{sim.run_parallel}} as preparation for evaluation..
 }
+\examples{
+# The package ships with a small precomputed toy simulation study with small
+# numbers of repetitions (rep) and posterior sample sizes (stanmod.iter, stanmod.warmup). 
+# The simulation parameters below match the shipped example results.
+
+#### prep:
+toy_path <- system.file("extdata", "toysim", package = "WSPsignal")
+
+# setup prior template
+fp_list <- sim.priors_template(tte.dist = c("w", "pgw"), prior.sds = 10)
+
+# fill in prior template with prior means
+fp_list$w[,2] <- c(1, 1, 180, 300)
+fp_list$w[,3] <- c(1, 0.207, 1, 4)
+
+fp_list$pgw[,2] <- c(1, 1, 20, 300)
+fp_list$pgw[,3] <- c(1, 0.207, 5.5, 4)
+fp_list$pgw[,4] <- c(1, 1, 14, 1)
+
+# recreate simulation settings used for the toy example
+pc_list <- sim.setup_sim_pars(
+  N = 500,
+  br = 0.1,
+  adr.rate = c(0, 1),
+  adr.relsd = 0.05,
+  study.period = 365,
+  est.approach = c("f", "b"),
+  tte.dist = c("w", "pgw"),
+  prior.dist = "ll",
+  fitpars.list = fp_list,
+  post.ci.type = c("ETI", "HDI"),
+  cred.level = seq(0.5, 0.9, by = 0.05),
+  sensitivity.option = 1:3,
+  reps = 6,
+  batch.size = 3,
+  resultpath = toy_path,
+  stanmod.iter = 1100,
+  stanmod.warmup = 100
+)
+
+#### merge Bayesian and frequentist simulation results
+res <- sim.merge_results(pc_list, save = FALSE)
+res_b <- res$res_b
+res_f <- res$res_f
+
+
+      
+}

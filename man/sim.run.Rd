@@ -26,14 +26,19 @@ This function executes simulations sequentially. For parallel
 execution, see \code{\link{sim.run_parallel}}.
 }
 \examples{
- \dontrun{
- sim.run(pc_list) # run all simulations
+\dontrun{
+# Running simulation studies can take considerable time, especially when
+# Bayesian estimation is included. Therefore, this example is not run.
+
+# See ?sim.setup_sim_pars for an example creating pc_list.
+
+# run all simulation scenarios
+sim.run(pc_list) # run all simulation scenarios
  
- 
- # To run only a subset of simulation scenarios, specify the indices of the rows
- # in pc_list$pc_table that you want to run. For example, to run the first 10 scenarios:
- 
- sim.run(pc_list, subset_ind = 1:10) # run first 10 simulation scenarios
+# 
+to run only a subset of simulation scenarios, specify row indices from
+# pc_list$pc_table, e.g. the first 10 scenarios:
+sim.run(pc_list, subset_ind = 1:10)
 }
 
 

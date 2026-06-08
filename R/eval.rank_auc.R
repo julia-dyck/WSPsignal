@@ -62,26 +62,51 @@
 #' 
 #' 
 #' @examples
-#' \dontrun{
-#' # loading of performance metrics returned by eval.calc_perf function,
-#' load(paste0(pc_list$add$resultpath, "/perf.RData"))
-#' 
-#' # ranking of all WSP tests considered in simulation setup
-#' rank = eval.rank_auc(perf)
-#' 
-#' # ranking of subset of all Bayesian WSP tests considered in the simulation setup
-#' rank_b = eval.rank_auc(perf, test.type.subset = "bwsp")
+#' # The package ships with a small precomputed toy simulation study with small
+#' # numbers of repetitions (rep) and posterior sample sizes (stanmod.iter, stanmod.warmup). 
+#' # The simulation parameters below match the shipped example results.
 #'
-#' # ranking of subset of all frequentist Weibull tests considered
-#' # in the simulation setup
-#' rank_w = eval.rank_auc(perf, tte.dist.subset = "w")
+#' #### prep:
+#' toy_path <- system.file("extdata", "toysim", package = "WSPsignal")
+#'
+#' # setup prior template
+#' fp_list <- sim.priors_template(tte.dist = c("w", "pgw"), prior.sds = 10)
+#'
+#' # fill in prior template with prior means
+#' fp_list$w[,2] <- c(1, 1, 180, 300)
+#' fp_list$w[,3] <- c(1, 0.207, 1, 4)
+#'
+#' fp_list$pgw[,2] <- c(1, 1, 20, 300)
+#' fp_list$pgw[,3] <- c(1, 0.207, 5.5, 4)
+#' fp_list$pgw[,4] <- c(1, 1, 14, 1)
+#'
+#' # recreate simulation settings used for the toy example
+#' pc_list <- sim.setup_sim_pars(
+#'   N = 500,
+#'   br = 0.1,
+#'   adr.rate = c(0, 1),
+#'   adr.relsd = 0.05,
+#'   study.period = 365,
+#'   est.approach = c("f", "b"),
+#'   tte.dist = c("w", "pgw"),
+#'   prior.dist = "ll",
+#'   fitpars.list = fp_list,
+#'   post.ci.type = c("ETI", "HDI"),
+#'   cred.level = seq(0.5, 0.9, by = 0.05),
+#'   sensitivity.option = 1:3,
+#'   reps = 6,
+#'   batch.size = 3,
+#'   resultpath = toy_path,
+#'   stanmod.iter = 1100,
+#'   stanmod.warmup = 100
+#' )
+#'
+#' # compute performance metrics based on merged simulation results
+#' perf = eval.calc_perf(pc_list)
 #' 
-#' # ranking of subset of all Bayesian WSP tests with "ll"-prior considered in 
-#' # the simulation setup
-#' rank_b_ll = eval.rank_auc(perf, test.type.subset = "bwsp",
-#'                        prior.dist.subset = "ll")
-#'                        
-#' }
+#' #### rank WSP test conficurations
+#' 
+#' rank = eval.rank_auc(perf)
 #'
 #' @export
 #'
