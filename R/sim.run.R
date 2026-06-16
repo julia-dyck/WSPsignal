@@ -24,8 +24,7 @@
 #' # run all simulation scenarios
 #' sim.run(pc_list) # run all simulation scenarios
 #'  
-#' # 
-#' to run only a subset of simulation scenarios, specify row indices from
+#' # to run only a subset of simulation scenarios, specify row indices from
 #' # pc_list$pc_table, e.g. the first 10 scenarios:
 #' sim.run(pc_list, subset_ind = 1:10)
 #' }
