@@ -1,3 +1,11 @@
+<!-- badges: start -->
+[![CRAN
+status](https://www.r-pkg.org/badges/version/WSPsignal)](https://CRAN.R-project.org/package=WSPsignal)
+[![metacran
+downloads](https://cranlogs.r-pkg.org/badges/last-month/WSPsignal)](https://cran.r-project.org/package=WSPsignal)
+[![R-CMD-check](https://github.com/julia-dyck/WSPsignal/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/julia-dyck/WSPsignal/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 # WSPsignal <img src="man/figures/Logo_WSPsignal.png" align="right" style="height:170px; width:auto;">
 
 The family of Weibull Shape Parameter (WSP) tests was developed to detect signals of adverse events in electronic health records.
